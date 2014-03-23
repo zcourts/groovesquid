@@ -92,9 +92,6 @@ public class Main {
 
         // Update Checker
         new UpdateCheckThread().start();
-
-        // Services
-        
         
         // init grooveshark (every 25min)
         new InitThread().start();
@@ -200,7 +197,7 @@ public class Main {
             hm.put("ru_RU", new Language("ru_RU"));
             hm.put("pl_PL", new Language("pl_PL"));
             hm.put("nl_BE", new Language("nl_BE"));
-            hm.put("sr_Latn_RS", new Language("sr_Latn_RS"));
+            hm.put("sr_LATN_RS", new Language("sr_LATN_RS"));
             hm.put("sr_RS", new Language("sr_RS"));
             hm.put("pt_PT", new Language("pt_PT"));
             hm.put("pt_BR", new Language("pt_BR"));

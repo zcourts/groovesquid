@@ -11,58 +11,63 @@
 
 package groovesquid;
 
-import groovesquid.model.Clients;
 import com.google.gson.Gson;
-import groovesquid.util.Utils;
-import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 
 /**
  *
  * @author Maino
  */
-public class UpdateCheckThread extends Thread {
+public class GetAdsThread extends Thread {
     private final static Logger log = Logger.getLogger(Main.class.getName());
-    private static Gson gson = new Gson();
-    private static String updateFile = "http://groovesquid.com/updatecheck.php";
+    private static final Gson gson = new Gson();
+    private static final String getAdsUrl = "http://groovesquid.com/ads/inc/api.php?getAds";
+    private List<AdsResponse.Ad> ads;
+    private final JEditorPane adPane;
     
-    public UpdateCheckThread() {
-        
+    public GetAdsThread(JEditorPane adPane) {
+        this.adPane = adPane;
     }
     
     @Override
     public void run() {
-        UpdateCheck updateCheck = gson.fromJson(getFile(updateFile), UpdateCheck.class);
-        if(updateCheck.getClients() != null)
-            Grooveshark.setClients(updateCheck.getClients());
-        
-        if(Utils.compareVersions(updateCheck.getVersion(), Main.getVersion()) > 0) {
-            if(JOptionPane.showConfirmDialog(null, "New version (v" + updateCheck.getVersion() + ") is available! Do you want to download the new version (recommended)?", "New version", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
-                try {
-                    Desktop.getDesktop().browse(java.net.URI.create("http://groovesquid.com/#download"));
-                } catch (IOException ex) {
-                    log.log(Level.SEVERE, null, ex);
-                }
-            }
+        AdsResponse adsResponse = gson.fromJson(getFile(getAdsUrl), AdsResponse.class);
+        ads = adsResponse.getAds();
+        if(ads.size() > 0) {
+            Random randomGenerator = new Random();
+            int index = randomGenerator.nextInt(ads.size());
+            
+            AdsResponse.Ad ad = ads.get(index);
+            
+            HTMLEditorKit kit = new HTMLEditorKit();
+            adPane.setEditorKit(kit);
+            
+            StyleSheet styleSheet = kit.getStyleSheet();
+            styleSheet.addRule("body { width: 160px; margin: 0; padding: 10px 0 0 0; }");
+            //styleSheet.addRule("div { width: 160px; height:600px; position:absolute; top:50%; margin-top:-300px; }");
+            String result = "<html><body><div><a href=\"" + ad.getUrl() + "\"><img src=\"" + ad.getImage() + "\" alt=\"" + ad.getTitle() + "\" border=\"0\"/></a></div></body></html>";
+            Document doc = kit.createDefaultDocument();
+            adPane.setDocument(doc);
+            adPane.setText(result);
+            
+            System.out.println(result);
         }
+
     }
     
     public static String getFile(String url) {
@@ -99,16 +104,29 @@ public class UpdateCheckThread extends Thread {
         return responseContent;
     }
     
-    public class UpdateCheck {
-        private String version;
-        private Clients clients;
+    public class AdsResponse {
+        private List<Ad> ads;
+        
+        public class Ad {
+            private String title;
+            private String image;
+            private String url;
 
-        public String getVersion() {
-            return version;
+            public String getTitle() {
+                return title;
+            }
+
+            public String getImage() {
+                return image;
+            }
+
+            private String getUrl() {
+                return url;
+            }
         }
         
-        public Clients getClients() {
-            return clients;
+        public List<Ad> getAds() {
+            return ads;
         }
     }
 }

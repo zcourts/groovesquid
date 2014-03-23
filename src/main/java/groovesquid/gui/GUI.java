@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.lang3.ArrayUtils;
@@ -121,7 +123,7 @@ public class GUI extends PFrame {
         }
     };
     
-    private PlayServiceListener playServiceListener = new PlayServiceListener() {
+    private final PlayServiceListener playServiceListener = new PlayServiceListener() {
         public void playbackStarted(Track track) {
             playPauseButton.setIcon(pauseIcon);
         }
@@ -481,12 +483,10 @@ public class GUI extends PFrame {
     }
 
     public void retryFailedDownloadsButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                     
-        int[] selectedRows = downloadTable.getSelectedRows();
         DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
-        for (int i = 0; i < selectedRows.length; i++) {
-            int selectedRow = downloadTable.convertRowIndexToModel(selectedRows[i] - i);
-            Track track = model.getSongDownloads().get(selectedRow);
-            if(track.getStatus() == Track.Status.ERROR) {
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Track track = model.getSongDownloads().get(i);
+            if(track.getStatus() == Track.Status.ERROR || track.getProgress() == 0) {
                 Services.getDownloadService().cancelDownload(track, false);
                 final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
                 downloadTableModel.addRow(0, Services.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
@@ -1010,6 +1010,8 @@ public class GUI extends PFrame {
     protected javax.swing.JLabel volumeOffLabel;
     protected javax.swing.JLabel volumeOnLabel;
     protected javax.swing.JSlider volumeSlider;
+    protected javax.swing.JEditorPane adPane;
+    protected javax.swing.JScrollPane adScrollPane;
     // End of variables declaration
 
     private void removeFromList(boolean andDisk) {
