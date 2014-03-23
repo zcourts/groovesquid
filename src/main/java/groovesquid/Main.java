@@ -40,7 +40,7 @@ public class Main {
     private static Settings settings;
     private static About about;
       
-    private static String version = "0.6.0";
+    private static String version = "0.6.1";
     private static Clients clients = new Clients(new Clients.Client("htmlshark", "20130520", "nuggetsOfBaller"), new Clients.Client("jsqueue", "20130520", "chickenFingers"));
     private static Gson gson = new Gson();
     private static File configDir;
@@ -51,7 +51,7 @@ public class Main {
         
         System.setSecurityManager(null);
         
-        log.info("Groovesquid v" + version + " running on " + System.getProperty("java.vm.name") + " " + System.getProperty("java.runtime.version") + " (" + System.getProperty("java.vm.vendor") + ") in " + System.getProperty("java.home"));
+        log.log(Level.INFO, "Groovesquid v{0} running on {1} {2} ({3}) in {4}", new Object[]{version, System.getProperty("java.vm.name"), System.getProperty("java.runtime.version"), System.getProperty("java.vm.vendor"), System.getProperty("java.home")});
         
         // show gui
         
