@@ -52,35 +52,35 @@ public class FileStore implements Store {
 
         try {
             ID3v1 id3v1 = new ID3v1_1();
-            ID3v2_4 id3v2 = new ID3v2_4();
+            ID3v2_3 id3v2 = new ID3v2_3();
 
             String artistName = track.getSong().getArtist().getName();
             if (artistName != null) {
                 id3v1.setArtist(artistName);
-                AbstractID3v2Frame frame;
+                ID3v2_3Frame frame;
                 AbstractID3v2FrameBody frameBody;
                 frameBody = new FrameBodyTPE1((byte) 0, artistName);
-                frame = new ID3v2_4Frame(frameBody);
+                frame = new ID3v2_3Frame(frameBody);
                 id3v2.setFrame(frame);
             }
 
             String albumName = track.getSong().getAlbum().getName();
             if (albumName != null) {
                 id3v1.setAlbum(albumName);
-                AbstractID3v2Frame frame;
+                ID3v2_3Frame frame;
                 AbstractID3v2FrameBody frameBody;
                 frameBody = new FrameBodyTALB((byte) 0, albumName);
-                frame = new ID3v2_4Frame(frameBody);
+                frame = new ID3v2_3Frame(frameBody);
                 id3v2.setFrame(frame);
             }
 
             String songName = track.getSong().getName();
             if (songName != null) {
                 id3v1.setTitle(songName);
-                AbstractID3v2Frame frame;
+                ID3v2_3Frame frame;
                 AbstractID3v2FrameBody frameBody;
-                frameBody = new FrameBodyTIT2((byte) 3, songName);
-                frame = new ID3v2_4Frame(frameBody);
+                frameBody = new FrameBodyTIT2((byte) 0, songName);
+                frame = new ID3v2_3Frame(frameBody);
                 id3v2.setFrame(frame);
             }
 
@@ -88,10 +88,10 @@ public class FileStore implements Store {
             if (year != null) {
                 id3v1.setYear(year);
                 try {
-                    AbstractID3v2Frame frame;
+                    ID3v2_3Frame frame;
                     AbstractID3v2FrameBody frameBody;
                     frameBody = new FrameBodyTDRC((byte) 0, year);
-                    frame = new ID3v2_4Frame(frameBody);
+                    frame = new ID3v2_3Frame(frameBody);
                     id3v2.setFrame(frame);
                 } catch (NumberFormatException ignore) {
                     // ignored
@@ -100,23 +100,21 @@ public class FileStore implements Store {
 
             String trackNum = track.getSong().getTrackNum().toString();
             if (trackNum != null) {
-                AbstractID3v2Frame frame;
+                ID3v2_3Frame frame;
                 AbstractID3v2FrameBody frameBody;
                 frameBody = new FrameBodyTRCK((byte) 0, trackNum);
-                frame = new ID3v2_4Frame(frameBody);
+                frame = new ID3v2_3Frame(frameBody);
                 id3v2.setFrame(frame);
             }
                         
             // let's advertise ourself a bit
             String comment = "Downloaded with Groovesquid (groovesquid.com)";
-            if (comment != null) {
-                id3v1.setComment(comment);
-                AbstractID3v2Frame frame;
-                AbstractID3v2FrameBody frameBody;
-                frameBody = new FrameBodyCOMM((byte) 0, "eng", comment, comment);
-                frame = new ID3v2_4Frame(frameBody);
-                id3v2.setFrame(frame);
-            }
+            id3v1.setComment(comment);
+            ID3v2_3Frame frame;
+            AbstractID3v2FrameBody frameBody;
+            frameBody = new FrameBodyCOMM((byte) 0, "eng", comment, comment);
+            frame = new ID3v2_3Frame(frameBody);
+            id3v2.setFrame(frame);
 
             MP3File mp3File = new MP3File(file);
             TagOptionSingleton.getInstance().setDefaultSaveMode(TagConstant.MP3_FILE_SAVE_OVERWRITE);

@@ -232,7 +232,7 @@ public abstract class AbstractID3v2 extends AbstractID3 {
             oldTag = new ID3v2_4(file);
             oldTag.overwrite(this);
             oldTag.write(file);
-        } catch (TagNotFoundException ex) {
+        } catch (Exception ex) {
             try {
                 oldTag = new ID3v2_3(file);
                 oldTag.overwrite(this);
