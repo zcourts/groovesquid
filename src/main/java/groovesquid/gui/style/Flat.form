@@ -121,8 +121,8 @@
               <Component id="jPanel1" min="-2" pref="50" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="splitPane" pref="596" max="32767" attributes="0"/>
-                  <Component id="adScrollPane" pref="596" max="32767" attributes="0"/>
+                  <Component id="splitPane" max="32767" attributes="0"/>
+                  <Component id="adScrollPane" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="playerPanel" min="-2" pref="67" max="-2" attributes="0"/>
@@ -167,8 +167,8 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="trackSlider" min="-2" pref="251" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="durationLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
+                  <Component id="durationLabel" min="-2" pref="75" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                   <Component id="albumCoverLabel" min="-2" pref="67" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -180,13 +180,16 @@
               <Component id="nextButton" alignment="0" max="32767" attributes="0"/>
               <Group type="102" alignment="1" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="durationLabel" min="-2" pref="59" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="7" max="32767" attributes="0"/>
+                      </Group>
                       <Component id="currentDurationLabel" alignment="0" max="32767" attributes="0"/>
                       <Component id="volumeOnLabel" alignment="0" max="32767" attributes="0"/>
                       <Component id="volumeOffLabel" alignment="0" max="32767" attributes="0"/>
-                      <Component id="trackSlider" pref="66" max="32767" attributes="0"/>
+                      <Component id="trackSlider" max="32767" attributes="0"/>
                       <Component id="volumeSlider" alignment="1" max="32767" attributes="0"/>
                       <Component id="currentlyPlayingLabel" alignment="1" max="32767" attributes="0"/>
-                      <Component id="durationLabel" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
               </Group>
@@ -435,7 +438,7 @@
                           <Component id="playButton" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="searchScrollPane" pref="160" max="32767" attributes="0"/>
+                      <Component id="searchScrollPane" pref="164" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -748,7 +751,7 @@
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="downloadScrollPane" pref="216" max="32767" attributes="0"/>
+                      <Component id="downloadScrollPane" pref="223" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
