@@ -169,8 +169,7 @@
                     </assembly>
                 </configuration>
             </plugin>-->
-             
-            <!--<plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptorRefs>
@@ -228,8 +227,8 @@
                     </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
-            <plugin>
+            </plugin>
+            <!--<plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>osxappbundle-maven-plugin</artifactId>
                 <version>1.0-alpha-3-cm</version>
@@ -245,7 +244,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
     <repositories>
