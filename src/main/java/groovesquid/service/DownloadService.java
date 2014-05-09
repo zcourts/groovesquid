@@ -7,6 +7,7 @@ import groovesquid.Main;
 import groovesquid.model.*;
 import groovesquid.util.Utils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -296,7 +297,11 @@ public class DownloadService {
             httpPost.setHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded");
             httpPost.setHeader(HTTP.CONN_KEEP_ALIVE, "300");
             httpPost.setEntity(new StringEntity("streamKey=" + streamKey));
-            HttpClient httpClient = HttpClientBuilder.create().build();
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            if(Main.getConfig().getProxyHost() != null && Main.getConfig().getProxyPort() != null) {
+                httpClientBuilder.setProxy(new HttpHost(Main.getConfig().getProxyHost(), Main.getConfig().getProxyPort()));
+            }
+            HttpClient httpClient = httpClientBuilder.build();
             HttpResponse httpResponse = httpClient.execute(httpPost);
             HttpEntity httpEntity = httpResponse.getEntity();
             OutputStream outputStream = null;
