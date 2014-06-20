@@ -29,7 +29,7 @@ import java.util.Iterator;
  */
 public class FieldBodyIMG extends AbstractLyrics3v2FieldBody {
 
-    private ArrayList images = new ArrayList();
+    private ArrayList<ObjectLyrics3Image> images = new ArrayList<ObjectLyrics3Image>();
 
     /**
      * Creates a new FieldBodyIMG object.
@@ -89,7 +89,7 @@ public class FieldBodyIMG extends AbstractLyrics3v2FieldBody {
         if ((object instanceof FieldBodyIMG) == false) {
             return false;
         }
-        final ArrayList superset = ((FieldBodyIMG) object).images;
+        final ArrayList<ObjectLyrics3Image> superset = ((FieldBodyIMG) object).images;
         for (int i = 0; i < this.images.size(); i++) {
             if (superset.contains(this.images.get(i)) == false) {
                 return false;
@@ -121,7 +121,7 @@ public class FieldBodyIMG extends AbstractLyrics3v2FieldBody {
         return super.equals(obj);
     }
 
-    public Iterator iterator() {
+    public Iterator<ObjectLyrics3Image> iterator() {
         return this.images.iterator();
     }
 
@@ -190,7 +190,7 @@ public class FieldBodyIMG extends AbstractLyrics3v2FieldBody {
         String token;
         int offset = 0;
         int delim = imageString.indexOf(TagConstant.SEPERATOR_LINE);
-        this.images = new ArrayList();
+        this.images = new ArrayList<ObjectLyrics3Image>();
         while (delim >= 0) {
             token = imageString.substring(offset, delim);
             image = new ObjectLyrics3Image("Image");

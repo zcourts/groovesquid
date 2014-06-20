@@ -482,17 +482,25 @@ public class GUI extends PFrame {
         }
     }
 
-    public void retryFailedDownloadsButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                     
-        DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            Track track = model.getSongDownloads().get(i);
-            if(track.getStatus() == Track.Status.ERROR || track.getProgress() == 0) {
-                Services.getDownloadService().cancelDownload(track, false);
-                final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
-                downloadTableModel.addRow(0, Services.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
+    public void retryFailedDownloadsButtonActionPerformed(java.awt.event.ActionEvent evt) {             
+    	/*
+    	 * TODO: RESOLVE CRASH WITH RETRY FAILED DOWNLOADS
+    	 */
+    	
+    	if(JOptionPane.showConfirmDialog(null, "ENG: THIS IS BROKEN MAY CRASH THE PROGRAM. TRY ANYWAY?","FEATURE NON-FUNCTIONAL", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+    		DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
+            for (int i = 0; i < model.getRowCount(); i++) {
+                Track track = model.getSongDownloads().get(i);
+                if(track.getStatus() == Track.Status.ERROR || track.getProgress() == 0) {
+                    Services.getDownloadService().cancelDownload(track, false);
+                    final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
+                    downloadTableModel.addRow(0, Services.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
+                }
             }
-        }
-        downloadTable.clearSelection();
+            downloadTable.clearSelection();
+    	}
+        
+    	
     }
     
     public void searchTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                   

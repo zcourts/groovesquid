@@ -267,127 +267,127 @@ public class TagConstant {
     /**
      * <code>HashMap</code> translating the three letter ID into a human understandable string
      */
-    public static final HashMap id3v2_2FrameIdToString = new HashMap();
+    public static final HashMap<Comparable, String> id3v2_2FrameIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the four letter ID into a human understandable string
      */
-    public static final HashMap id3v2_3FrameIdToString = new HashMap();
+    public static final HashMap<Comparable, String> id3v2_3FrameIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the four letter ID into a human understandable string
      */
-    public static final HashMap id3v2_4FrameIdToString = new HashMap();
+    public static final HashMap<Comparable, String> id3v2_4FrameIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the predefined string into the three letter ID
      */
-    public static final HashMap id3v2_2FrameStringToId = new HashMap();
+    public static final HashMap<String, String> id3v2_2FrameStringToId = new HashMap<String, String>();
     /**
      * <code>HashMap</code> translating the predefined string into the four letter ID
      */
-    public static final HashMap id3v2_3FrameStringToId = new HashMap();
+    public static final HashMap<String, String> id3v2_3FrameStringToId = new HashMap<String, String>();
     /**
      * <code>HashMap</code> translating the predefined string into the four letter ID
      */
-    public static final HashMap id3v2_4FrameStringToId = new HashMap();
+    public static final HashMap<String, String> id3v2_4FrameStringToId = new HashMap<String, String>();
     /**
      * <code>HashMap</code> translating the predefined string into the three letter ID
      */
-    public static final HashMap lyrics3v2FieldIdToString = new HashMap();
+    public static final HashMap<Comparable, String> lyrics3v2FieldIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the predefined string into the three letter ID
      */
-    public static final HashMap lyrics3v2FieldStringToId = new HashMap();
+    public static final HashMap<String, String> lyrics3v2FieldStringToId = new HashMap<String, String>();
     /**
      * <code>HashMap</code> translating the three letter ID3v2.2 ID to the corresponding ID3v2.4 ID
      */
-    public static final HashMap id3v2_3ToId3v2_4 = new HashMap();
+    public static final HashMap<Comparable, String> id3v2_3ToId3v2_4 = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the three letter ID3v2.2 ID to the corresponding ID3v2.3 ID
      */
-    public static final HashMap id3v2_2ToId3v2_3 = new HashMap();
+    public static final HashMap<Comparable, String> id3v2_2ToId3v2_3 = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the three letter ID3v2.2 ID to the corresponding ID3v2.4 ID
      */
-    public static final HashMap id3v2_4ToId3v2_3 = new HashMap();
+    public static final HashMap<String, String> id3v2_4ToId3v2_3 = new HashMap<String, String>();
     /**
      * <code>HashMap</code> translating the three letter ID3v2.2 ID to the corresponding ID3v2.3 ID
      */
-    public static final HashMap id3v2_3ToId3v2_2 = new HashMap();
+    public static final HashMap<String, String> id3v2_3ToId3v2_2 = new HashMap<String, String>();
     /**
      * <code>HashMap</code> translating the ID3v1 genre bit into a human readable string
      */
-    public static final HashMap genreIdToString = new HashMap();
+    public static final HashMap<Comparable, String> genreIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the predefined genre string into the ID3v1 genre bit
      */
-    public static final HashMap genreStringToId = new HashMap();
+    public static final HashMap<String, Long> genreStringToId = new HashMap<String, Long>();
     /**
      * <code>HashMap</code> translating the language ID to a human readable string. [ISO-639-2] ISO/FDIS 639-2
      */
-    public static final HashMap languageIdToString = new HashMap();
+    public static final HashMap<Comparable, String> languageIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating the predefined language string into the ID. [ISO-639-2] ISO/FDIS 639-2
      */
-    public static final HashMap languageStringToId = new HashMap();
+    public static final HashMap<String, String> languageStringToId = new HashMap<String, String>();
     /**
      * <code>HashMap</code> translating the bitrate read in from the MP3 Header into a base-10 integer
      */
-    public static final HashMap bitrate = new HashMap();
+    public static final HashMap<Long, Long> bitrate = new HashMap<Long, Long>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap textEncodingIdToString = new HashMap();
+    public static final HashMap<Comparable, String> textEncodingIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap textEncodingStringToId = new HashMap();
+    public static final HashMap<String, Long> textEncodingStringToId = new HashMap<String, Long>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap interpolationMethodIdToString = new HashMap();
+    public static final HashMap<Comparable, String> interpolationMethodIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap interpolationMethodStringToId = new HashMap();
+    public static final HashMap<String, Long> interpolationMethodStringToId = new HashMap<String, Long>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap pictureTypeIdToString = new HashMap();
+    public static final HashMap<Comparable, String> pictureTypeIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap pictureTypeStringToId = new HashMap();
+    public static final HashMap<String, Long> pictureTypeStringToId = new HashMap<String, Long>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap timeStampFormatIdToString = new HashMap();
+    public static final HashMap<Comparable, String> timeStampFormatIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap timeStampFormatStringToId = new HashMap();
+    public static final HashMap<String, Long> timeStampFormatStringToId = new HashMap<String, Long>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap typeOfEventIdToString = new HashMap();
+    public static final HashMap<Comparable, String> typeOfEventIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap typeOfEventStringToId = new HashMap();
+    public static final HashMap<String, Long> typeOfEventStringToId = new HashMap<String, Long>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap typeOfChannelIdToString = new HashMap();
+    public static final HashMap<Comparable, String> typeOfChannelIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap typeOfChannelStringToId = new HashMap();
+    public static final HashMap<String, Long> typeOfChannelStringToId = new HashMap<String, Long>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap recievedAsIdToString = new HashMap();
+    public static final HashMap<Comparable, String> recievedAsIdToString = new HashMap<Comparable, String>();
     /**
      * <code>HashMap</code> translating table found in ID3 tags
      */
-    public static final HashMap recievedAsStringToId = new HashMap();
+    public static final HashMap<String, Long> recievedAsStringToId = new HashMap<String, Long>();
 
     static {
         id3v2_2FrameIdToString.put("BUF", "Recommended buffer size");
@@ -455,7 +455,7 @@ public class TagConstant {
         id3v2_2FrameIdToString.put("WXX", "User defined URL link frame");
         String key;
         String value;
-        Iterator iterator = id3v2_2FrameIdToString.keySet().iterator();
+        Iterator<Comparable> iterator = id3v2_2FrameIdToString.keySet().iterator();
         while (iterator.hasNext()) {
             key = (String) iterator.next();
             value = (String) id3v2_2FrameIdToString.get(key);
@@ -1133,7 +1133,7 @@ public class TagConstant {
         languageIdToString.put("gre", "Greek, Modern (1453-)");
         languageIdToString.put("grn", "Guarani");
         languageIdToString.put("guj", "Gujarati");
-        languageIdToString.put("gwi", "Gwich´in");
+        languageIdToString.put("gwi", "Gwichï¿½in");
         languageIdToString.put("hai", "Haida");
         languageIdToString.put("hau", "Hausa");
         languageIdToString.put("haw", "Hawaiian");
@@ -1274,7 +1274,7 @@ public class TagConstant {
         languageIdToString.put("niu", "Niuean");
         languageIdToString.put("nld", "Dutch");
         languageIdToString.put("nno", "Norwegian Nynorsk");
-        languageIdToString.put("nob", "Norwegian Bokmål");
+        languageIdToString.put("nob", "Norwegian Bokmï¿½l");
         languageIdToString.put("non", "Norse, Old");
         languageIdToString.put("nor", "Norwegian");
         languageIdToString.put("nso", "Sotho, Northern");
@@ -1284,7 +1284,7 @@ public class TagConstant {
         languageIdToString.put("nyn", "Nyankole");
         languageIdToString.put("nyo", "Nyoro");
         languageIdToString.put("nzi", "Nzima");
-        languageIdToString.put("oci", "Occitan (post 1500); Provençal");
+        languageIdToString.put("oci", "Occitan (post 1500); Provenï¿½al");
         languageIdToString.put("oji", "Ojibwa");
         languageIdToString.put("ori", "Oriya");
         languageIdToString.put("orm", "Oromo");
@@ -1309,7 +1309,7 @@ public class TagConstant {
         languageIdToString.put("pon", "Pohnpeian");
         languageIdToString.put("por", "Portuguese");
         languageIdToString.put("pra", "Prakrit languages");
-        languageIdToString.put("pro", "Provençal, Old (to 1500)");
+        languageIdToString.put("pro", "Provenï¿½al, Old (to 1500)");
         languageIdToString.put("pus", "Pushto");
         languageIdToString.put("que", "Quechua");
         languageIdToString.put("raj", "Rajasthani");
@@ -1414,7 +1414,7 @@ public class TagConstant {
         languageIdToString.put("vai", "Vai");
         languageIdToString.put("ven", "Venda");
         languageIdToString.put("vie", "Vietnamese");
-        languageIdToString.put("vol", "Volapük");
+        languageIdToString.put("vol", "Volapï¿½k");
         languageIdToString.put("vot", "Votic");
         languageIdToString.put("wak", "Wakashan languages");
         languageIdToString.put("wal", "Walamo");
