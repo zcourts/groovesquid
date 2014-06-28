@@ -24,7 +24,7 @@ import java.util.Iterator;
  */
 public class FieldBodyLYR extends AbstractLyrics3v2FieldBody {
 
-    private ArrayList lines = new ArrayList();
+    private ArrayList<AbstractMP3Object> lines = new ArrayList<AbstractMP3Object>();
 
     /**
      * Creates a new FieldBodyLYR object.
@@ -101,7 +101,7 @@ public class FieldBodyLYR extends AbstractLyrics3v2FieldBody {
         if ((object instanceof FieldBodyLYR) == false) {
             return false;
         }
-        final ArrayList superset = ((FieldBodyLYR) object).lines;
+        final ArrayList<AbstractMP3Object> superset = ((FieldBodyLYR) object).lines;
         for (int i = 0; i < this.lines.size(); i++) {
             if (superset.contains(this.lines.get(i)) == false) {
                 return false;
@@ -112,11 +112,11 @@ public class FieldBodyLYR extends AbstractLyrics3v2FieldBody {
 
     public void addLyric(final FrameBodySYLT sync) {
         // SYLT frames are made of individual lines
-        final Iterator iterator = sync.iterator();
+        final Iterator<?> iterator = sync.iterator();
         ObjectLyrics3Line newLine;
         ObjectID3v2LyricLine currentLine;
         ObjectLyrics3TimeStamp timeStamp;
-        final HashMap lineMap = new HashMap();
+        final HashMap<String, ObjectLyrics3Line> lineMap = new HashMap<String, ObjectLyrics3Line>();
         while (iterator.hasNext()) {
             currentLine = (ObjectID3v2LyricLine) iterator.next();
 
@@ -170,7 +170,7 @@ public class FieldBodyLYR extends AbstractLyrics3v2FieldBody {
         return present;
     }
 
-    public Iterator iterator() {
+    public Iterator<AbstractMP3Object> iterator() {
         return this.lines.iterator();
     }
 
@@ -235,7 +235,7 @@ public class FieldBodyLYR extends AbstractLyrics3v2FieldBody {
         String token;
         int offset = 0;
         int delim = lineString.indexOf(TagConstant.SEPERATOR_LINE);
-        this.lines = new ArrayList();
+        this.lines = new ArrayList<AbstractMP3Object>();
         ObjectLyrics3Line line;
         while (delim >= 0) {
             token = lineString.substring(offset, delim);

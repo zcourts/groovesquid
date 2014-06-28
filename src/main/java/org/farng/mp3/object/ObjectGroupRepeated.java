@@ -14,16 +14,16 @@ import java.util.Iterator;
  */
 public class ObjectGroupRepeated extends AbstractMP3Object {
 
-    private ArrayList objectList;
-    private ArrayList propertyList;
+    private ArrayList<AbstractMP3Object> objectList;
+    private ArrayList<AbstractMP3Object> propertyList;
 
     /**
      * Creates a new ObjectGroupRepeated object.
      */
     public ObjectGroupRepeated(final String identifier) {
         this.identifier = identifier;
-        this.propertyList = new ArrayList();
-        this.objectList = new ArrayList();
+        this.propertyList = new ArrayList<AbstractMP3Object>();
+        this.objectList = new ArrayList<AbstractMP3Object>();
     }
 
     /**
@@ -42,18 +42,18 @@ public class ObjectGroupRepeated extends AbstractMP3Object {
         }
     }
 
-    public ArrayList getObjectList() {
+    public ArrayList<AbstractMP3Object> getObjectList() {
         return this.objectList;
     }
 
-    public ArrayList getPropertyList() {
+    public ArrayList<AbstractMP3Object> getPropertyList() {
         return this.propertyList;
     }
 
     public int getSize() {
         int size = 0;
         AbstractMP3Object object;
-        final Iterator iterator = this.objectList.listIterator();
+        final Iterator<AbstractMP3Object> iterator = this.objectList.listIterator();
         while (iterator.hasNext()) {
             object = (AbstractMP3Object) iterator.next();
             size += object.getSize();
@@ -95,8 +95,8 @@ public class ObjectGroupRepeated extends AbstractMP3Object {
                                                         .length);
         }
         AbstractMP3Object object;
-        Class className;
-        Iterator iterator;
+        Class<? extends Object> className;
+        Iterator<AbstractMP3Object> iterator;
         if (this.propertyList.size() > 0) {
             while (offset < arr.length) {
                 iterator = this.propertyList.listIterator();
@@ -124,7 +124,7 @@ public class ObjectGroupRepeated extends AbstractMP3Object {
     public String toString() {
         String str = "";
         AbstractMP3Object object;
-        final Iterator iterator = this.objectList.listIterator();
+        final Iterator<AbstractMP3Object> iterator = this.objectList.listIterator();
         while (iterator.hasNext()) {
             object = (AbstractMP3Object) iterator.next();
             str += (object.toString() + "\n");
@@ -136,7 +136,7 @@ public class ObjectGroupRepeated extends AbstractMP3Object {
         AbstractMP3Object object;
         final byte[] totalArray = new byte[this.getSize()];
         byte[] objectArray;
-        final Iterator iterator = this.objectList.listIterator();
+        final Iterator<AbstractMP3Object> iterator = this.objectList.listIterator();
         while (iterator.hasNext()) {
             object = (AbstractMP3Object) iterator.next();
             objectArray = object.writeByteArray();

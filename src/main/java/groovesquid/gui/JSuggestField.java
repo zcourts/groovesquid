@@ -57,7 +57,7 @@ public class JSuggestField extends JTextField {
 
 	/**
 	 * Separate matcher-thread, prevents the text-field from hanging while the
-	 * suggestions are beeing prepared.
+	 * suggestions are being prepared.
 	 */
 	private InterruptableMatcher matcher;
 
@@ -81,7 +81,7 @@ public class JSuggestField extends JTextField {
 	 */
 	private String hint;
 
-	/** Listeners, fire event when a selection as occured */
+	/** Listeners, fire event when a selection as occurred */
 	private LinkedList<ActionListener> listeners;
 	
 	private SuggestMatcher suggestMatcher = new ContainsMatcher();
