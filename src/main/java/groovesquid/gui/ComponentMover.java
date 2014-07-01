@@ -294,20 +294,26 @@ public class ComponentMover extends MouseAdapter
 		//  Mouse dragged events are not generated for every pixel the mouse
 		//  is moved. Adjust the location to make sure we are still on a
 		//  snap value.
+                
+                if(edgeInsets == null) {
+                    locationX += snapSize.width;
+                    locationY += snapSize.height;
+                } else {
 
-		while (locationX < edgeInsets.left)
-			locationX += snapSize.width;
+                    while (locationX < edgeInsets.left)
+                            locationX += snapSize.width;
 
-		while (locationY < edgeInsets.top)
-			locationY += snapSize.height;
+                    while (locationY < edgeInsets.top)
+                            locationY += snapSize.height;
 
-		Dimension d = getBoundingSize( destination );
+                    Dimension d = getBoundingSize( destination );
 
-		while (locationX + destination.getSize().width + edgeInsets.right > d.width)
-			locationX -= snapSize.width;
+                    while (locationX + destination.getSize().width + edgeInsets.right > d.width)
+                            locationX -= snapSize.width;
 
-		while (locationY + destination.getSize().height + edgeInsets.bottom > d.height)
-			locationY -= snapSize.height;
+                    while (locationY + destination.getSize().height + edgeInsets.bottom > d.height)
+                            locationY -= snapSize.height;
+                }
 
 		//  Adjustments are finished, move the component
 

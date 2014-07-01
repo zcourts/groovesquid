@@ -121,8 +121,8 @@
               <Component id="jPanel1" min="-2" pref="50" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="splitPane" pref="596" max="32767" attributes="0"/>
-                  <Component id="adScrollPane" pref="596" max="32767" attributes="0"/>
+                  <Component id="splitPane" max="32767" attributes="0"/>
+                  <Component id="adScrollPane" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="playerPanel" min="-2" pref="67" max="-2" attributes="0"/>
@@ -185,8 +185,8 @@
                       <Component id="volumeOffLabel" alignment="0" max="32767" attributes="0"/>
                       <Component id="trackSlider" pref="66" max="32767" attributes="0"/>
                       <Component id="volumeSlider" alignment="1" max="32767" attributes="0"/>
-                      <Component id="currentlyPlayingLabel" alignment="1" max="32767" attributes="0"/>
                       <Component id="durationLabel" alignment="0" max="32767" attributes="0"/>
+                      <Component id="currentlyPlayingLabel" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
               </Group>
@@ -237,6 +237,11 @@
           <Properties>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                <EmptyBorder bottom="0" left="0" right="0" top="-10"/>
+              </Border>
             </Property>
           </Properties>
         </Component>

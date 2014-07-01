@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.lang3.ArrayUtils;
@@ -57,7 +55,10 @@ public class GUI extends JFrame {
         dispose();
         setUndecorated(true);
         ComponentMover cm = new ComponentMover(this, titleBarPanel);
+        cm.setEdgeInsets(null);
+        cm.setChangeCursor(false);
         ComponentResizer cr = new ComponentResizer(this);
+        cr.setMinimumSize(new Dimension(820, 480));
         
         // title
         setTitle("Groovesquid");
@@ -487,23 +488,24 @@ public class GUI extends JFrame {
         }
     }
 
-    public void retryFailedDownloadsButtonActionPerformed(java.awt.event.ActionEvent evt) {             
-    	/*
-    	 * TODO: RESOLVE CRASH WITH RETRY FAILED DOWNLOADS
-    	 */
-    	
-    	if(JOptionPane.showConfirmDialog(null, "ENG: THIS IS BROKEN MAY CRASH THE PROGRAM. TRY ANYWAY?", "FEATURE NON-FUNCTIONAL", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                Track track = model.getSongDownloads().get(i);
-                if(track.getStatus() == Track.Status.ERROR || track.getProgress() == 0) {
-                    Services.getDownloadService().cancelDownload(track, false);
-                    final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
-                    downloadTableModel.addRow(0, Services.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
-                }
+    public void retryFailedDownloadsButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        List<Track> failedDownloads = new ArrayList<Track>();
+        DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            int row = downloadTable.convertRowIndexToModel(i);
+            Track track = model.getSongDownloads().get(row);
+            if(track.getStatus() == Track.Status.ERROR || track.getProgress() == 0) {
+                failedDownloads.add(track);
             }
-            downloadTable.clearSelection();
-    	}
+        }
+        
+        final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
+        for (Track track : failedDownloads) {
+            Services.getDownloadService().cancelDownload(track, false);
+            downloadTableModel.removeRow(track);
+            downloadTableModel.addRow(0, Services.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
+        }
+        downloadTable.clearSelection();
         
     }
     
@@ -822,13 +824,10 @@ public class GUI extends JFrame {
         Services.getPlayService().skipBackward();
     }
 
-    public void trackSliderMouseDragged(java.awt.event.MouseEvent evt) {                                         
-        /*
-         * if(currentlyPlayingTrack != null) {
-         * Services.getPlayService().setCurrentPosition(trackSlider.getValue());
-         * System.out.println(trackSlider.getValue());
+    public void trackSliderMouseDragged(java.awt.event.MouseEvent evt) {
+        if(Services.getPlayService().getCurrentTrack() != null) {
+            //Services.getPlayService().setCurrentPosition(trackSlider.getValue());
         }
-         */
     }                                        
 
     public void closeButtonMouseClicked(java.awt.event.MouseEvent evt) {                                         
