@@ -144,7 +144,11 @@ public class FrameBodyRVAD extends AbstractID3v2FrameBody {
      * Creates a new FrameBodyRVAD object.
      */
     public FrameBodyRVAD(final RandomAccessFile file) throws IOException, InvalidTagException {
-        this.read(file);
+        try {
+            this.read(file);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            // ignore
+        }
     }
 
     public String getIdentifier() {
