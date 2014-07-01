@@ -125,8 +125,7 @@ public class FileStore implements Store {
             File originalFile = new File(FilenameUtils.removeExtension(file.toString()) + ".original.mp3");
             if(originalFile.exists())
                 originalFile.delete();
-        }
-        catch (TagException ex) {
+        } catch (TagException ex) {
             throw new IOException("cannot write ID3 tags to file " + file + "; track: " + track + "; reason: " + ex, ex);
         }
     }

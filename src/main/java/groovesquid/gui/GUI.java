@@ -34,7 +34,7 @@ import org.apache.commons.lang3.ArrayUtils;
  * @author Maino
  */
 
-public class GUI extends PFrame {
+public class GUI extends JFrame {
     
     private ArrayList<String> autocompleteList = new ArrayList<String>();
     private String searchTextFieldOriginal;
@@ -49,10 +49,15 @@ public class GUI extends PFrame {
 
     }
     
+    static Point mouseDownScreenCoords;
+    static Point mouseDownCompCoords;
+    
     protected void initGui() {
         // undecorated
         dispose();
         setUndecorated(true);
+        ComponentMover cm = new ComponentMover(this, titleBarPanel);
+        ComponentResizer cr = new ComponentResizer(this);
         
         // title
         setTitle("Groovesquid");
@@ -487,8 +492,8 @@ public class GUI extends PFrame {
     	 * TODO: RESOLVE CRASH WITH RETRY FAILED DOWNLOADS
     	 */
     	
-    	if(JOptionPane.showConfirmDialog(null, "ENG: THIS IS BROKEN MAY CRASH THE PROGRAM. TRY ANYWAY?","FEATURE NON-FUNCTIONAL", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
-    		DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
+    	if(JOptionPane.showConfirmDialog(null, "ENG: THIS IS BROKEN MAY CRASH THE PROGRAM. TRY ANYWAY?", "FEATURE NON-FUNCTIONAL", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
             for (int i = 0; i < model.getRowCount(); i++) {
                 Track track = model.getSongDownloads().get(i);
                 if(track.getStatus() == Track.Status.ERROR || track.getProgress() == 0) {
@@ -500,7 +505,6 @@ public class GUI extends PFrame {
             downloadTable.clearSelection();
     	}
         
-    	
     }
     
     public void searchTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                   
@@ -837,6 +841,8 @@ public class GUI extends PFrame {
         if(getExtendedState() == JFrame.MAXIMIZED_BOTH) {
             setExtendedState(JFrame.NORMAL);
         } else {
+            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();  
+            setMaximizedBounds(env.getMaximumWindowBounds()); 
             setExtendedState(JFrame.MAXIMIZED_BOTH);
         }
     }                                              
