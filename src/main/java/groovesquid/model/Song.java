@@ -28,7 +28,15 @@ public class Song {
     private int bitrate;
     private String year;
     private Long trackNum;
+    private Long orderNum = null;
     
+    public Song(Object id, Object name, Object artistId, Object artistName, Object albumId, Object albumName, Object duration, Object year, Object trackNum, Object orderNum) {
+    	this(id, name, artistId, artistName, albumId, albumName, duration, year, trackNum);
+    	
+        if(orderNum != null)
+            this.orderNum = Long.valueOf(orderNum.toString());
+    }	
+    	
     public Song(Object id, Object name, Object artistId, Object artistName, Object albumId, Object albumName, Object duration, Object year, Object trackNum) {
         this.id = id.toString();
         this.name = name.toString().trim();
@@ -126,6 +134,10 @@ public class Song {
     
     public Long getTrackNum() {
         return trackNum;
+    }
+    
+    public Long getOrderNum() {
+    	return orderNum;
     }
     
     @Override
