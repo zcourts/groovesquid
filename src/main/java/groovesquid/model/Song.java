@@ -28,6 +28,7 @@ public class Song {
     private int bitrate;
     private String year;
     private Long trackNum;
+    private boolean downloaded;
     
     public Song(Object id, Object name, Object artistId, Object artistName, Object albumId, Object albumName, Object duration, Object year, Object trackNum) {
         this.id = id.toString();
@@ -136,5 +137,13 @@ public class Song {
         sb.append(", songName='").append(name).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public boolean isDownloaded() {
+        return downloaded;
+    }
+
+    public void setDownloaded(boolean downloaded) {
+        this.downloaded = downloaded;
     }
 }

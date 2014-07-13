@@ -1,14 +1,3 @@
-/*
- * Copyright (C) 2013 Maino
- * 
- * This work is licensed under the Creative Commons
- * Attribution-NonCommercial-NoDerivs 3.0 Unported License. To view a copy of
- * this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/ or send
- * a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco,
- * California, 94105, USA.
- * 
- */
-
 package groovesquid.gui;
 
 import groovesquid.model.Track;
@@ -94,9 +83,9 @@ public class ProgressCellRenderer extends JProgressBar implements TableCellRende
             } else {
                 setBackground(new Color(230,230,230));
             }
-            setBackground(table.getBackground());
         }
         
+        setOpaque(true);
         setBorderPainted(false);
         setForeground(new Color(243,156,18));
         setFont(table.getFont());

@@ -97,6 +97,7 @@ public class DownloadService {
     }
 
     private Track download(Song song, Store store, DownloadListener downloadListener, boolean forPlay) {
+        song.setDownloaded(true);
         Track track = new Track(song, store);
         int additionalAbortDelay = 0;
         boolean downloadWasInterrupted = cancelDownload(track, true);

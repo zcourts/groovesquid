@@ -37,7 +37,7 @@ public class GUI extends JFrame {
     private ArrayList<String> autocompleteList = new ArrayList<String>();
     private String searchTextFieldOriginal;
 
-    protected ImageIcon playIcon, playIconActive, pauseIcon, pauseIconActive, nextIcon, nextIconActive, previousIcon, previousIconActive;/*, minimizeButtonImage, minimizeButtonHoverImage, maximizeButtonImage, maximizeButtonHoverImage, closeButtonImage, closeButtonHoverImage, blueArrowSouth, smallBlueArrowSouth, blueArrowNorth, smallBlueArrowNorth, orangeArrowSouth, smallOrangeArrowSouth, orangeArrowNorth, smallOrangeArrowNorth, facebookIcon, twitterIcon;
+    protected ImageIcon playIcon, playIconActive, pauseIcon, pauseIconActive, nextIcon, nextIconActive, previousIcon, previousIconActive, plusIcon, plusIconHover;/*, minimizeButtonImage, minimizeButtonHoverImage, maximizeButtonImage, maximizeButtonHoverImage, closeButtonImage, closeButtonHoverImage, blueArrowSouth, smallBlueArrowSouth, blueArrowNorth, smallBlueArrowNorth, orangeArrowSouth, smallOrangeArrowSouth, orangeArrowNorth, smallOrangeArrowNorth, facebookIcon, twitterIcon;
     private Image blueButton, blueButtonHover, blueButtonPressed, orangeButton, orangeButtonHover, orangeButtonPressed, dividerImage;*/
 
     /**
@@ -74,13 +74,45 @@ public class GUI extends JFrame {
         // icon
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/groovesquid/gui/icon.png")));
         
+        // titleBarPanel
+        titleBarPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if(e.getClickCount() == 2){
+                    maximize();
+                }
+            }
+        });
         titleBarLabel.setIcon(new ImageIcon(getClass().getResource("/groovesquid/gui/titlebar.png")));
         
         // tables
         ((DownloadTableModel)downloadTable.getModel()).setSongDownloads(Main.getConfig().getDownloads());
         
         searchTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
+        searchTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                searchTableMousePressed(evt);
+            }
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                searchTableMouseReleased(evt);
+            }
+        });
+        
         downloadTable.getSelectionModel().addListSelectionListener(downloadListSelectionListener);
+        downloadTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                downloadTableMouseReleased(evt);
+            }
+        });
+        downloadTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                downloadTableKeyReleased(evt);
+            }
+        });
         
         Services.getPlayService().setListener(playServiceListener);
     }
@@ -111,7 +143,7 @@ public class GUI extends JFrame {
 
                 String playButtonText = Main.getLocaleString("PLAY");
 
-                if(searchTable.getModel().getClass() == AlbumSearchTableModel.class || searchTable.getModel().getClass() == PlaylistSearchTableModel.class || searchTable.getModel().getClass() == ArtistSearchTableModel.class) {
+                if(searchTable.getModel() instanceof AlbumSearchTableModel || searchTable.getModel() instanceof PlaylistSearchTableModel || searchTable.getModel() instanceof ArtistSearchTableModel) {
                     playButtonText = Main.getLocaleString("SHOW_SONGS");
                 }
                 if(selectedRows.length > 0) {
@@ -210,7 +242,7 @@ public class GUI extends JFrame {
     public void playButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         int[] selectedRows = searchTable.getSelectedRows();
 
-        if (searchTable.getModel().getClass() == SongSearchTableModel.class) {
+        if (searchTable.getModel() instanceof SongSearchTableModel) {
             SongSearchTableModel model = (SongSearchTableModel) searchTable.getModel();
             List<Song> songs = new ArrayList<Song>();
 
@@ -220,7 +252,7 @@ public class GUI extends JFrame {
             }
         
             play(songs);
-        } else if (searchTable.getModel().getClass() == AlbumSearchTableModel.class) {
+        } else if (searchTable.getModel() instanceof AlbumSearchTableModel) {
             searchTable.setEnabled(false);
             searchTypeComboBox.setEnabled(false);
             searchTextField.setEnabled(false);
@@ -263,7 +295,7 @@ public class GUI extends JFrame {
             };
             worker.execute();
             
-        } else if (searchTable.getModel().getClass() == PlaylistSearchTableModel.class) {
+        } else if (searchTable.getModel() instanceof PlaylistSearchTableModel) {
             searchTable.setEnabled(false);
             searchTypeComboBox.setEnabled(false);
             searchTextField.setEnabled(false);
@@ -306,7 +338,7 @@ public class GUI extends JFrame {
             };
             worker.execute();
             
-        } else if (searchTable.getModel().getClass() == ArtistSearchTableModel.class) {
+        } else if (searchTable.getModel() instanceof ArtistSearchTableModel) {
             searchTable.setEnabled(false);
             searchTypeComboBox.setEnabled(false);
             searchTextField.setEnabled(false);
@@ -353,7 +385,7 @@ public class GUI extends JFrame {
         searchTable.getSelectionModel().clearSelection();
     }
     
-    private DownloadListener getDownloadListener(final DownloadTableModel downloadTableModel) {
+    public DownloadListener getDownloadListener(final DownloadTableModel downloadTableModel) {
         final DownloadListener downloadListener = new DownloadListener() {
             @Override
             public void downloadedBytesChanged(Track track) {
@@ -399,14 +431,13 @@ public class GUI extends JFrame {
 
         final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
         for (int selectedRow : selectedRows) {
-            // fix
             selectedRow = searchTable.convertRowIndexToModel(selectedRow);
             
-            if (searchTable.getModel().getClass() == SongSearchTableModel.class) {
+            if (searchTable.getModel() instanceof SongSearchTableModel) {
                 SongSearchTableModel songSearchTableModel = (SongSearchTableModel) searchTable.getModel();
                 Song song = songSearchTableModel.getSongs().get(selectedRow);
                 downloadTableModel.addRow(0, Services.getDownloadService().download(song, getDownloadListener(downloadTableModel)));
-            } else if (searchTable.getModel().getClass() == AlbumSearchTableModel.class) {
+            } else if (searchTable.getModel() instanceof AlbumSearchTableModel) {
                 AlbumSearchTableModel albumSearchTableModel = (AlbumSearchTableModel) searchTable.getModel();
                 final Album album = albumSearchTableModel.getAlbums().get(selectedRow);
                 SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
@@ -433,7 +464,7 @@ public class GUI extends JFrame {
                 };
                 worker.execute();
 
-            } else if (searchTable.getModel().getClass() == PlaylistSearchTableModel.class) {
+            } else if (searchTable.getModel() instanceof PlaylistSearchTableModel) {
                 PlaylistSearchTableModel playlistSearchTableModel = (PlaylistSearchTableModel) searchTable.getModel();
                 final Playlist playlist = playlistSearchTableModel.getPlaylists().get(selectedRow);
                 SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
@@ -836,14 +867,8 @@ public class GUI extends JFrame {
         }
     }                                        
 
-    public void maximizeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        if(getExtendedState() == JFrame.MAXIMIZED_BOTH) {
-            setExtendedState(JFrame.NORMAL);
-        } else {
-            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();  
-            setMaximizedBounds(env.getMaximumWindowBounds()); 
-            setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
+    public void maximizeButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        maximize();
     }                                              
 
     public void minimizeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
@@ -875,10 +900,8 @@ public class GUI extends JFrame {
 
     public void downloadTableMouseReleased(java.awt.event.MouseEvent evt) {                                            
         int r = downloadTable.rowAtPoint(evt.getPoint());
-        if ((SwingUtilities.isRightMouseButton(evt) || evt.isControlDown()) && r >= 0 && r < downloadTable.getRowCount() && !ArrayUtils.contains(downloadTable.getSelectedRows(), r)) {
+        if (SwingUtilities.isRightMouseButton(evt) && r >= 0 && r < downloadTable.getRowCount() && !ArrayUtils.contains(downloadTable.getSelectedRows(), r) && !evt.isControlDown()) {
             downloadTable.setRowSelectionInterval(r, r);
-        } else {
-            //downloadTable.clearSelection();
         }
 
         int rowindex = downloadTable.getSelectedRow();
@@ -891,10 +914,8 @@ public class GUI extends JFrame {
 
     public void searchTableMouseReleased(java.awt.event.MouseEvent evt) {                                          
         int r = searchTable.rowAtPoint(evt.getPoint());
-        if ((SwingUtilities.isRightMouseButton(evt) || evt.isControlDown()) && r >= 0 && r < searchTable.getRowCount() && !ArrayUtils.contains(searchTable.getSelectedRows(), r)) {
+        if (SwingUtilities.isRightMouseButton(evt) && r >= 0 && r < searchTable.getRowCount() && !ArrayUtils.contains(searchTable.getSelectedRows(), r) && !evt.isControlDown()) {
             searchTable.setRowSelectionInterval(r, r);
-        } else {
-            //searchTable.clearSelection();
         }
 
         int rowindex = searchTable.getSelectedRow();
@@ -1110,6 +1131,16 @@ public class GUI extends JFrame {
 
     public void showError(String message) {
         JOptionPane.showMessageDialog(this, message, Main.getLocaleString("ERROR"), JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void maximize() {
+        if(getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+            setExtendedState(JFrame.NORMAL);
+        } else {
+            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();  
+            setMaximizedBounds(env.getMaximumWindowBounds()); 
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
     }
     
 }

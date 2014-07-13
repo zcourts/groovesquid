@@ -19,7 +19,6 @@ import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.*;
 
 
-
 /**
  *
  * @author Maino
@@ -27,13 +26,11 @@ import javax.swing.plaf.basic.*;
 
 public class Flat extends GUI {
     
-    private ArrayList<String> autocompleteList = new ArrayList<String>();
+    private final ArrayList<String> autocompleteList = new ArrayList<String>();
     private String searchTextFieldOriginal;
 
-    private ImageIcon minimizeButtonImage, minimizeButtonHoverImage, maximizeButtonImage, maximizeButtonHoverImage, closeButtonImage, closeButtonHoverImage, blueArrowSouth, smallBlueArrowSouth, blueArrowNorth, smallBlueArrowNorth, orangeArrowSouth, smallOrangeArrowSouth, orangeArrowNorth, smallOrangeArrowNorth, facebookIcon, twitterIcon;
+    public ImageIcon minimizeButtonImage, minimizeButtonHoverImage, maximizeButtonImage, maximizeButtonHoverImage, closeButtonImage, closeButtonHoverImage, blueArrowSouth, smallBlueArrowSouth, blueArrowNorth, smallBlueArrowNorth, orangeArrowSouth, smallOrangeArrowSouth, orangeArrowNorth, smallOrangeArrowNorth, facebookIcon, twitterIcon;
     private Image blueButton, blueButtonHover, blueButtonPressed, orangeButton, orangeButtonHover, orangeButtonPressed, dividerImage;
-
-    private static Point point = new Point();
     
     /**
      * Creates new form GUI
@@ -42,7 +39,7 @@ public class Flat extends GUI {
         UIManager.put("ComboBox.selectionBackground", new ColorUIResource(76, 180, 249));
         UIManager.put("ComboBox.selectionForeground", new ColorUIResource(Color.WHITE));
         UIManager.put("ComboBox.background", new ColorUIResource(Color.WHITE));
-        //UIManager.put("ComboBox.disabledBackground", new ColorUIResource(Color.WHITE));
+        UIManager.put("ComboBox.disabledBackground", new ColorUIResource(Color.WHITE));
         
         // load images
         loadResources();
@@ -87,7 +84,7 @@ public class Flat extends GUI {
         splitPane = new javax.swing.JSplitPane();
         searchPanel = new javax.swing.JPanel();
         searchScrollPane = new javax.swing.JScrollPane();
-        searchTable = new StripedTable();
+        searchTable = new SquidTable();
         downloadButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
         searchTypeComboBox = new javax.swing.JComboBox();
@@ -99,7 +96,7 @@ public class Flat extends GUI {
         removeFromDiskButton = new javax.swing.JButton();
         removeFromListButton = new javax.swing.JButton();
         downloadScrollPane = new javax.swing.JScrollPane();
-        downloadTable =  new StripedTable()
+        downloadTable =  new groovesquid.gui.SquidTable()
         ;
         selectComboBox = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
@@ -367,7 +364,7 @@ public class Flat extends GUI {
         searchTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(searchTable.getTableHeader().getDefaultRenderer(), new Color(52, 152, 219)));
         searchTable.setAutoCreateRowSorter(true);
         searchTable.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        searchTable.setModel(new groovesquid.gui.SongSearchTableModel());
+        searchTable.setModel(new SongSearchTableModel());
         searchTable.setFillsViewportHeight(true);
         searchTable.setGridColor(new java.awt.Color(204, 204, 204));
         searchTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
@@ -376,14 +373,6 @@ public class Flat extends GUI {
         searchTable.setShowHorizontalLines(false);
         searchTable.setShowVerticalLines(false);
         searchTable.getTableHeader().setReorderingAllowed(false);
-        searchTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                searchTableMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                searchTableMouseReleased(evt);
-            }
-        });
         searchScrollPane.setViewportView(searchTable);
 
         downloadButton.setIcon(Utils.stretchImage(blueButton, 90, 27, this));
@@ -601,9 +590,7 @@ public class Flat extends GUI {
         downloadTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(downloadTable.getTableHeader().getDefaultRenderer(), new Color(243, 156, 18)));
         downloadTable.setAutoCreateRowSorter(true);
         downloadTable.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        downloadTable.setModel(new groovesquid.gui.DownloadTableModel());
-        downloadTable.getColumnModel().getColumn(5).setCellRenderer(new ProgressCellRenderer());
-        downloadTable.getColumnModel().getColumn(5).setMinWidth(250);
+        downloadTable.setModel(new DownloadTableModel());
         downloadTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         downloadTable.setFillsViewportHeight(true);
         downloadTable.setGridColor(new java.awt.Color(204, 204, 204));
@@ -613,16 +600,6 @@ public class Flat extends GUI {
         downloadTable.setShowHorizontalLines(false);
         downloadTable.setShowVerticalLines(false);
         downloadTable.getTableHeader().setReorderingAllowed(false);
-        downloadTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                downloadTableMouseReleased(evt);
-            }
-        });
-        downloadTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                downloadTableKeyReleased(evt);
-            }
-        });
         downloadScrollPane.setViewportView(downloadTable);
 
         selectComboBox.setUI(ColorArrowUI.createUI(selectComboBox, orangeArrowSouth));
@@ -1035,10 +1012,12 @@ public class Flat extends GUI {
             
             facebookIcon =  new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/facebook.png"));
             twitterIcon =  new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/twitter.png"));
+            
+            plusIcon =  new ImageIcon(getClass().getResource("/groovesquid/gui/plus.png"));
+            plusIconHover =  new ImageIcon(getClass().getResource("/groovesquid/gui/plusHover.png"));
         } catch (IOException ex) {
             Logger.getLogger(Flat.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     
 }
@@ -1082,6 +1061,7 @@ class SquidScrollBarUI extends BasicScrollBarUI {
     protected JButton createIncreaseButton(int orientation) {
         JButton button = new JButton();
         button.setBorderPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
         button.setContentAreaFilled(false);
         button.setIcon(arrowSouth);
         button.setBackground(Color.WHITE);
@@ -1094,6 +1074,7 @@ class SquidScrollBarUI extends BasicScrollBarUI {
     protected JButton createDecreaseButton(int orientation) {
         JButton button = new JButton();
         button.setBorderPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
         button.setContentAreaFilled(false);
         button.setIcon(arrowNorth);
         button.setBackground(Color.WHITE);
@@ -1113,7 +1094,6 @@ class SquidScrollBarUI extends BasicScrollBarUI {
         scrollbar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
         scrollbar.setOpaque(false);
         scrollBarWdth = 30;
-        //scrollbar.
     }
     
     @Override

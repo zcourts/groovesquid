@@ -1,11 +1,5 @@
 /*
- * Copyright (C) 2013 Maino
- * 
- * This work is licensed under the Creative Commons
- * Attribution-NonCommercial-NoDerivs 3.0 Unported License. To view a copy of
- * this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/ or send
- * a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco,
- * California, 94105, USA.
+ * Copyright (C) 2013 Marius Gebhardt
  * 
  */
 
@@ -22,7 +16,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class SongSearchTableModel extends AbstractTableModel {
 
-    private String[] columnNames = { Main.getLocaleString("SONG"), Main.getLocaleString("ARTIST"), Main.getLocaleString("ALBUM"), Main.getLocaleString("DURATION"), Main.getLocaleString("YEAR") };
+    private final String[] columnNames = { "", Main.getLocaleString("SONG"), Main.getLocaleString("ARTIST"), Main.getLocaleString("ALBUM"), Main.getLocaleString("DURATION"), Main.getLocaleString("YEAR") };
     
     private List<Song> songs = new ArrayList<Song>();
 
@@ -51,11 +45,12 @@ public class SongSearchTableModel extends AbstractTableModel {
         Song song = songs.get(row);
 
         switch (col) {
-            case 0: return song.getName();
-            case 1: return song.getArtist().getName();
-            case 2: return song.getAlbum().getName();
-            case 3: return song.getReadableDuration();
-            case 4: return song.getYear();
+            case 0: return song.isDownloaded();
+            case 1: return song.getName();
+            case 2: return song.getArtist().getName();
+            case 3: return song.getAlbum().getName();
+            case 4: return song.getReadableDuration();
+            case 5: return song.getYear();
         }
         return null;
     }
@@ -63,29 +58,52 @@ public class SongSearchTableModel extends AbstractTableModel {
     public List<Song> getSongs() {
         return songs;
     }
-        
+    
+    @Override
+    public Class<?> getColumnClass(int column) {
+        if(songs.size() > 0 && getRowCount() > 0) {
+            return getValueAt(0, column).getClass();
+        } else {
+            return Object.class;
+        }
+    }
+    
     public void removeRow(int row) {
         songs.remove(row);
-        fireTableDataChanged();
+        fireTableRowsDeleted(row, row);
     }
     
     public void removeRow(Song song) {
+        int row = this.songs.indexOf(song);
         songs.remove(song);
-        fireTableDataChanged();
+        fireTableRowsDeleted(row, row);
     }
     
     public void addRow(Song song) {
         songs.add(song);
-        fireTableDataChanged();
+        int row = this.songs.indexOf(song);
+        fireTableRowsInserted(row, row);
     }
     
     public void addRows(List<Song> songs) {
+        int from = this.songs.size() - 1;
         this.songs.addAll(songs);
-        fireTableDataChanged();
+        fireTableRowsInserted(from, this.songs.size() - 1);
     }
     
     public void setRows(List<Song> songs) {
         this.songs = songs;
-        fireTableDataChanged();
+        fireTableRowsUpdated(0, this.songs.indexOf(this.songs.get(this.songs.size() - 1)));
+        fireTableStructureChanged();
     }
+    
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if(columnIndex == 0) {
+            return true;
+        } else {
+            return super.isCellEditable(rowIndex, columnIndex);
+        }
+    }
+    
 }
