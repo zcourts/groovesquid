@@ -1,3 +1,9 @@
+v0.7.0
+- several GUI fixes
+- download songs by clicking the '+' button in the search table
+- new language: greece
+- new playlist order tag
+
 v0.6.1
 ===================
 - several bug fixes
