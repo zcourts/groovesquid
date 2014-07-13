@@ -165,7 +165,9 @@ public class SearchService {
         HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("playlistGetSongs", new HashMap(){{
             put("playlistID", playlist.getId());
         }}), PopularResponse.class).getResult().getSongs();
-
+        
+        int orderNum=1;
+        
         for (HashMap<String, Object> hm : result) {
             songs.add(new Song(
                 hm.get("SongID"),
@@ -176,7 +178,8 @@ public class SearchService {
                 hm.get("AlbumName"),
                 hm.get("EstimateDuration"),
                 hm.get("Year"),
-                hm.get("TrackNum")
+                hm.get("TrackNum"),
+                orderNum++
             ));
         }
         

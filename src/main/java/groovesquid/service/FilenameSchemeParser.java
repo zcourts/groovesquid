@@ -102,7 +102,12 @@ public class FilenameSchemeParser {
         if (questionPos > 0)
             conditionalText = s.substring(questionPos + 1);
 
-        String result = matchNumberTag(tag, song, conditionalText);
+        String result = matchNumberTag('#', tag, song, conditionalText);
+        if (result == null) { 
+        	result = matchNumberTag('%', tag, song, conditionalText);
+        	if (result != null && song.getOrderNum().equals(null))
+        		result = "";
+        }	        	
         if (result == null)
             result = matchTag(TAG_ARTIST, tag, song.getArtist().getName(), conditionalText, song);
         if (result == null)
@@ -115,17 +120,23 @@ public class FilenameSchemeParser {
         return result;
     }
 
-    private String matchNumberTag(String tag, Song song, String conditionalText) {
-        if (!tag.matches("#+"))
+    private String matchNumberTag(char pattern, String tag, Song song, String conditionalText) {
+        if (!tag.matches(String.valueOf(pattern).concat("+")))
             return null;
         String parsedConditionalText = null;
         if (conditionalText != null)
             parsedConditionalText = parse0(song, conditionalText);
         if (conditionalText != null)
             return parsedConditionalText;
-        Long trackNum = song.getTrackNum();
+        
+        Long trackNum = null;
+        if (pattern == '#')
+        	trackNum = song.getTrackNum();
+        else if (pattern == '%') 
+        	trackNum = song.getOrderNum();
+        
         if (trackNum != null) {
-            String formatMask = tag.replace('#', '0');
+            String formatMask = tag.replace(pattern, '0');
             return new DecimalFormat(formatMask).format(trackNum);
         } else {
             return "";
