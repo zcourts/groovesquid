@@ -29,6 +29,7 @@ public class Song {
     private String year;
     private Long trackNum;
     private Long orderNum = null;
+    private boolean downloaded;
     
     public Song(Object id, Object name, Object artistId, Object artistName, Object albumId, Object albumName, Object duration, Object year, Object trackNum, Object orderNum) {
     	this(id, name, artistId, artistName, albumId, albumName, duration, year, trackNum);
