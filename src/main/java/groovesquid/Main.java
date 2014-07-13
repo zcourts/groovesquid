@@ -30,7 +30,7 @@ import org.apache.commons.io.FileUtils;
 
 /**
  *
- * @author Maino
+ * @author Marius Gebhardt
  */
 public class Main {
     
@@ -40,7 +40,7 @@ public class Main {
     private static Settings settings;
     private static About about;
       
-    private static String version = "0.6.1";
+    private static String version = "0.7.0";
     private static Clients clients = new Clients(new Clients.Client("htmlshark", "20130520", "nuggetsOfBaller"), new Clients.Client("jsqueue", "20130520", "chickenFingers"));
     private static Gson gson = new Gson();
     private static File configDir;
@@ -93,7 +93,7 @@ public class Main {
         // Update Checker
         new UpdateCheckThread().start();
         
-        // init grooveshark (every 25min)
+        // init grooveshark (needded every 25min)
         new InitThread().start();
 
     }
@@ -197,6 +197,7 @@ public class Main {
             hm.put("ru_RU", new Language("ru_RU"));
             hm.put("pl_PL", new Language("pl_PL"));
             hm.put("nl_BE", new Language("nl_BE"));
+            hm.put("el_GR", new Language("el_GR"));
             hm.put("sr_LATN_RS", new Language("sr_LATN_RS"));
             hm.put("sr_RS", new Language("sr_RS"));
             hm.put("pt_PT", new Language("pt_PT"));
