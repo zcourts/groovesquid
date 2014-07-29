@@ -47,7 +47,6 @@ public class Track {
     private String path;
     private Long startDownloadTime;
     private Long stopDownloadTime;
-    private Double downloadRate;
     
     public Track(Song song, Store store) {
         this.song = song;
@@ -59,7 +58,6 @@ public class Track {
         this.path = store.getDescription();
         this.startDownloadTime = 0L;
         this.stopDownloadTime = 0L;
-        this.downloadRate = null;
     }
     
     public Song getSong() {
@@ -142,24 +140,20 @@ public class Track {
     }
     
     public Long getDownloadDuration() {
-        if (startDownloadTime == null || startDownloadTime == 0)
+        if (startDownloadTime == null)
             return null;
-        else if (stopDownloadTime != null && stopDownloadTime > 0)
+        else if (stopDownloadTime != null)
             return stopDownloadTime - startDownloadTime;
         else
             return System.currentTimeMillis() - startDownloadTime;
     }
 
     public Double getDownloadRate() {
-        if(status == Status.FINISHED && downloadRate != null) {
-            return downloadRate;
-        }
         Long downloadDuration = getDownloadDuration();
         if (downloadDuration != null && downloadDuration > 0 && downloadedBytes > 0)
-            downloadRate = (double) downloadedBytes / downloadDuration * 1000.0;
+            return (double) downloadedBytes / downloadDuration * 1000.0;
         else
-            downloadRate = 0.0D;
-        return downloadRate;
+            return 0.0D;
     }
     
     /*private void updateTableCell() {
