@@ -113,6 +113,7 @@ public class Flat extends GUI {
         twitterLabel = new javax.swing.JLabel();
         facebookLabel = new javax.swing.JLabel();
         donateLabel = new javax.swing.JLabel();
+        batchButton = new javax.swing.JButton();
         adScrollPane = new javax.swing.JScrollPane();
         adPane = new javax.swing.JEditorPane();
 
@@ -809,6 +810,12 @@ public class Flat extends GUI {
             }
         });
 
+        batchButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
+        batchButton.setText("Batch");
+        batchButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        batchButton.setBorderPainted(false);
+        batchButton.setContentAreaFilled(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -818,6 +825,8 @@ public class Flat extends GUI {
                 .addComponent(aboutButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(settingsButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(batchButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(donateLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -836,9 +845,16 @@ public class Flat extends GUI {
                     .addComponent(donateLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(aboutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(twitterLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(settingsButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(twitterLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(settingsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(batchButton))))
         );
+
+        batchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                batchButtonActionPerformed(evt);
+            }
+        });
 
         adScrollPane.setBackground(new java.awt.Color(204, 204, 204));
         adScrollPane.setBorder(null);
@@ -916,6 +932,7 @@ public class Flat extends GUI {
     private javax.swing.JScrollPane adScrollPane;
     private javax.swing.JPopupMenu airPlayPopupMenu;
     private javax.swing.JLabel albumCoverLabel;
+    private javax.swing.JButton batchButton;
     private javax.swing.JButton closeButton;
     private javax.swing.JLabel currentDurationLabel;
     private javax.swing.JLabel currentlyPlayingLabel;

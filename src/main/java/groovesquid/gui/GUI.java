@@ -35,7 +35,6 @@ import org.apache.commons.lang3.ArrayUtils;
 public class GUI extends JFrame {
     
     private ArrayList<String> autocompleteList = new ArrayList<String>();
-    private String searchTextFieldOriginal;
 
     protected ImageIcon playIcon, playIconActive, pauseIcon, pauseIconActive, nextIcon, nextIconActive, previousIcon, previousIconActive, plusIcon, plusIconHover;/*, minimizeButtonImage, minimizeButtonHoverImage, maximizeButtonImage, maximizeButtonHoverImage, closeButtonImage, closeButtonHoverImage, blueArrowSouth, smallBlueArrowSouth, blueArrowNorth, smallBlueArrowNorth, orangeArrowSouth, smallOrangeArrowSouth, orangeArrowNorth, smallOrangeArrowNorth, facebookIcon, twitterIcon;
     private Image blueButton, blueButtonHover, blueButtonPressed, orangeButton, orangeButtonHover, orangeButtonPressed, dividerImage;*/
@@ -735,11 +734,11 @@ public class GUI extends JFrame {
         } else {
             System.exit(0);
         }
-    }                                  
-
-    public void searchTextFieldKeyReleased(java.awt.event.KeyEvent evt) {                                            
+    }
+    
+    public void searchTextFieldKeyReleased(java.awt.event.KeyEvent evt) {
         if(Main.getConfig().getAutocompleteEnabled()) {
-            if (evt.getKeyCode() >= KeyEvent.VK_A && evt.getKeyCode() <= KeyEvent.VK_Z) {
+            if (evt.getKeyCode() >= KeyEvent.VK_A && evt.getKeyCode() <= KeyEvent.VK_Z && (evt.getModifiers() & ActionEvent.CTRL_MASK) != ActionEvent.CTRL_MASK && ! evt.isControlDown()) {
                 SwingWorker<List<String>, Void> worker = new SwingWorker<List<String>, Void>() {
 
                     @Override
@@ -753,12 +752,10 @@ public class GUI extends JFrame {
                             autocompleteList = (ArrayList<String>) get();
                             if(autocompleteList.size() > 0) {
                                 String autocomplete = autocompleteList.get(0);
-                                String autocompleteSub = autocomplete.substring(searchTextFieldOriginal.length());
-                                String newText = searchTextFieldOriginal + autocompleteSub;
+                                String autocompleteSub = autocomplete.substring(searchTextField.getText().length());
+                                String newText = searchTextField.getText() + autocompleteSub;
                                 searchTextField.setText(newText);
-                                searchTextField.select(autocompleteSub.length() + 1, newText.length() + 1);
-                            } else {
-                                searchTextFieldOriginal = searchTextField.getText();
+                                searchTextField.select(newText.length() - autocompleteSub.length(), newText.length());
                             }
                         } catch (InterruptedException ex) {
                             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -770,7 +767,7 @@ public class GUI extends JFrame {
                 worker.execute();
             }
         }
-    }                                           
+    }
 
     public void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                
         /*((JSuggestField)searchTextField).fireEnterPressed();
@@ -869,27 +866,31 @@ public class GUI extends JFrame {
 
     public void maximizeButtonActionPerformed(java.awt.event.ActionEvent evt) {
         maximize();
-    }                                              
+    }
 
     public void minimizeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
         setState(Frame.ICONIFIED);
-    }                                              
+    }
 
     public void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
         Main.getSettings().setVisible(true);
-    }                                              
+    }
 
     public void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
         Main.getAbout().setVisible(true);
-    }                                           
+    }
+    
+    public void batchButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        new Batch().setVisible(true);
+    }                                              
 
     public void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {                                          
          Services.getPlayService().setVolume(volumeSlider.getValue());
-    }                                         
+    }
 
     public void removeFromListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
         removeFromList(false);
-    }                                                      
+    }
 
     public void removeFromDiskMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
         int[] selectedRows = downloadTable.getSelectedRows();
@@ -995,6 +996,7 @@ public class GUI extends JFrame {
     protected javax.swing.JButton airPlayButton;
     protected javax.swing.JPopupMenu airPlayPopupMenu;
     protected javax.swing.JLabel albumCoverLabel;
+    protected javax.swing.JButton batchButton;
     protected javax.swing.JButton closeButton;
     protected javax.swing.JLabel currentDurationLabel;
     protected javax.swing.JLabel currentlyPlayingLabel;
