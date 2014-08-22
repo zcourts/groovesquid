@@ -3,6 +3,8 @@ v0.7.0
 - download songs by clicking the '+' button in the search table
 - new language: greece
 - new playlist order tag
+- batch search
+- autocompletion fix
 
 v0.6.1
 ===================
