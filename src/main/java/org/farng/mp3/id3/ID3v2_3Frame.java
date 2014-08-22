@@ -194,6 +194,7 @@ public class ID3v2_3Frame extends ID3v2_2Frame {
         this.groupingIdentity = (buffer[1] & TagConstant.MASK_V23_GROUPING_IDENTITY) != 0;
         file.seek(filePointer);
         this.setBody(readBody(identifier, file));
+        
     }
 
     public void write(final RandomAccessFile file) throws IOException {
