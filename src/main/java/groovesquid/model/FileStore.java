@@ -98,11 +98,11 @@ public class FileStore implements Store {
                 }
             }
 
-            String trackNum = track.getSong().getTrackNum().toString();
+            Long trackNum = track.getSong().getTrackNum();
             if (trackNum != null) {
                 ID3v2_3Frame frame;
                 AbstractID3v2FrameBody frameBody;
-                frameBody = new FrameBodyTRCK((byte) 0, trackNum);
+                frameBody = new FrameBodyTRCK((byte) 0, trackNum.toString());
                 frame = new ID3v2_3Frame(frameBody);
                 id3v2.setFrame(frame);
             }
