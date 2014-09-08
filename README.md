@@ -4,11 +4,6 @@ Instantly search, find and download over 15 million MP3s anonymously from Groove
 
 Downloads are at [http://groovesquid.com](http://groovesquid.com)
 
-Donations
----------
-
-Donations are very appreciated! See http://groovesquid.com/#donate.
-
 Compiling
 ---------
 
@@ -22,6 +17,11 @@ Contributing
 You can create pull requests with your own features and I'll mostly accept them and release the new builds on the website.
 
 If you want to help with translation, please [join our Facebook Translator group](https://www.facebook.com/groups/groovesquid.translators/) and send the translated [locale_en_US.properties](https://github.com/groovesquid/groovesquid/blob/master/src/main/resources/groovesquid/properties/locale_en_US.properties) file to us or simply create a pull request.
+
+Donations
+---------
+
+Donations are very appreciated! See http://groovesquid.com/#donate.
 
 Todo
 ---------
