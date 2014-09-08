@@ -1,3 +1,13 @@
+// Simple build script information
+buildscript {
+    repositories {
+        maven { url "http://jcenter.bintray.com" }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
+    }
+}
+
 // Tasks to perform when no task is specified
 defaultTasks 'clean', 'build', 'shadowJar'
 
@@ -62,16 +72,6 @@ configure([compileJava, compileTestJava]) {
     options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
     options.deprecation = true
     options.encoding = 'utf8'
-}
-
-// Simple build script information
-buildscript {
-    repositories {
-        maven { url "http://jcenter.bintray.com" }
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
-    }
 }
 
 // Configuration settings to check for new snapshots
