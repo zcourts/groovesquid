@@ -1,0 +1,10 @@
+language: java
+notifications:
+  email: false
+install: true
+script:
+  - gradle build
+  - gradle
+matrix:
+  include:
+  - jdk: openjdk6
