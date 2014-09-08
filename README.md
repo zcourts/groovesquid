@@ -1,4 +1,4 @@
-# ![Groovesquid](http://i.imgur.com/1MNc63y.png)
+# Groovesquid [![Build Status](https://api.travis-ci.org/groovesquid/groovesquid.png)](https://travis-ci.org/groovesquid/groovesquid/)
 
 Instantly search, find and download over 15 million MP3s anonymously from Grooveshark with Groovesquid!
 
