@@ -108,7 +108,7 @@ public class SearchService {
     public List<Song> searchPopular() {
         final List<Song> songs = new ArrayList<Song>();
 
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("popularGetSongs", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("popularGetSongs", new HashMap<String, Object>(){{
             put("type", "daily");
         }}), PopularResponse.class).getResult().getSongs();
 
@@ -136,7 +136,7 @@ public class SearchService {
     public List<Song> searchSongsByAlbum(final Album album) {
         List<Song> songs = new ArrayList<Song>();
         
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("albumGetAllSongs", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("albumGetAllSongs", new HashMap<String, Object>(){{
             put("albumID", album.getId());
         }}), AlbumResponse.class).getResult();
 
@@ -162,7 +162,7 @@ public class SearchService {
     public List<Song> searchSongsByPlaylist(final Playlist playlist) {
         List<Song> songs = new ArrayList<Song>();
         
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("playlistGetSongs", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("playlistGetSongs", new HashMap<String, Object>(){{
             put("playlistID", playlist.getId());
         }}), PopularResponse.class).getResult().getSongs();
         
@@ -190,7 +190,7 @@ public class SearchService {
     public List<Song> searchSongsByArtist(final Artist artist) {
         List<Song> songs = new ArrayList<Song>();
         
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("artistGetArtistSongs", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("artistGetArtistSongs", new HashMap<String, Object>(){{
             put("artistID", artist.getId());
         }}), AlbumResponse.class).getResult();
 
@@ -235,7 +235,7 @@ public class SearchService {
             }
         }
         
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap<String, Object>(){{
             put("query", searchQuery);
             put("type", new String[] {"Albums"});
             put("guts", "0");
@@ -282,7 +282,7 @@ public class SearchService {
             }
         }
 
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap<String, Object>(){{
             put("query", searchQuery);
             put("type", new String[] {"Playlists"});
             put("guts", "0");
@@ -329,7 +329,7 @@ public class SearchService {
             }
         }
 
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap<String, Object>(){{
             put("query", searchQuery);
             put("type", new String[] {"Artists"});
             put("guts", "0");
@@ -351,7 +351,7 @@ public class SearchService {
     }
     
     public Playlist searchPlaylistByID(final String playlistID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getPlaylistByID", new HashMap(){{
+        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getPlaylistByID", new HashMap<String, Object>(){{
             put("playlistID", playlistID);
         }}), PlaylistResponse.class).getResult();
 
@@ -370,7 +370,7 @@ public class SearchService {
     }
     
     public Artist searchArtistByID(final String artistID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getArtistByID", new HashMap(){{
+        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getArtistByID", new HashMap<String, Object>(){{
             put("artistID", artistID);
         }}), PlaylistResponse.class).getResult();
 
@@ -387,7 +387,7 @@ public class SearchService {
     }
     
     public Album searchAlbumByID(final String albumID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getAlbumByID", new HashMap(){{
+        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getAlbumByID", new HashMap<String, Object>(){{
             put("albumID", albumID);
         }}), PlaylistResponse.class).getResult();
 
@@ -406,7 +406,7 @@ public class SearchService {
     }
     
     public Song searchSongByID(final String songID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getSongByID", new HashMap(){{
+        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getSongByID", new HashMap<String, Object>(){{
             put("songID", songID);
         }}), PlaylistResponse.class).getResult();
 
@@ -432,7 +432,7 @@ public class SearchService {
     public List<String> autocompleteByQuery(final String searchQuery) {
         List<String> suggestions = new ArrayList<String>();
         
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getAutocomplete", new HashMap(){{
+        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getAutocomplete", new HashMap<String, Object>(){{
             put("query", searchQuery);
             put("type", "artist");
         }}), AutocompleteResponse.class).getResult();
