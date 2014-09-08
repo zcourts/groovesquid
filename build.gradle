@@ -1,0 +1,116 @@
+// Tasks to perform when no task is specified
+defaultTasks 'clean', 'build', 'shadowJar'
+
+// Plugins used
+apply plugin: 'java' // Specifies a java project, allows for javadoc generation etc.
+apply plugin: 'application' // Adds the 'gradle run' task
+apply plugin: 'project-report' // Adds project report tasks
+apply plugin: 'shadow' // Allows for dependency shading
+
+// Methods to determine detailed version string
+def gitDescribe() {
+    try {
+        // determine git-describe output
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--always', '--dirty=*'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    } catch (e) {
+        return "unknown"
+    }
+}
+def getVersionName() {
+    try {
+        // determine git-describe output
+        def version = gitDescribe()
+
+        // add on jenkins or travis build information
+        def jenkins_build = System.getenv("BUILD_NUMBER")
+        def travis_build = System.getenv("TRAVIS_BUILD_NUMBER")
+        if (jenkins_build != null) {
+            version += "-b" + jenkins_build
+        } else if (travis_build != null) {
+            version += "-trv" + travis_build
+        } else {
+            version += "-dev"
+        }
+
+        return version
+    } catch (e) {
+        return "unknown-version"
+    }
+}
+
+// Basic project information
+group = 'com.groovesquid'
+version = '0.0.1-SNAPSHOT'
+description = "Groovesquid"
+mainClassName = "com.groovesquid.Main"
+
+// Extended project information
+ext.url = 'https://github.com/groovesquid/groovesquid'
+ext.gitDescribe = getVersionName()
+
+// Minimum Java version required
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
+// Source compiler configuration
+configure([compileJava, compileTestJava]) {
+    options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
+    options.deprecation = true
+    options.encoding = 'utf8'
+}
+
+// Simple build script information
+buildscript {
+    repositories {
+        maven { url "http://jcenter.bintray.com" }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
+    }
+}
+
+// Configuration settings to check for new snapshots
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds' // Always check for new snapshots
+}
+
+// Repositories storing our dependencies
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+// Dependencies used by our project
+dependencies {
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'org.apache.httpcomponents:httpclient:4.3.5'
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'commons-io:commons-io:2.4'
+    compile 'commons-validator:commons-validator:1.4.0'
+    compile 'commons-collections:commons-collections:3.2.1'
+    compile 'org.swinglabs:swing-layout:1.0.3'
+    testCompile 'junit:junit:4.11'
+}
+
+// Shadow plugin settings
+shadow {
+    artifactAttached = false
+}
+
+// Jar manifest information
+jar.manifest.mainAttributes(
+        'Main-Class': mainClassName,
+        'Sealed': true
+)
+
+// Exclude jar signatures
+shadow {
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+}
