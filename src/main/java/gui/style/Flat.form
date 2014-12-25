@@ -863,7 +863,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value=" new com.groovesquid.gui.SquidTable()&#xa;"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value=" new gui.SquidTable()&#xa;"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="downloadTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(downloadTable.getTableHeader().getDefaultRenderer(), new Color(243, 156, 18)));"/>
                   </AuxValues>
                 </Component>

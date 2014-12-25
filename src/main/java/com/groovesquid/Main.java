@@ -12,9 +12,9 @@
 package com.groovesquid;
 
 import com.google.gson.Gson;
-import com.groovesquid.gui.About;
-import com.groovesquid.gui.GUI;
-import com.groovesquid.gui.Settings;
+import gui.About;
+import gui.GUI;
+import gui.Settings;
 import com.groovesquid.model.Clients;
 import com.groovesquid.model.Language;
 import com.groovesquid.util.Utils;

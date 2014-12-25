@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.groovesquid.gui;
+package gui;
 
 import com.groovesquid.Config;
 import com.groovesquid.InitThread;

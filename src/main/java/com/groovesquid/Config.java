@@ -79,7 +79,7 @@ public class Config {
         originalDownloadComplete = DownloadComplete.DO_NOTHING.ordinal();
         originalFileExists = FileExists.RENAME.ordinal();
         originalLocale = Locale.getDefault().toString();
-        originalGuiClass = "com.groovesquid.gui.style.Flat";
+        originalGuiClass = "gui.style.Flat";
         originalProxyHost = null;
         originalProxyPort = null;
         resetSettings();
@@ -179,7 +179,7 @@ public class Config {
             return Class.forName(guiClass);
         } catch (ClassNotFoundException ex) {
             try {
-                return Class.forName("com.groovesquid.gui.style.Flat");
+                return Class.forName("gui.style.Flat");
             } catch (ClassNotFoundException ex1) {
                 Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex1);
             }

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.groovesquid.gui;
+package gui;
 
 import com.groovesquid.Main;
 import java.awt.Desktop;
@@ -63,7 +63,7 @@ public class About extends javax.swing.JFrame {
 
         websiteLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
         websiteLabel.setForeground(java.awt.Color.blue);
-        websiteLabel.setText("http://com.groovesquid.com");
+        websiteLabel.setText("http://groovesquid.com");
         websiteLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         websiteLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -73,7 +73,7 @@ public class About extends javax.swing.JFrame {
 
         facebookLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
         facebookLabel.setForeground(java.awt.Color.blue);
-        facebookLabel.setText("http://facebook.com/com.groovesquid");
+        facebookLabel.setText("http://facebook.com/groovesquid");
         facebookLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         facebookLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -89,7 +89,7 @@ public class About extends javax.swing.JFrame {
 
         twitterLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
         twitterLabel.setForeground(java.awt.Color.blue);
-        twitterLabel.setText("http://twitter.com/com.groovesquid");
+        twitterLabel.setText("http://twitter.com/groovesquid");
         twitterLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         twitterLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -123,7 +123,7 @@ public class About extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/groovesquid/gui/logo.png"))); // NOI18N
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/logo.png"))); // NOI18N
 
         versionLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
         versionLabel.setText("Version");

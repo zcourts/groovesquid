@@ -1,4 +1,4 @@
-package com.groovesquid.gui;
+package gui;
 
 import com.groovesquid.model.Track;
 import java.awt.Color;

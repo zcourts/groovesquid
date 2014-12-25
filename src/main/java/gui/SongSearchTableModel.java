@@ -3,7 +3,7 @@
  * 
  */
 
-package com.groovesquid.gui;
+package gui;
 
 import com.groovesquid.Main;
 import com.groovesquid.model.Song;

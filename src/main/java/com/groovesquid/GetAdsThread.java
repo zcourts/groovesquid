@@ -36,7 +36,7 @@ import org.apache.http.util.EntityUtils;
 public class GetAdsThread extends Thread {
     private final static Logger log = Logger.getLogger(Main.class.getName());
     private static final Gson gson = new Gson();
-    private static final String getAdsUrl = "http://com.groovesquid.com/ads/inc/api.php?getAds";
+    private static final String getAdsUrl = "http://groovesquid.com/ads/inc/api.php?getAds";
     private List<AdsResponse.Ad> ads;
     private final JEditorPane adPane;
     
@@ -46,26 +46,30 @@ public class GetAdsThread extends Thread {
     
     @Override
     public void run() {
-        AdsResponse adsResponse = gson.fromJson(getFile(getAdsUrl), AdsResponse.class);
-        ads = adsResponse.getAds();
-        if(ads.size() > 0) {
-            Random randomGenerator = new Random();
-            int index = randomGenerator.nextInt(ads.size());
-            
-            AdsResponse.Ad ad = ads.get(index);
-            
-            HTMLEditorKit kit = new HTMLEditorKit();
-            adPane.setEditorKit(kit);
-            
-            StyleSheet styleSheet = kit.getStyleSheet();
-            styleSheet.addRule("body { width: 160px; margin: 0; padding: 10px 0 0 0; }");
-            //styleSheet.addRule("div { width: 160px; height:600px; position:absolute; top:50%; margin-top:-300px; }");
-            String result = "<html><body><div><a href=\"" + ad.getUrl() + "\"><img src=\"" + ad.getImage() + "\" alt=\"" + ad.getTitle() + "\" border=\"0\"/></a></div></body></html>";
-            Document doc = kit.createDefaultDocument();
-            adPane.setDocument(doc);
-            adPane.setText(result);
-            
-            System.out.println(result);
+        try {
+            AdsResponse adsResponse = gson.fromJson(getFile(getAdsUrl), AdsResponse.class);
+            ads = adsResponse.getAds();
+            if (ads.size() > 0) {
+                Random randomGenerator = new Random();
+                int index = randomGenerator.nextInt(ads.size());
+
+                AdsResponse.Ad ad = ads.get(index);
+
+                HTMLEditorKit kit = new HTMLEditorKit();
+                adPane.setEditorKit(kit);
+
+                StyleSheet styleSheet = kit.getStyleSheet();
+                styleSheet.addRule("body { width: 160px; margin: 0; padding: 10px 0 0 0; }");
+                //styleSheet.addRule("div { width: 160px; height:600px; position:absolute; top:50%; margin-top:-300px; }");
+                String result = "<html><body><div><a href=\"" + ad.getUrl() + "\"><img src=\"" + ad.getImage() + "\" alt=\"" + ad.getTitle() + "\" border=\"0\"/></a></div></body></html>";
+                Document doc = kit.createDefaultDocument();
+                adPane.setDocument(doc);
+                adPane.setText(result);
+
+                System.out.println(result);
+            }
+        } catch (Exception ex) {
+
         }
 
     }

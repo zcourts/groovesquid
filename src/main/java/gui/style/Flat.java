@@ -1,12 +1,11 @@
-package com.groovesquid.gui.style;
+package gui.style;
 
-import com.groovesquid.gui.*;
+import gui.*;
 import com.groovesquid.*;
 import com.groovesquid.util.Utils;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -93,7 +92,7 @@ public class Flat extends GUI {
         removeFromDiskButton = new javax.swing.JButton();
         removeFromListButton = new javax.swing.JButton();
         downloadScrollPane = new javax.swing.JScrollPane();
-        downloadTable =  new com.groovesquid.gui.SquidTable()
+        downloadTable =  new gui.SquidTable()
         ;
         selectComboBox = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
@@ -237,9 +236,9 @@ public class Flat extends GUI {
             }
         });
 
-        volumeOffLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/volumeOff.png"))); // NOI18N
+        volumeOffLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/style/flat/volumeOff.png"))); // NOI18N
 
-        volumeOnLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/volumeOn.png"))); // NOI18N
+        volumeOnLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/style/flat/volumeOn.png"))); // NOI18N
 
         previousButton.setIcon(previousIcon);
         previousButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -779,7 +778,7 @@ public class Flat extends GUI {
         });
 
         twitterLabel.setIcon(Utils.stretchImage(twitterIcon, 12, 12, this));
-        twitterLabel.setToolTipText("http://twitter.com/com.groovesquid");
+        twitterLabel.setToolTipText("http://twitter.com/groovesquid");
         twitterLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 facebookLabelMousePressed(evt);
@@ -787,7 +786,7 @@ public class Flat extends GUI {
         });
 
         facebookLabel.setIcon(Utils.stretchImage(facebookIcon, 12, 12, this));
-        facebookLabel.setToolTipText("http://facebook.com/com.groovesquid");
+        facebookLabel.setToolTipText("http://facebook.com/groovesquid");
         facebookLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 facebookLabelMousePressed(evt);
@@ -979,51 +978,51 @@ public class Flat extends GUI {
 
     private void loadResources() {
         try {
-            blueButton = ImageIO.read(getClass().getResource("/groovesquid/gui/style/flat/blueButton.png"));
-            blueButtonHover = ImageIO.read(getClass().getResource("/groovesquid/gui/style/flat/blueButtonHover.png"));
-            blueButtonPressed = ImageIO.read(getClass().getResource("/groovesquid/gui/style/flat/blueButtonPressed.png"));
+            blueButton = ImageIO.read(getClass().getResource("/gui/style/flat/blueButton.png"));
+            blueButtonHover = ImageIO.read(getClass().getResource("/gui/style/flat/blueButtonHover.png"));
+            blueButtonPressed = ImageIO.read(getClass().getResource("/gui/style/flat/blueButtonPressed.png"));
             
-            orangeButton = ImageIO.read(getClass().getResource("/groovesquid/gui/style/flat/orangeButton.png"));
-            orangeButtonHover = ImageIO.read(getClass().getResource("/groovesquid/gui/style/flat/orangeButtonHover.png"));
-            orangeButtonPressed = ImageIO.read(getClass().getResource("/groovesquid/gui/style/flat/orangeButtonPressed.png"));
+            orangeButton = ImageIO.read(getClass().getResource("/gui/style/flat/orangeButton.png"));
+            orangeButtonHover = ImageIO.read(getClass().getResource("/gui/style/flat/orangeButtonHover.png"));
+            orangeButtonPressed = ImageIO.read(getClass().getResource("/gui/style/flat/orangeButtonPressed.png"));
             
-            minimizeButtonImage = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/minimizeButton.png"));
-            minimizeButtonHoverImage = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/minimizeButtonHover.png"));
+            minimizeButtonImage = new ImageIcon(getClass().getResource("/gui/style/flat/minimizeButton.png"));
+            minimizeButtonHoverImage = new ImageIcon(getClass().getResource("/gui/style/flat/minimizeButtonHover.png"));
             
-            maximizeButtonImage = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/maximizeButton.png"));
-            maximizeButtonHoverImage = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/maximizeButtonHover.png"));
+            maximizeButtonImage = new ImageIcon(getClass().getResource("/gui/style/flat/maximizeButton.png"));
+            maximizeButtonHoverImage = new ImageIcon(getClass().getResource("/gui/style/flat/maximizeButtonHover.png"));
             
-            closeButtonImage = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/closeButton.png"));
-            closeButtonHoverImage = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/closeButtonHover.png"));
+            closeButtonImage = new ImageIcon(getClass().getResource("/gui/style/flat/closeButton.png"));
+            closeButtonHoverImage = new ImageIcon(getClass().getResource("/gui/style/flat/closeButtonHover.png"));
             
-            playIcon = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/play.png"));
-            playIconActive = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/playH.png"));
+            playIcon = new ImageIcon(getClass().getResource("/gui/style/flat/play.png"));
+            playIconActive = new ImageIcon(getClass().getResource("/gui/style/flat/playH.png"));
             
-            pauseIcon = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/pause.png"));
-            pauseIconActive = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/pauseH.png"));
+            pauseIcon = new ImageIcon(getClass().getResource("/gui/style/flat/pause.png"));
+            pauseIconActive = new ImageIcon(getClass().getResource("/gui/style/flat/pauseH.png"));
             
-            nextIcon = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/next.png"));
-            nextIconActive = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/nextH.png"));
+            nextIcon = new ImageIcon(getClass().getResource("/gui/style/flat/next.png"));
+            nextIconActive = new ImageIcon(getClass().getResource("/gui/style/flat/nextH.png"));
             
-            previousIcon = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/previous.png"));
-            previousIconActive = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/previousH.png"));
+            previousIcon = new ImageIcon(getClass().getResource("/gui/style/flat/previous.png"));
+            previousIconActive = new ImageIcon(getClass().getResource("/gui/style/flat/previousH.png"));
             
-            blueArrowSouth = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/blueArrowSouth.png"));
+            blueArrowSouth = new ImageIcon(getClass().getResource("/gui/style/flat/blueArrowSouth.png"));
             //smallBlueArrowSouth = Utils.stretchImage(blueArrowSouth, 11, 9, this);
-            blueArrowNorth = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/blueArrowNorth.png"));
+            blueArrowNorth = new ImageIcon(getClass().getResource("/gui/style/flat/blueArrowNorth.png"));
             //smallBlueArrowNorth = Utils.stretchImage(blueArrowNorth, 11, 9, this);
-            orangeArrowSouth = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/orangeArrowSouth.png"));
+            orangeArrowSouth = new ImageIcon(getClass().getResource("/gui/style/flat/orangeArrowSouth.png"));
             //smallOrangeArrowSouth = Utils.stretchImage(orangeArrowSouth, 11, 9, this);
-            orangeArrowNorth = new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/orangeArrowNorth.png"));
+            orangeArrowNorth = new ImageIcon(getClass().getResource("/gui/style/flat/orangeArrowNorth.png"));
             //smallOrangeArrowNorth = Utils.stretchImage(orangeArrowNorth, 11, 9, this);
             
-            dividerImage = ImageIO.read(getClass().getResource("/groovesquid/gui/style/flat/divider.png"));
+            dividerImage = ImageIO.read(getClass().getResource("/gui/style/flat/divider.png"));
             
-            facebookIcon =  new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/facebook.png"));
-            twitterIcon =  new ImageIcon(getClass().getResource("/groovesquid/gui/style/flat/twitter.png"));
+            facebookIcon =  new ImageIcon(getClass().getResource("/gui/style/flat/facebook.png"));
+            twitterIcon =  new ImageIcon(getClass().getResource("/gui/style/flat/twitter.png"));
             
-            plusIcon =  new ImageIcon(getClass().getResource("/groovesquid/gui/plus.png"));
-            plusIconHover =  new ImageIcon(getClass().getResource("/groovesquid/gui/plusHover.png"));
+            plusIcon =  new ImageIcon(getClass().getResource("/gui/plus.png"));
+            plusIconHover =  new ImageIcon(getClass().getResource("/gui/plusHover.png"));
         } catch (IOException ex) {
             Logger.getLogger(Flat.class.getName()).log(Level.SEVERE, null, ex);
         }

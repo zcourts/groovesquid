@@ -9,7 +9,7 @@
  * 
  */
 
-package com.groovesquid.gui;
+package gui;
 
 import java.awt.Color;
 import java.awt.Component;

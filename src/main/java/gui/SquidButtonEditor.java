@@ -1,4 +1,4 @@
-package com.groovesquid.gui;
+package gui;
 
 import com.groovesquid.Main;
 import java.awt.*;

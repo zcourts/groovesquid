@@ -38,7 +38,7 @@ public class Language {
         else if (parts.length == 2) locale = new Locale(parts[0], parts[1]);
         else locale = new Locale(parts[0], parts[1], parts[2]);
         
-        resourceBundle = ResourceBundle.getBundle("com.groovesquid.properties.locale", locale, new UTF8Control());
+        resourceBundle = ResourceBundle.getBundle("properties.locale", locale, new UTF8Control());
         languageName = resourceBundle.getString("LANGUAGE_NAME");
         this.localeString = localeString;
     }

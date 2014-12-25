@@ -1,4 +1,4 @@
-package com.groovesquid.gui;
+package gui;
 
 import com.groovesquid.model.Album;
 import com.groovesquid.model.Song;
@@ -71,7 +71,7 @@ public class GUI extends JFrame {
         getContentPane().setBackground(getBackground());
         
         // icon
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/groovesquid/gui/icon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/gui/icon.png")));
         
         // titleBarPanel
         titleBarPanel.addMouseListener(new MouseAdapter() {
@@ -82,7 +82,7 @@ public class GUI extends JFrame {
                 }
             }
         });
-        titleBarLabel.setIcon(new ImageIcon(getClass().getResource("/groovesquid/gui/titlebar.png")));
+        titleBarLabel.setIcon(new ImageIcon(getClass().getResource("/gui/titlebar.png")));
         
         // tables
         ((DownloadTableModel)downloadTable.getModel()).setSongDownloads(Main.getConfig().getDownloads());
@@ -959,7 +959,7 @@ public class GUI extends JFrame {
 
     public void donateLabelMousePressed(java.awt.event.MouseEvent evt) {        
         try {
-            Desktop.getDesktop().browse(java.net.URI.create("http://com.groovesquid.com/#donate"));
+            Desktop.getDesktop().browse(java.net.URI.create("http://groovesquid.com/#donate"));
         } catch (IOException ex) {
             Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
         }
