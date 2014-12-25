@@ -64,8 +64,8 @@ ext.url = 'https://github.com/groovesquid/groovesquid'
 ext.gitDescribe = getVersionName()
 
 // Minimum Java version required
-sourceCompatibility = '1.6'
-targetCompatibility = '1.6'
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
 
 // Source compiler configuration
 configure([compileJava, compileTestJava]) {
