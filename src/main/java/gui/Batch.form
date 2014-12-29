@@ -32,7 +32,7 @@
                   <Component id="jScrollPane1" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="307" max="32767" attributes="0"/>
+                      <EmptySpace pref="388" max="32767" attributes="0"/>
                       <Component id="downloadButton" min="-2" pref="107" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -85,7 +85,9 @@
     </Container>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="one search term per line"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="Main.getLocaleString(&quot;ONE_SEARCH_TERM_PER_LINE&quot;)" type="code"/>
+        </Property>
       </Properties>
     </Component>
   </SubComponents>
