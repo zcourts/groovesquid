@@ -14,6 +14,7 @@ package com.groovesquid;
 import com.groovesquid.model.Clients;
 import com.groovesquid.model.Track;
 import com.groovesquid.service.FilenameSchemeParser;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -79,7 +80,7 @@ public class Config {
         originalDownloadComplete = DownloadComplete.DO_NOTHING.ordinal();
         originalFileExists = FileExists.RENAME.ordinal();
         originalLocale = Locale.getDefault().toString();
-        originalGuiClass = "gui.style.Flat";
+        originalGuiClass = "com.groovesquid.gui.style.Flat";
         originalProxyHost = null;
         originalProxyPort = null;
         resetSettings();
@@ -173,13 +174,13 @@ public class Config {
         this.locale = locale;
         Main.saveConfig();
     }
-    
-    public Class getGuiClass() {
+
+    public Class<?> getGuiClass() {
         try {
             return Class.forName(guiClass);
         } catch (ClassNotFoundException ex) {
             try {
-                return Class.forName("gui.style.Flat");
+                return Class.forName(originalGuiClass);
             } catch (ClassNotFoundException ex1) {
                 Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex1);
             }
