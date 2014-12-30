@@ -1,4 +1,4 @@
-package com.groovesquid;
+package com.groovesquid.model;
 
 import java.util.HashMap;
 
