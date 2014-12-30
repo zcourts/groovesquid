@@ -12,21 +12,30 @@
 package com.groovesquid;
 
 import com.google.gson.Gson;
-import gui.About;
-import gui.GUI;
-import gui.Settings;
+import com.groovesquid.gui.AboutFrame;
+import com.groovesquid.gui.MainFrame;
+import com.groovesquid.gui.SettingsFrame;
 import com.groovesquid.model.Clients;
-import com.groovesquid.model.Language;
+import com.groovesquid.service.DownloadService;
+import com.groovesquid.service.PlayService;
+import com.groovesquid.service.SearchService;
 import com.groovesquid.util.Utils;
-import java.awt.Toolkit;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.LocaleUtils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
-import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -35,91 +44,94 @@ import org.apache.commons.io.FileUtils;
 public class Main {
     
     private final static Logger log = Logger.getLogger(Main.class.getName());
-    
-    private static GUI gui;
-    private static Settings settings;
-    private static About about;
+
+    private static MainFrame mainFrame;
+    private static SettingsFrame settingsFrame;
+    private static AboutFrame aboutFrame;
       
     private static String version = "0.7.0";
     private static Clients clients = new Clients(new Clients.Client("htmlshark", "20130520", "nuggetsOfBaller"), new Clients.Client("jsqueue", "20130520", "chickenFingers"));
     private static Gson gson = new Gson();
     private static File configDir;
     private static Config config;
-    private static Map<String, Language> languages;
+    private static LinkedList<Locale> locales;
+    private static Locale currentLocale;
+    private static DownloadService downloadService;
+    private static PlayService playService;
+    private static SearchService searchService;
 
     public static void main(String[] args) {
-        
-        System.setSecurityManager(null);
-        
         log.log(Level.INFO, "Groovesquid v{0} running on {1} {2} ({3}) in {4}", new Object[]{version, System.getProperty("java.vm.name"), System.getProperty("java.runtime.version"), System.getProperty("java.vm.vendor"), System.getProperty("java.home")});
-        
-        // show gui
-        
-        // apple os x
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Groovesquid");
-        // antialising
-        System.setProperty("awt.useSystemAAFontSettings", "lcd");
-        System.setProperty("swing.aatext", "true");
-        // flackering bg fix
-        System.setProperty("sun.awt.noerasebackground", "true");
-        System.setProperty("sun.java2d.noddraw", "true");
-        Toolkit.getDefaultToolkit().setDynamicLayout(true);
-        
-        try {
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-            log.log(Level.SEVERE, null, ex);
-        }
- 
-        // load languages
-        languages = loadLanguages();
 
-        // Load config
-        config = loadConfig();
+        // load config
+        loadConfig();
+
+        // load locales
+        loadLocales();
+
+        // start services
+        searchService = new SearchService();
+        downloadService = new DownloadService();
+        playService = new PlayService(downloadService);
         
         // GUI
-        try {
-            gui = (GUI) config.getGuiClass().newInstance();
-        } catch (InstantiationException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        if (!GraphicsEnvironment.isHeadless()) {
+            // apple os x
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.aboutFrame.name", "Groovesquid");
+            // antialising
+            System.setProperty("awt.useSystemAAFontSettings", "lcd");
+            System.setProperty("swing.aatext", "true");
+            // flackering bg fix
+            System.setProperty("sun.awt.noerasebackground", "true");
+            System.setProperty("sun.java2d.noddraw", "true");
+
+            Toolkit.getDefaultToolkit().setDynamicLayout(true);
+
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ex) {
+                log.log(Level.SEVERE, null, ex);
+            }
+
+            try {
+                mainFrame = (MainFrame) config.getGuiClass().newInstance();
+            } catch (Exception ex) {
+                log.log(Level.SEVERE, null, ex);
+            }
+            settingsFrame = new SettingsFrame();
+            aboutFrame = new AboutFrame();
         }
-        settings = new Settings();
-        about = new About();
 
-        // Update Checker
+        // check for updates
         new UpdateCheckThread().start();
-        
-        // init grooveshark (needded every 25min)
-        new InitThread().start();
 
+        // init grooveshark session (needed every 25min)
+        new InitThread().start();
     }
-    
-    public static GUI getGui() {
-        return Main.gui;
+
+    public static MainFrame getMainFrame() {
+        return Main.mainFrame;
     }
     
     public static void resetGui() {
-        gui.dispose();
+        mainFrame.dispose();
         try {
-            gui = (GUI) config.getGuiClass().newInstance();
+            mainFrame = (MainFrame) config.getGuiClass().newInstance();
         } catch (InstantiationException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        gui.initDone();
-        about.dispose();
-        about = new About();
-        settings.dispose();
-        settings = new Settings();
+        mainFrame.initDone();
+        aboutFrame.dispose();
+        aboutFrame = new AboutFrame();
+        settingsFrame.dispose();
+        settingsFrame = new SettingsFrame();
     }
 
-    public static Config loadConfig() {
-        configDir = new File(Utils.dataDirectory() + File.separator + ".com.groovesquid");
+    public static void loadConfig() {
+        configDir = new File(Utils.dataDirectory() + File.separator + ".groovesquid");
         if(!configDir.exists()) {
             configDir.mkdir();
         }
@@ -131,7 +143,7 @@ public class Main {
             try {
                 FileUtils.copyFile(oldConfigFile, configFile);
             } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                log.log(Level.SEVERE, null, ex);
             }
             oldConfigFile.delete();
         }
@@ -140,14 +152,15 @@ public class Main {
             try {
                 Config tempConfig = gson.fromJson(FileUtils.readFileToString(configFile), Config.class);
                 if(tempConfig != null) {
-                    return tempConfig;
+                    config = tempConfig;
                 }
             } catch (Exception ex) {
                 configFile.delete();
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                log.log(Level.SEVERE, null, ex);
             }
+        } else {
+            config = new Config();
         }
-        return new Config();
     }
     
     public static void saveConfig() {
@@ -165,64 +178,6 @@ public class Main {
         };  
         worker.execute();
     }
-        
-    public static String getLocaleString(String localeName) {
-        Language currentLanguage;
-        if(languages.containsKey(config.getLocale())) {
-            currentLanguage = languages.get(config.getLocale());
-        } else {
-            // default language
-            currentLanguage = languages.get("en_US");
-        }
-        if(currentLanguage.getResourceBundle().containsKey(localeName)) {
-            return currentLanguage.getResourceBundle().getString(localeName);
-        } else if(languages.get("en_US").getResourceBundle().containsKey(localeName)) {
-            return languages.get("en_US").getResourceBundle().getString(localeName);
-        } else {
-            return localeName;
-        }
-    }
-
-    private static Map<String, Language> loadLanguages() {
-        Map<String, Language> hm = new LinkedHashMap<String, Language>();
-        
-        try {
-            hm.put("en_US", new Language("en_US"));
-            hm.put("de_DE", new Language("de_DE"));
-            hm.put("fr_FR", new Language("fr_FR"));
-            hm.put("es_ES", new Language("es_ES"));
-            hm.put("it_IT", new Language("it_IT"));
-            hm.put("tr_TR", new Language("tr_TR"));
-            hm.put("se_SE", new Language("se_SE"));
-            hm.put("ru_RU", new Language("ru_RU"));
-            hm.put("pl_PL", new Language("pl_PL"));
-            hm.put("nl_BE", new Language("nl_BE"));
-            hm.put("el_GR", new Language("el_GR"));
-            hm.put("sr_LATN_RS", new Language("sr_LATN_RS"));
-            hm.put("sr_RS", new Language("sr_RS"));
-            hm.put("pt_PT", new Language("pt_PT"));
-            hm.put("pt_BR", new Language("pt_BR"));
-        } catch (Exception ex) {
-            log.log(Level.SEVERE, null, ex);
-        }
-        
-        return hm;
-    }
-    
-    public static synchronized Map<String, Language> getLanguages() {
-        return languages;
-    }
-    
-    public static int getLanguageIndex() {
-        int i = 0;
-        for(String localeString : languages.keySet()) {
-            if(Main.getConfig().getLocale().equals(localeString)) {
-                return i;
-            }
-            i++;
-        }
-        return 0;
-    }
     
     public static synchronized Config getConfig() {
         return config;
@@ -236,12 +191,116 @@ public class Main {
         return clients;
     }
 
-    public static Settings getSettings() {
-        return settings;
+    public static SettingsFrame getSettingsFrame() {
+        return settingsFrame;
     }
 
-    public static About getAbout() {
-        return about;
+    public static AboutFrame getAboutFrame() {
+        return aboutFrame;
     }
 
+    public static DownloadService getDownloadService() {
+        return downloadService;
+    }
+
+    public static PlayService getPlayService() {
+        return playService;
+    }
+
+    public static SearchService getSearchService() {
+        return searchService;
+    }
+
+    public static void loadLocales() {
+        // find available locales
+
+        String path = "locales";
+        String bundleName = "general";
+        File jarFile = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        List<String> fileNames = new ArrayList<String>();
+
+        if (jarFile.isFile()) { // Run with JAR file
+            try {
+                final JarFile jar = new JarFile(jarFile);
+                final Enumeration<JarEntry> entries = jar.entries(); // gives ALL entries in jar
+                while (entries.hasMoreElements()) {
+                    final String name = entries.nextElement().getName();
+                    if (name.startsWith(path + "/")) { // filter according to the path
+                        fileNames.add(name);
+                    }
+                }
+                jar.close();
+            } catch (IOException ex) {
+                log.log(Level.SEVERE, null, log);
+            }
+        } else { // Run with IDE
+            final URL url = Main.class.getResource("/" + path);
+            if (url != null) {
+                try {
+                    final File files = new File(url.toURI());
+                    for (File file : files.listFiles()) {
+                        fileNames.add(file.getAbsolutePath());
+                    }
+                } catch (URISyntaxException ex) {
+                    // never happens
+                }
+            }
+        }
+
+        locales = new LinkedList<Locale>();
+        for (String fileName : fileNames) {
+            String localeString = FilenameUtils.getBaseName(fileName);
+            String parts[] = localeString.split("_", -1);
+            Locale locale;
+            if (parts.length == 2) locale = new Locale(parts[1]);
+            else if (parts.length == 3) locale = new Locale(parts[1], parts[2]);
+            else if (parts.length == 4) locale = new Locale(parts[1], parts[2], parts[3]);
+            else locale = new Locale("en");
+            locales.add(locale);
+        }
+
+        Locale configLocale = LocaleUtils.toLocale(Main.getConfig().getLocale());
+        if (locales.contains(configLocale)) {
+            currentLocale = configLocale;
+        } else {
+            Locale defaultLocale = Locale.getDefault();
+            if (locales.contains(defaultLocale)) {
+                currentLocale = defaultLocale;
+            } else {
+                currentLocale = new Locale("en", "US");
+            }
+        }
+
+        // sort locales
+        Collections.sort(locales, new Comparator<Locale>() {
+            public int compare(Locale l1, Locale l2) {
+                return l1.getDisplayName(l1).compareTo(l2.getDisplayName(l2));
+            }
+        });
+    }
+
+    public static List<Locale> getLocales() {
+        return locales;
+    }
+
+    public static String getLocaleString(String string) {
+        try {
+            return ResourceBundle.getBundle("locales.general", currentLocale).getString(string);
+        } catch (MissingResourceException ex) {
+            try {
+                return ResourceBundle.getBundle("locales.general", new Locale("en", "US")).getString(string);
+            } catch (Exception ex2) {
+                return string;
+            }
+        }
+    }
+
+    public static Locale getCurrentLocale() {
+        return currentLocale;
+    }
+
+    public static void setCurrentLocale(Locale locale) {
+        currentLocale = locale;
+    }
+    
 }
