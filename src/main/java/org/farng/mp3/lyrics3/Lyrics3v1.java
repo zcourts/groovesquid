@@ -34,6 +34,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings("rawtypes")
 public class Lyrics3v1 extends AbstractLyrics3 {
 
     private String lyric = "";

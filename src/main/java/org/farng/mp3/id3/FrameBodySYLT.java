@@ -100,6 +100,8 @@ import java.util.LinkedList;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class FrameBodySYLT extends AbstractID3v2FrameBody {
 
     LinkedList lines = new LinkedList();

@@ -27,6 +27,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings("cast")
 public class FieldBodyIMG extends AbstractLyrics3v2FieldBody {
 
     private ArrayList<ObjectLyrics3Image> images = new ArrayList<ObjectLyrics3Image>();

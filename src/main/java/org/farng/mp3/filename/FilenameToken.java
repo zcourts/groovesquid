@@ -2,13 +2,7 @@ package org.farng.mp3.filename;
 
 import org.farng.mp3.AbstractMP3Tag;
 import org.farng.mp3.TagOptionSingleton;
-import org.farng.mp3.id3.AbstractFrameBodyTextInformation;
-import org.farng.mp3.id3.AbstractFrameBodyUrlLink;
-import org.farng.mp3.id3.AbstractID3v2Frame;
-import org.farng.mp3.id3.AbstractID3v2FrameBody;
-import org.farng.mp3.id3.FrameBodyCOMM;
-import org.farng.mp3.id3.ID3v2_4;
-import org.farng.mp3.id3.ID3v2_4Frame;
+import org.farng.mp3.id3.*;
 
 import java.util.Iterator;
 
@@ -18,6 +12,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.7 $
  */
+
+@SuppressWarnings("rawtypes")
 public class FilenameToken extends AbstractFilenameComposite {
 
     /**

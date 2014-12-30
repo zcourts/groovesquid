@@ -10,6 +10,8 @@ import java.io.RandomAccessFile;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings("cast")
 public class FieldBodyUnsupported extends AbstractLyrics3v2FieldBody {
 
     private byte[] value = null;

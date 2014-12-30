@@ -57,6 +57,8 @@ import java.io.RandomAccessFile;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings("cast")
 public class FrameBodyASPI extends AbstractID3v2FrameBody {
 
     private short[] fraction = null;

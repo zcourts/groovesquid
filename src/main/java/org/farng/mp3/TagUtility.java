@@ -1,18 +1,8 @@
 package org.farng.mp3;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * This is a holder class that contains static methods that I use in my library. They may or may not be useful for
@@ -21,6 +11,8 @@ import java.util.StringTokenizer;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings({"cast", "rawtypes", "unchecked"})
 public class TagUtility {
 
     /**

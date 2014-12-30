@@ -12,6 +12,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.3 $
  */
+
+@SuppressWarnings("rawtypes")
 public abstract class AbstractFilenameComposite {
 
     /**

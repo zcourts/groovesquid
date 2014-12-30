@@ -7,12 +7,7 @@ import org.farng.mp3.TagUtility;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Superclass for all ID3v2 tags
@@ -20,6 +15,8 @@ import java.util.Set;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractID3v2 extends AbstractID3 {
 
     /**

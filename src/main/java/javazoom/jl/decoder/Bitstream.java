@@ -35,11 +35,7 @@
 
 package javazoom.jl.decoder;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
+import java.io.*;
 
 
 /**
@@ -50,6 +46,8 @@ import java.io.PushbackInputStream;
  * various decoders. This should be moved into this class and associated
  * inner classes.
  */
+
+@SuppressWarnings("cast")
 public final class Bitstream implements BitstreamErrors
 {
 	/**

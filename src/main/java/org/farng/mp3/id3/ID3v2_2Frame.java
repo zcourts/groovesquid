@@ -41,7 +41,7 @@ import java.io.RandomAccessFile;
  * is used it should be $01. </p>
  * <p/>
  * <p class=t> The three byte language field is used to describe the language of the frame's content, according to <a
- * href="#iso639-2">ISO-639-2</a>.<br> <i>ISO-639-1 is not used since its supported languages are just a subset of those
+ * href="#iso639-2">ISO-639-2</a>.<br> <i>ISO-639-1 is not used since its supported locales are just a subset of those
  * in ISO-639-2.</i> </p>
  * <p/>
  * <p class=t> All <a href="#url">URL</a>s may be relative, e.g. "picture.png", "../doc.txt". </p>

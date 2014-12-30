@@ -16,6 +16,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings("rawtypes")
 public class FilenameParenthesis extends FilenameDelimiter {
 
     /**

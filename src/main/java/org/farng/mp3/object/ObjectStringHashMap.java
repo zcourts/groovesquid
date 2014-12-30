@@ -13,6 +13,8 @@ import java.util.TreeSet;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ObjectStringHashMap extends ObjectStringFixedLength implements ObjectHashMapInterface {
 
     public static final String LANGUAGE = "Language";

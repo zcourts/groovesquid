@@ -71,6 +71,8 @@ import java.io.RandomAccessFile;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings("rawtypes")
 public class FrameBodyCOMR extends AbstractID3v2FrameBody {
 
     /**

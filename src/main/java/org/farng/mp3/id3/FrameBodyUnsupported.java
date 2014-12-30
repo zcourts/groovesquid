@@ -13,6 +13,8 @@ import java.util.Arrays;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings("cast")
 public class FrameBodyUnsupported extends AbstractID3v2FrameBody {
 
     private String identifier = "";

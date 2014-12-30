@@ -4,11 +4,7 @@ import org.farng.mp3.id3.AbstractID3v2FrameBody;
 import org.farng.mp3.id3.FrameBodyCOMM;
 import org.farng.mp3.id3.FrameBodyTIPL;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Options that are used for every object and class in this library.
@@ -16,6 +12,8 @@ import java.util.Map;
  * @author Eric Farng
  * @version $Revision: 1.3 $
  */
+
+@SuppressWarnings({"cast", "rawtypes", "unchecked"})
 public class TagOptionSingleton {
 
     private static final Map tagOptionTable = new HashMap();

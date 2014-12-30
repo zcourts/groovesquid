@@ -12,6 +12,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings("cast")
 public class ObjectGroupRepeated extends AbstractMP3Object {
 
     private ArrayList<AbstractMP3Object> objectList;

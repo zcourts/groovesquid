@@ -10,6 +10,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.3 $
  */
+
+@SuppressWarnings({"cast", "rawtypes"})
 public class TagConstant {
 
     // Bit numbering starts with the most significat bit as 7
@@ -984,10 +986,10 @@ public class TagConstant {
         languageIdToString.put("akk", "Akkadian");
         languageIdToString.put("alb", "Albanian");
         languageIdToString.put("ale", "Aleut");
-        languageIdToString.put("alg", "Algonquian languages");
+        languageIdToString.put("alg", "Algonquian locales");
         languageIdToString.put("amh", "Amharic");
         languageIdToString.put("ang", "English, Old (ca.450-1100)");
-        languageIdToString.put("apa", "Apache languages");
+        languageIdToString.put("apa", "Apache locales");
         languageIdToString.put("ara", "Arabic");
         languageIdToString.put("arc", "Aramaic");
         languageIdToString.put("arm", "Armenian");
@@ -997,15 +999,15 @@ public class TagConstant {
         languageIdToString.put("arw", "Arawak");
         languageIdToString.put("asm", "Assamese");
         languageIdToString.put("ast", "Asturian; Bable");
-        languageIdToString.put("ath", "Athapascan languages");
-        languageIdToString.put("aus", "Australian languages");
+        languageIdToString.put("ath", "Athapascan locales");
+        languageIdToString.put("aus", "Australian locales");
         languageIdToString.put("ava", "Avaric");
         languageIdToString.put("ave", "Avestan");
         languageIdToString.put("awa", "Awadhi");
         languageIdToString.put("aym", "Aymara");
         languageIdToString.put("aze", "Azerbaijani");
         languageIdToString.put("bad", "Banda");
-        languageIdToString.put("bai", "Bamileke languages");
+        languageIdToString.put("bai", "Bamileke locales");
         languageIdToString.put("bak", "Bashkir");
         languageIdToString.put("bal", "Baluchi");
         languageIdToString.put("bam", "Bambara");
@@ -1057,7 +1059,7 @@ public class TagConstant {
                                "Church Slavic; Old Slavonic; Old Church Slavonic; Church Slavonic; Old Bulgarian");
         languageIdToString.put("chv", "Chuvash");
         languageIdToString.put("chy", "Cheyenne");
-        languageIdToString.put("cmc", "Chamic languages");
+        languageIdToString.put("cmc", "Chamic locales");
         languageIdToString.put("cop", "Coptic");
         languageIdToString.put("cor", "Cornish");
         languageIdToString.put("cos", "Corsican");
@@ -1163,7 +1165,7 @@ public class TagConstant {
         languageIdToString.put("ine", "Indo-European (Other)");
         languageIdToString.put("ipk", "Inupiaq");
         languageIdToString.put("ira", "Iranian (Other)");
-        languageIdToString.put("iro", "Iroquoian languages");
+        languageIdToString.put("iro", "Iroquoian locales");
         languageIdToString.put("isl", "Icelandic");
         languageIdToString.put("ita", "Italian");
         languageIdToString.put("jav", "Javanese");
@@ -1239,26 +1241,26 @@ public class TagConstant {
         languageIdToString.put("mga", "Irish, Middle (900-1200)");
         languageIdToString.put("mic", "Micmac");
         languageIdToString.put("min", "Minangkabau");
-        languageIdToString.put("mis", "Miscellaneous languages");
+        languageIdToString.put("mis", "Miscellaneous locales");
         languageIdToString.put("mkd", "Macedonian");
         languageIdToString.put("mkh", "Mon-Khmer (Other)");
         languageIdToString.put("mlg", "Malagasy");
         languageIdToString.put("mlt", "Maltese");
         languageIdToString.put("mnc", "Manchu");
         languageIdToString.put("mni", "Manipuri");
-        languageIdToString.put("mno", "Manobo languages");
+        languageIdToString.put("mno", "Manobo locales");
         languageIdToString.put("moh", "Mohawk");
         languageIdToString.put("mol", "Moldavian");
         languageIdToString.put("mon", "Mongolian");
         languageIdToString.put("mos", "Mossi");
         languageIdToString.put("mri", "Maori");
         languageIdToString.put("msa", "Malay");
-        languageIdToString.put("mul", "Multiple languages");
-        languageIdToString.put("mun", "Munda languages");
+        languageIdToString.put("mul", "Multiple locales");
+        languageIdToString.put("mun", "Munda locales");
         languageIdToString.put("mus", "Creek");
         languageIdToString.put("mwr", "Marwari");
         languageIdToString.put("mya", "Burmese");
-        languageIdToString.put("myn", "Mayan languages");
+        languageIdToString.put("myn", "Mayan locales");
         languageIdToString.put("nah", "Nahuatl");
         languageIdToString.put("nai", "North American Indian");
         languageIdToString.put("nau", "Nauru");
@@ -1278,7 +1280,7 @@ public class TagConstant {
         languageIdToString.put("non", "Norse, Old");
         languageIdToString.put("nor", "Norwegian");
         languageIdToString.put("nso", "Sotho, Northern");
-        languageIdToString.put("nub", "Nubian languages");
+        languageIdToString.put("nub", "Nubian locales");
         languageIdToString.put("nya", "Chichewa; Chewa; Nyanja");
         languageIdToString.put("nym", "Nyamwezi");
         languageIdToString.put("nyn", "Nyankole");
@@ -1291,7 +1293,7 @@ public class TagConstant {
         languageIdToString.put("osa", "Osage");
         languageIdToString.put("oss", "Ossetian; Ossetic");
         languageIdToString.put("ota", "Turkish, Ottoman (1500-1928)");
-        languageIdToString.put("oto", "Otomian languages");
+        languageIdToString.put("oto", "Otomian locales");
         languageIdToString.put("paa", "Papuan (Other)");
         languageIdToString.put("pag", "Pangasinan");
         languageIdToString.put("pal", "Pahlavi");
@@ -1308,7 +1310,7 @@ public class TagConstant {
         languageIdToString.put("pol", "Polish");
         languageIdToString.put("pon", "Pohnpeian");
         languageIdToString.put("por", "Portuguese");
-        languageIdToString.put("pra", "Prakrit languages");
+        languageIdToString.put("pra", "Prakrit locales");
         languageIdToString.put("pro", "Proven�al, Old (to 1500)");
         languageIdToString.put("pus", "Pushto");
         languageIdToString.put("que", "Quechua");
@@ -1326,7 +1328,7 @@ public class TagConstant {
         languageIdToString.put("sag", "Sango");
         languageIdToString.put("sah", "Yakut");
         languageIdToString.put("sai", "South American Indian (Other)");
-        languageIdToString.put("sal", "Salishan languages");
+        languageIdToString.put("sal", "Salishan locales");
         languageIdToString.put("sam", "Samaritan Aramaic");
         languageIdToString.put("san", "Sanskrit");
         languageIdToString.put("sas", "Sasak");
@@ -1337,11 +1339,11 @@ public class TagConstant {
         languageIdToString.put("sel", "Selkup");
         languageIdToString.put("sem", "Semitic (Other)");
         languageIdToString.put("sga", "Irish, Old (to 900)");
-        languageIdToString.put("sgn", "Sign languages");
+        languageIdToString.put("sgn", "Sign locales");
         languageIdToString.put("shn", "Shan");
         languageIdToString.put("sid", "Sidamo");
         languageIdToString.put("sin", "Sinhales");
-        languageIdToString.put("sio", "Siouan languages");
+        languageIdToString.put("sio", "Siouan locales");
         languageIdToString.put("sit", "Sino-Tibetan (Other)");
         languageIdToString.put("sla", "Slavic (Other)");
         languageIdToString.put("slk", "Slovak");
@@ -1349,7 +1351,7 @@ public class TagConstant {
         languageIdToString.put("slv", "Slovenian");
         languageIdToString.put("sma", "Southern Sami");
         languageIdToString.put("sme", "Northern Sami");
-        languageIdToString.put("smi", "Sami languages (Other)");
+        languageIdToString.put("smi", "Sami locales (Other)");
         languageIdToString.put("smj", "Lule Sami");
         languageIdToString.put("smn", "Inari Sami");
         languageIdToString.put("smo", "Samoan");
@@ -1398,7 +1400,7 @@ public class TagConstant {
         languageIdToString.put("tso", "Tsonga");
         languageIdToString.put("tuk", "Turkmen");
         languageIdToString.put("tum", "Tumbuka");
-        languageIdToString.put("tup", "Tupi languages");
+        languageIdToString.put("tup", "Tupi locales");
         languageIdToString.put("tur", "Turkish");
         languageIdToString.put("tut", "Altaic (Other)");
         languageIdToString.put("tvl", "Tuvalu");
@@ -1416,12 +1418,12 @@ public class TagConstant {
         languageIdToString.put("vie", "Vietnamese");
         languageIdToString.put("vol", "Volap�k");
         languageIdToString.put("vot", "Votic");
-        languageIdToString.put("wak", "Wakashan languages");
+        languageIdToString.put("wak", "Wakashan locales");
         languageIdToString.put("wal", "Walamo");
         languageIdToString.put("war", "Waray");
         languageIdToString.put("was", "Washo");
         languageIdToString.put("wel", "Welsh");
-        languageIdToString.put("wen", "Sorbian languages");
+        languageIdToString.put("wen", "Sorbian locales");
         languageIdToString.put("wln", "Walloon");
         languageIdToString.put("wol", "Wolof");
         languageIdToString.put("xho", "Xhosa");
@@ -1429,7 +1431,7 @@ public class TagConstant {
         languageIdToString.put("yap", "Yapese");
         languageIdToString.put("yid", "Yiddish");
         languageIdToString.put("yor", "Yoruba");
-        languageIdToString.put("ypk", "Yupik languages");
+        languageIdToString.put("ypk", "Yupik locales");
         languageIdToString.put("zap", "Zapotec");
         languageIdToString.put("zen", "Zenaga");
         languageIdToString.put("zha", "Zhuang; Chuang");

@@ -22,6 +22,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.6 $
  */
+
+@SuppressWarnings("cast")
 public class FieldBodyLYR extends AbstractLyrics3v2FieldBody {
 
     private ArrayList<AbstractMP3Object> lines = new ArrayList<AbstractMP3Object>();

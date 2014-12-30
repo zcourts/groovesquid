@@ -19,6 +19,8 @@ import java.util.List;
  * @author Eric Farng
  * @version $Revision: 1.6 $
  */
+
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractMP3FragmentBody extends AbstractMP3FileItem {
 
     private static final int SIZE_OBJECT_LIST = 16;

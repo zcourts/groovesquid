@@ -32,6 +32,8 @@ import java.io.RandomAccessFile;
 /**
  * Class to manage RIFF files
  */
+
+@SuppressWarnings("deprecation")
 public class RiffFile
 {
    class RiffChunkHeader

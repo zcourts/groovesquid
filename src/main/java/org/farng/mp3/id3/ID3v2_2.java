@@ -1,11 +1,6 @@
 package org.farng.mp3.id3;
 
-import org.farng.mp3.AbstractMP3Tag;
-import org.farng.mp3.InvalidTagException;
-import org.farng.mp3.MP3File;
-import org.farng.mp3.TagConstant;
-import org.farng.mp3.TagException;
-import org.farng.mp3.TagNotFoundException;
+import org.farng.mp3.*;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -90,6 +85,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings("rawtypes")
 public class ID3v2_2 extends AbstractID3v2 {
 
     protected boolean compression = false;

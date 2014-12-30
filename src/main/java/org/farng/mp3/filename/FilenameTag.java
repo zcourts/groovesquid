@@ -1,23 +1,7 @@
 package org.farng.mp3.filename;
 
-import org.farng.mp3.AbstractMP3Tag;
-import org.farng.mp3.MP3File;
-import org.farng.mp3.TagConstant;
-import org.farng.mp3.TagException;
-import org.farng.mp3.TagUtility;
-import org.farng.mp3.id3.AbstractID3v2Frame;
-import org.farng.mp3.id3.FrameBodyCOMM;
-import org.farng.mp3.id3.FrameBodySYLT;
-import org.farng.mp3.id3.FrameBodyTALB;
-import org.farng.mp3.id3.FrameBodyTCOM;
-import org.farng.mp3.id3.FrameBodyTCON;
-import org.farng.mp3.id3.FrameBodyTDRC;
-import org.farng.mp3.id3.FrameBodyTIT2;
-import org.farng.mp3.id3.FrameBodyTPE1;
-import org.farng.mp3.id3.FrameBodyTRCK;
-import org.farng.mp3.id3.FrameBodyUSLT;
-import org.farng.mp3.id3.ID3v2_3Frame;
-import org.farng.mp3.id3.ID3v2_4;
+import org.farng.mp3.*;
+import org.farng.mp3.id3.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +15,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings("rawtypes")
 public class FilenameTag extends AbstractMP3Tag {
 
     /**

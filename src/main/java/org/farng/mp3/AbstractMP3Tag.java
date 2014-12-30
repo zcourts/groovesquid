@@ -98,7 +98,7 @@ import java.util.Iterator;
  * id3v2 = mp3file.getID3v2Tag();
  * lyrics3 = mp3file.getLyrics3Tag();
  * </pre>
- * ID3v1 tags have fixed fields and use accessor methods to change it's properties. <p>ID3v2 tags have multiple
+ * ID3v1 tags have fixed fields and use accessor methods to change it's locales. <p>ID3v2 tags have multiple
  * <i>frames</i>. Use this to set the title of the tag.</p>
  * <pre>
  * frame = id3v2.getFrame("TIT2");
@@ -120,6 +120,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings("rawtypes")
 public abstract class AbstractMP3Tag extends AbstractMP3FileItem {
 
     /**

@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
  * @author Eric Farng
  * @version $Revision: 1.1 $
  */
+
+@SuppressWarnings("serial")
 public class TagException extends Exception {
 
     /**

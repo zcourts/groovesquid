@@ -10,6 +10,8 @@ import java.util.LinkedList;
  * @author Eric Farng
  * @version $Revision: 1.5 $
  */
+
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ObjectLyrics3Line extends AbstractMP3Object {
 
     private LinkedList timeStamp = new LinkedList();

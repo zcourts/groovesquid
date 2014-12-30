@@ -7,7 +7,7 @@ import org.farng.mp3.object.ObjectStringHashMap;
 import java.io.RandomAccessFile;
 
 /**
- * &nbsp;&nbsp; The 'Language' frame should contain the languages of the text or<br> &nbsp;&nbsp; lyrics spoken or sung
+ * &nbsp;&nbsp; The 'Language' frame should contain the locales of the text or<br> &nbsp;&nbsp; lyrics spoken or sung
  * in the audio. The language is represented with<br> &nbsp;&nbsp; three characters according to ISO-639-2 [ISO-639-2].
  * If more than one<br> &nbsp;&nbsp; language is used in the text their language codes should follow<br>
  * <p/>

@@ -3,13 +3,7 @@ package org.farng.mp3.id3;
 import org.farng.mp3.InvalidTagException;
 import org.farng.mp3.TagConstant;
 import org.farng.mp3.TagUtility;
-import org.farng.mp3.lyrics3.FieldBodyAUT;
-import org.farng.mp3.lyrics3.FieldBodyEAL;
-import org.farng.mp3.lyrics3.FieldBodyEAR;
-import org.farng.mp3.lyrics3.FieldBodyETT;
-import org.farng.mp3.lyrics3.FieldBodyINF;
-import org.farng.mp3.lyrics3.FieldBodyLYR;
-import org.farng.mp3.lyrics3.Lyrics3v2Field;
+import org.farng.mp3.lyrics3.*;
 import org.farng.mp3.object.ObjectLyrics3Line;
 
 import java.io.IOException;
@@ -200,6 +194,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.6 $
  */
+
+@SuppressWarnings("rawtypes")
 public class ID3v2_4Frame extends ID3v2_3Frame {
 
     protected boolean dataLengthIndicator = false;

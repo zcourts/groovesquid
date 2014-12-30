@@ -20,12 +20,12 @@
 
 package javazoom.jl.player;
 
+import javazoom.jl.decoder.JavaLayerException;
+
 import java.applet.Applet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import javazoom.jl.decoder.JavaLayerException;
 
 /**
  * A simple applet that plays an MPEG audio file. 
@@ -35,6 +35,8 @@ import javazoom.jl.decoder.JavaLayerException;
  * @author	Mat McGowan
  * @since	0.0.8
  */
+
+@SuppressWarnings("serial")
 public class PlayerApplet extends Applet implements Runnable
 {
 	static public final String AUDIO_PARAMETER = "audioURL";

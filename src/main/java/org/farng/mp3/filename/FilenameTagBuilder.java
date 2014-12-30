@@ -15,6 +15,8 @@ import java.util.Iterator;
  * @author Eric Farng
  * @version $Revision: 1.2 $
  */
+
+@SuppressWarnings("rawtypes")
 public class FilenameTagBuilder {
 
     private FilenameTagBuilder() {

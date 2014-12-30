@@ -9,6 +9,8 @@ import java.util.NoSuchElementException;
  * @author Eric Farng
  * @version $Revision: 1.4 $
  */
+
+@SuppressWarnings({"fallthrough", "rawtypes"})
 public class ID3v1Iterator implements Iterator {
 
     private static final int TITLE = 1;
