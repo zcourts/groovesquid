@@ -11,16 +11,16 @@
 
 package com.groovesquid.util;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 
 /**
  *
@@ -310,8 +310,8 @@ public class Utils {
         else if (parts.length == 2) return new Locale(parts[0], parts[1]);
         else return new Locale(parts[0], parts[1], parts[2]);
     }
-    
-    public static Object getByIndex(Map hMap, int index){
+
+    public static Object getByIndex(Map<?, ?> hMap, int index) {
         return hMap.values().toArray()[index];
     }
 }
