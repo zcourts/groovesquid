@@ -11,20 +11,22 @@
 
 package com.groovesquid;
 
-import com.groovesquid.model.Country;
 import com.google.gson.Gson;
+import com.groovesquid.model.Country;
 import com.groovesquid.util.Utils;
 
+import javax.swing.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Maino
  */
+
+@SuppressWarnings("serial")
 public class InitThread extends Thread {
     
     private final static Logger log = Logger.getLogger(Main.class.getName());
@@ -44,26 +46,26 @@ public class InitThread extends Thread {
         
         String session;
         try {
-            session = gson.fromJson(Grooveshark.sendRequest("initiateSession", null), Response.class).getResult();
+            session = gson.fromJson(GroovesharkClient.sendRequest("initiateSession", null), Response.class).getResult();
         } catch (Exception ex) {
-            Main.getGui().showError(Main.getLocaleString("ERROR_INITIATE_SESSION"));
+            Main.getMainFrame().showError(Main.getLocaleString("ERROR_INITIATE_SESSION"));
             return;
         }
-        Grooveshark.setSession(session);
-        
-        String commtoken = gson.fromJson(Grooveshark.sendRequest("getCommunicationToken", new HashMap<String, Object>(){{
-            put("secretKey", Utils.md5(Grooveshark.getSession()));
+        GroovesharkClient.setSession(session);
+
+        String commtoken = gson.fromJson(GroovesharkClient.sendRequest("getCommunicationToken", new HashMap<String, Object>() {{
+            put("secretKey", Utils.md5(GroovesharkClient.getSession()));
         }}), Response.class).getResult();
-        Grooveshark.setCommtoken(commtoken);
+        GroovesharkClient.setCommtoken(commtoken);
         // commtoken expires after 25 minutes
-        Grooveshark.setTokenExpires(new Date().getTime() + ((1000 * 60) * 25));
-        
-        Country country = gson.fromJson(Grooveshark.sendRequest("getCountry", null), CountryResponse.class).getResult();
+        GroovesharkClient.setTokenExpires(new Date().getTime() + ((1000 * 60) * 25));
+
+        Country country = gson.fromJson(GroovesharkClient.sendRequest("getCountry", null), CountryResponse.class).getResult();
         if(country != null)
-            Grooveshark.setCountry(country);
+            GroovesharkClient.setCountry(country);
         
         SwingUtilities.invokeLater(new Runnable(){public void run(){
-            Main.getGui().initDone();
+            Main.getMainFrame().initDone();
         }});
         
         latch.countDown();

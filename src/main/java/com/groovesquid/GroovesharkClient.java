@@ -11,16 +11,12 @@
 
 package com.groovesquid;
 
-import com.groovesquid.model.Country;
 import com.google.gson.Gson;
 import com.groovesquid.model.Clients;
 import com.groovesquid.model.Clients.Client;
+import com.groovesquid.model.Country;
+import com.groovesquid.model.JsonRequest;
 import com.groovesquid.util.Utils;
-import java.io.*;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -29,11 +25,21 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Maino
  */
-public class Grooveshark {
+public class GroovesharkClient {
     
     private final static Logger log = Logger.getLogger(Main.class.getName());
 
@@ -133,12 +139,12 @@ public class Grooveshark {
             
 
         } catch (Exception ex) {
-            Logger.getLogger(Grooveshark.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GroovesharkClient.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 EntityUtils.consume(httpEntity);
             } catch (IOException ex) {
-                Logger.getLogger(Grooveshark.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GroovesharkClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         log.info("<<< " + responseContent);
@@ -148,7 +154,6 @@ public class Grooveshark {
     public static double calcProgress(long downloadedBytes, long totalBytes) {
         return totalBytes > 0 ? (double) downloadedBytes / (double) totalBytes : 0.0;
     }
-    
     
     public static InputStream downloadSong(HttpEntity httpEntity) {
         InputStream inputStream = null;
@@ -161,14 +166,14 @@ public class Grooveshark {
                     
                 }
             } catch (IOException ex) {
-                Logger.getLogger(Grooveshark.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GroovesharkClient.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalStateException ex) {
-                Logger.getLogger(Grooveshark.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GroovesharkClient.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 try {
                     EntityUtils.consume(httpEntity);
                 } catch (IOException ex) {
-                    Logger.getLogger(Grooveshark.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GroovesharkClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -185,12 +190,12 @@ public class Grooveshark {
     }
     
     public static synchronized void setSession(String session) {
-        Grooveshark.session = session;
+        GroovesharkClient.session = session;
         log.info("session: " + session);
     }
     
     public static synchronized void setCommtoken(String commtoken) {
-        Grooveshark.commtoken = commtoken;
+        GroovesharkClient.commtoken = commtoken;
         log.info("commtoken: " + commtoken);
     }
     
@@ -199,7 +204,7 @@ public class Grooveshark {
     }
     
     public static synchronized void setCountry(Country country) {
-        Grooveshark.country = country;
+        GroovesharkClient.country = country;
         log.info("country: " + country);
     }
     
@@ -208,7 +213,7 @@ public class Grooveshark {
     }
     
     public static synchronized void setClients(Clients clients) {
-        Grooveshark.clients = clients;
+        GroovesharkClient.clients = clients;
         log.info("clients: " + clients.toString());
     }
     
@@ -217,6 +222,6 @@ public class Grooveshark {
     }
     
     public static synchronized void setTokenExpires(long tokenExpires) {
-        Grooveshark.tokenExpires = tokenExpires;
+        GroovesharkClient.tokenExpires = tokenExpires;
     }
 }

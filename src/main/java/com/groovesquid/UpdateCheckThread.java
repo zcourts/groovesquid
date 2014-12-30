@@ -11,22 +11,25 @@
 
 package com.groovesquid;
 
-import com.groovesquid.model.Clients;
 import com.google.gson.Gson;
+import com.groovesquid.model.Clients;
 import com.groovesquid.util.Utils;
-import java.awt.Desktop;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-
-import org.apache.http.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -45,7 +48,7 @@ public class UpdateCheckThread extends Thread {
     public void run() {
         UpdateCheck updateCheck = gson.fromJson(getFile(updateFile), UpdateCheck.class);
         if(updateCheck.getClients() != null)
-            Grooveshark.setClients(updateCheck.getClients());
+            GroovesharkClient.setClients(updateCheck.getClients());
         
         if(Utils.compareVersions(updateCheck.getVersion(), Main.getVersion()) > 0) {
             if(JOptionPane.showConfirmDialog(null, "New version (v" + updateCheck.getVersion() + ") is available! Do you want to download the new version (recommended)?", "New version", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
