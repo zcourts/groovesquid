@@ -18,8 +18,6 @@ import com.groovesquid.service.FilenameSchemeParser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -65,7 +63,6 @@ public class Config {
     private int downloadComplete, originalDownloadComplete;
     private int fileExists, originalFileExists;
     private String locale, originalLocale;
-    private String guiClass, originalGuiClass;
     private String proxyHost, originalProxyHost;
     private Integer proxyPort, originalProxyPort;
 
@@ -80,7 +77,6 @@ public class Config {
         originalDownloadComplete = DownloadComplete.DO_NOTHING.ordinal();
         originalFileExists = FileExists.RENAME.ordinal();
         originalLocale = Locale.getDefault().toString();
-        originalGuiClass = "com.groovesquid.gui.style.Flat";
         originalProxyHost = null;
         originalProxyPort = null;
         resetSettings();
@@ -96,7 +92,6 @@ public class Config {
         autocompleteEnabled = originalAutocompleteEnabled;
         downloadComplete = originalDownloadComplete;
         locale = originalLocale;
-        guiClass = originalGuiClass;
         proxyHost = originalProxyHost;
         proxyPort = originalProxyPort;
     }
@@ -173,20 +168,6 @@ public class Config {
     public void setLocale(String locale) {
         this.locale = locale;
         Main.saveConfig();
-    }
-
-    public Class<?> getGuiClass() {
-        try {
-            return Class.forName(guiClass);
-        } catch (ClassNotFoundException ex) {
-            try {
-                return Class.forName(originalGuiClass);
-            } catch (ClassNotFoundException ex1) {
-                Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex1);
-            }
-            Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
     }
     
     public String getProxyHost() {

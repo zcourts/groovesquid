@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.groovesquid.gui.AboutFrame;
 import com.groovesquid.gui.MainFrame;
 import com.groovesquid.gui.SettingsFrame;
+import com.groovesquid.gui.style.Flat;
 import com.groovesquid.model.Clients;
 import com.groovesquid.service.DownloadService;
 import com.groovesquid.service.PlayService;
@@ -95,7 +96,7 @@ public class Main {
             }
 
             try {
-                mainFrame = (MainFrame) config.getGuiClass().newInstance();
+                mainFrame = new Flat();
             } catch (Exception ex) {
                 log.log(Level.SEVERE, null, ex);
             }
@@ -116,13 +117,7 @@ public class Main {
     
     public static void resetGui() {
         mainFrame.dispose();
-        try {
-            mainFrame = (MainFrame) config.getGuiClass().newInstance();
-        } catch (InstantiationException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        mainFrame = new Flat();
         mainFrame.initDone();
         aboutFrame.dispose();
         aboutFrame = new AboutFrame();
