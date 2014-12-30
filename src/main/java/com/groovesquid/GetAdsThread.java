@@ -12,22 +12,26 @@
 package com.groovesquid;
 
 import com.google.gson.Gson;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
+import javax.swing.*;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JEditorPane;
-import javax.swing.text.Document;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
-import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 /**
  *
@@ -66,7 +70,7 @@ public class GetAdsThread extends Thread {
                 adPane.setDocument(doc);
                 adPane.setText(result);
 
-                System.out.println(result);
+                //System.out.println(result);
             }
         } catch (Exception ex) {
 
