@@ -1,14 +1,25 @@
 package com.groovesquid.service;
 
 import com.google.gson.Gson;
-import com.groovesquid.Grooveshark;
+import com.groovesquid.GroovesharkClient;
 import com.groovesquid.Main;
 import com.groovesquid.model.Album;
 import com.groovesquid.model.Artist;
 import com.groovesquid.model.Playlist;
 import com.groovesquid.model.Song;
 import com.groovesquid.util.Utils;
-import java.awt.Image;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,21 +34,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 
 /**
  *
  * @author Maino
  */
+
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class SearchService {
 
     private final static Logger log = Logger.getLogger(SearchService.class.getName());
@@ -50,8 +53,8 @@ public class SearchService {
     
     public List<Song> searchSongs(final Album album) {
         List<Song> songs = new ArrayList<Song>();
-        
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("albumGetAllSongs", new HashMap(){{
+
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("albumGetAllSongs", new HashMap() {{
             put("albumID", album.getId());
         }}), AlbumResponse.class).getResult();
 
@@ -76,16 +79,16 @@ public class SearchService {
     
     public List<Song> searchSongsByQuery(final String searchQuery) {
         List<Song> songs = new ArrayList<Song>();
-        
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap(){{
+
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("getResultsFromSearch", new HashMap() {{
             put("query", searchQuery);
-            put("type", new String[] {"Songs", "Artists", "Albums", "Playlists"});
+            put("type", new String[]{"Songs", "Artists", "Albums", "Playlists"});
             put("guts", "0");
             put("ppOverride", "false");
         }}), SearchResponse.class).getResult().getResult().getSongs();
 
         if(result.length < 1) {
-            JOptionPane.showMessageDialog(Main.getGui(), "No search results for \"" + searchQuery + "\".");
+            JOptionPane.showMessageDialog(Main.getMainFrame(), "No search results for \"" + searchQuery + "\".");
         }
 
         for (HashMap<String, Object> hm : result) {
@@ -108,12 +111,12 @@ public class SearchService {
     public List<Song> searchPopular() {
         final List<Song> songs = new ArrayList<Song>();
 
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("popularGetSongs", new HashMap<String, Object>(){{
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("popularGetSongs", new HashMap<String, Object>() {{
             put("type", "daily");
         }}), PopularResponse.class).getResult().getSongs();
 
         if(result.length < 1) {
-            JOptionPane.showMessageDialog(Main.getGui(), "No search results.");
+            JOptionPane.showMessageDialog(Main.getMainFrame(), "No search results.");
         }
 
         for (HashMap<String, Object> hm : result) {
@@ -135,8 +138,8 @@ public class SearchService {
     
     public List<Song> searchSongsByAlbum(final Album album) {
         List<Song> songs = new ArrayList<Song>();
-        
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("albumGetAllSongs", new HashMap<String, Object>(){{
+
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("albumGetAllSongs", new HashMap<String, Object>() {{
             put("albumID", album.getId());
         }}), AlbumResponse.class).getResult();
 
@@ -161,8 +164,8 @@ public class SearchService {
     
     public List<Song> searchSongsByPlaylist(final Playlist playlist) {
         List<Song> songs = new ArrayList<Song>();
-        
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("playlistGetSongs", new HashMap<String, Object>(){{
+
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("playlistGetSongs", new HashMap<String, Object>() {{
             put("playlistID", playlist.getId());
         }}), PopularResponse.class).getResult().getSongs();
         
@@ -189,8 +192,8 @@ public class SearchService {
     
     public List<Song> searchSongsByArtist(final Artist artist) {
         List<Song> songs = new ArrayList<Song>();
-        
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("artistGetArtistSongs", new HashMap<String, Object>(){{
+
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("artistGetArtistSongs", new HashMap<String, Object>() {{
             put("artistID", artist.getId());
         }}), AlbumResponse.class).getResult();
 
@@ -234,16 +237,16 @@ public class SearchService {
                 return albums;
             }
         }
-        
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap<String, Object>(){{
+
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("getResultsFromSearch", new HashMap<String, Object>() {{
             put("query", searchQuery);
-            put("type", new String[] {"Albums"});
+            put("type", new String[]{"Albums"});
             put("guts", "0");
             put("ppOverride", "false");
         }}), SearchResponse.class).getResult().getResult().getAlbums();
 
         if(result.length < 1) {
-            JOptionPane.showMessageDialog(Main.getGui(), "No search results for \"" + searchQuery + "\".");
+            JOptionPane.showMessageDialog(Main.getMainFrame(), "No search results for \"" + searchQuery + "\".");
         }
 
         for (HashMap<String, Object> hm : result) {
@@ -282,15 +285,15 @@ public class SearchService {
             }
         }
 
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap<String, Object>(){{
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("getResultsFromSearch", new HashMap<String, Object>() {{
             put("query", searchQuery);
-            put("type", new String[] {"Playlists"});
+            put("type", new String[]{"Playlists"});
             put("guts", "0");
             put("ppOverride", "false");
         }}), SearchResponse.class).getResult().getResult().getPlaylists();
 
         if(result.length < 1) {
-            JOptionPane.showMessageDialog(Main.getGui(), "No search results for \"" + searchQuery + "\".");
+            JOptionPane.showMessageDialog(Main.getMainFrame(), "No search results for \"" + searchQuery + "\".");
         }
 
         for (HashMap<String, Object> hm : result) {
@@ -329,15 +332,15 @@ public class SearchService {
             }
         }
 
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getResultsFromSearch", new HashMap<String, Object>(){{
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("getResultsFromSearch", new HashMap<String, Object>() {{
             put("query", searchQuery);
-            put("type", new String[] {"Artists"});
+            put("type", new String[]{"Artists"});
             put("guts", "0");
             put("ppOverride", "false");
         }}), SearchResponse.class).getResult().getResult().getArtists();
 
         if(result.length < 1) {
-            JOptionPane.showMessageDialog(Main.getGui(), "No search results for \"" + searchQuery + "\".");
+            JOptionPane.showMessageDialog(Main.getMainFrame(), "No search results for \"" + searchQuery + "\".");
         }
 
         for (HashMap<String, Object> hm : result) {
@@ -351,7 +354,7 @@ public class SearchService {
     }
     
     public Playlist searchPlaylistByID(final String playlistID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getPlaylistByID", new HashMap<String, Object>(){{
+        HashMap<String, Object> result = gson.fromJson(GroovesharkClient.sendRequest("getPlaylistByID", new HashMap<String, Object>() {{
             put("playlistID", playlistID);
         }}), PlaylistResponse.class).getResult();
 
@@ -370,7 +373,7 @@ public class SearchService {
     }
     
     public Artist searchArtistByID(final String artistID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getArtistByID", new HashMap<String, Object>(){{
+        HashMap<String, Object> result = gson.fromJson(GroovesharkClient.sendRequest("getArtistByID", new HashMap<String, Object>() {{
             put("artistID", artistID);
         }}), PlaylistResponse.class).getResult();
 
@@ -387,7 +390,7 @@ public class SearchService {
     }
     
     public Album searchAlbumByID(final String albumID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getAlbumByID", new HashMap<String, Object>(){{
+        HashMap<String, Object> result = gson.fromJson(GroovesharkClient.sendRequest("getAlbumByID", new HashMap<String, Object>() {{
             put("albumID", albumID);
         }}), PlaylistResponse.class).getResult();
 
@@ -406,7 +409,7 @@ public class SearchService {
     }
     
     public Song searchSongByID(final String songID) {
-        HashMap<String, Object> result = gson.fromJson(Grooveshark.sendRequest("getSongByID", new HashMap<String, Object>(){{
+        HashMap<String, Object> result = gson.fromJson(GroovesharkClient.sendRequest("getSongByID", new HashMap<String, Object>() {{
             put("songID", songID);
         }}), PlaylistResponse.class).getResult();
 
@@ -431,8 +434,8 @@ public class SearchService {
     
     public List<String> autocompleteByQuery(final String searchQuery) {
         List<String> suggestions = new ArrayList<String>();
-        
-        HashMap<String, Object>[] result = gson.fromJson(Grooveshark.sendRequest("getAutocomplete", new HashMap<String, Object>(){{
+
+        HashMap<String, Object>[] result = gson.fromJson(GroovesharkClient.sendRequest("getAutocomplete", new HashMap<String, Object>() {{
             put("query", searchQuery);
             put("type", "artist");
         }}), AutocompleteResponse.class).getResult();

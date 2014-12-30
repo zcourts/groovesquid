@@ -2,38 +2,35 @@ package com.groovesquid.service;
 
 import com.google.gson.Gson;
 import com.groovesquid.Config.FileExists;
-import com.groovesquid.Grooveshark;
+import com.groovesquid.GroovesharkClient;
 import com.groovesquid.Main;
 import com.groovesquid.model.*;
 import com.groovesquid.util.Utils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.http.*;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 
+import static java.lang.String.format;
+
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class DownloadService {
 
     private final static Logger log = Logger.getLogger(Main.class.getName());
@@ -221,8 +218,8 @@ public class DownloadService {
                 
                 Gson gson = new Gson();
 
-                Response response = gson.fromJson(Grooveshark.sendRequest("getStreamKeyFromSongIDEx", new HashMap(){{
-                    put("country", Grooveshark.getCountry());
+                Response response = gson.fromJson(GroovesharkClient.sendRequest("getStreamKeyFromSongIDEx", new HashMap() {{
+                    put("country", GroovesharkClient.getCountry());
                     put("mobile", "false");
                     put("prefetch", "false");
                     put("songID", track.getSong().getId());
@@ -252,7 +249,7 @@ public class DownloadService {
                 fireDownloadStatusChanged();
                 log.info("finished download track " + track);
 
-                HashMap<String, Object> result2 = gson.fromJson(Grooveshark.sendRequest("markSongDownloadedEx", new HashMap(){{
+                HashMap<String, Object> result2 = gson.fromJson(GroovesharkClient.sendRequest("markSongDownloadedEx", new HashMap() {{
                     put("songID", track.getSong().getId());
                     put("streamKey", streamKey);
                     put("streamServerID", streamServerID);
