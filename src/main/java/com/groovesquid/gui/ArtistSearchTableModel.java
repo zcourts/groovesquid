@@ -9,29 +9,32 @@
  * 
  */
 
-package gui;
+package com.groovesquid.gui;
 
 import com.groovesquid.Main;
-import com.groovesquid.model.Playlist;
+import com.groovesquid.model.Artist;
+
+import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 /**
  *
  * @author Maino
  */
-public class PlaylistSearchTableModel extends AbstractTableModel {
 
-    private String[] columnNames = { Main.getLocaleString("NAME"), Main.getLocaleString("AUTHOR"), Main.getLocaleString("SONGS") };
+@SuppressWarnings("serial")
+public class ArtistSearchTableModel extends AbstractTableModel {
+
+    private String[] columnNames = { Main.getLocaleString("NAME") };
     
-    private List<Playlist> playlists = new ArrayList<Playlist>();
+    private List<Artist> artists = new ArrayList<Artist>();
 
-    public PlaylistSearchTableModel() {
+    public ArtistSearchTableModel() {
         
     }
     
-    public PlaylistSearchTableModel(List<Playlist> playlists) {
-        this.playlists = playlists;
+    public ArtistSearchTableModel(List<Artist> artists) {
+        this.artists = artists;
     }
 
     public int getColumnCount() {
@@ -39,7 +42,7 @@ public class PlaylistSearchTableModel extends AbstractTableModel {
     }
 
     public int getRowCount() {
-        return playlists.size();
+        return artists.size();
     }
 
     @Override
@@ -48,32 +51,30 @@ public class PlaylistSearchTableModel extends AbstractTableModel {
     }
 
     public Object getValueAt(int row, int col) {
-        Playlist playlist = playlists.get(row);
+        Artist artist = artists.get(row);
 
         switch (col) {
-            case 0: return playlist.getName();
-            case 1: return playlist.getAuthor();
-            case 2: return playlist.getNumSongs();
+            case 0: return artist.getName();
         }
         return null;
     }
     
-    public List<Playlist> getPlaylists() {
-        return playlists;
+    public List<Artist> getArtists() {
+        return artists;
     }
         
     public void removeRow(int row) {
-        playlists.remove(row);
+        artists.remove(row);
         fireTableStructureChanged();
     }
     
-    public void removeRow(Playlist song) {
-        playlists.remove(song);
+    public void removeRow(Artist song) {
+        artists.remove(song);
         fireTableStructureChanged();
     }
     
-    public void addRow(Playlist song) {
-        playlists.add(song);
+    public void addRow(Artist song) {
+        artists.add(song);
         fireTableStructureChanged();
     }
 }

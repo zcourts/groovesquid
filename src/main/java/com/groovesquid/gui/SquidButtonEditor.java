@@ -1,10 +1,14 @@
-package gui;
+package com.groovesquid.gui;
 
 import com.groovesquid.Main;
-import java.awt.*;
-import java.awt.event.*;
+
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *  The ButtonColumn class provides a renderer and an editor that looks like a
@@ -19,6 +23,8 @@ import javax.swing.table.*;
  *  the model row number of the button that was clicked.
  *
  */
+
+@SuppressWarnings("serial")
 public class SquidButtonEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
     private JTable table;
     private Action action;
@@ -70,8 +76,8 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         if(!((Boolean) value)) {
-            editButton.setIcon(Main.getGui().plusIcon);
-            editButton.setRolloverIcon(Main.getGui().plusIconHover);
+            editButton.setIcon(Main.getMainFrame().plusIcon);
+            editButton.setRolloverIcon(Main.getMainFrame().plusIconHover);
         } else {
             editButton.setIcon(null);
             editButton.setRolloverIcon(null);
@@ -97,8 +103,8 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if(!((Boolean) value)) {
-            renderButton.setIcon(Main.getGui().plusIcon);
-            renderButton.setRolloverIcon(Main.getGui().plusIconHover);
+            renderButton.setIcon(Main.getMainFrame().plusIcon);
+            renderButton.setRolloverIcon(Main.getMainFrame().plusIconHover);
         } else {
             renderButton.setIcon(null);
             renderButton.setRolloverIcon(null);

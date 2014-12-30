@@ -9,21 +9,18 @@
  * 
  */
 
-package gui;
+package com.groovesquid.gui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 /**
  *
- * @author Maino
+ * @author Marius
  */
+
+@SuppressWarnings("serial")
 public class TableHeaderCellRenderer implements TableCellRenderer {
 
     private final TableCellRenderer wrappedRenderer;

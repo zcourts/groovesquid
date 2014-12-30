@@ -1,15 +1,16 @@
-package gui;
+package com.groovesquid.gui;
 
-import com.groovesquid.model.Album;
-import com.groovesquid.model.Song;
-import com.groovesquid.model.Playlist;
-import com.groovesquid.*;
 import com.groovesquid.Config.DownloadComplete;
+import com.groovesquid.Main;
 import com.groovesquid.model.*;
 import com.groovesquid.service.DownloadListener;
 import com.groovesquid.service.PlayService;
 import com.groovesquid.service.PlayServiceListener;
-import com.groovesquid.service.Services;
+import org.apache.commons.lang3.ArrayUtils;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -21,10 +22,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.apache.commons.lang3.ArrayUtils;
 
 
 /**
@@ -32,7 +29,8 @@ import org.apache.commons.lang3.ArrayUtils;
  * @author Maino
  */
 
-public class GUI extends JFrame {
+@SuppressWarnings({"serial", "rawtypes"})
+public class MainFrame extends JFrame {
     
     private ArrayList<String> autocompleteList = new ArrayList<String>();
 
@@ -42,7 +40,7 @@ public class GUI extends JFrame {
     /**
      * Creates new form GUI
      */
-    public GUI() {
+    public MainFrame() {
 
     }
     
@@ -64,7 +62,7 @@ public class GUI extends JFrame {
 
         // center screen
         setLocationRelativeTo(null);
-        
+
         setVisible(true);
         
         // background fix
@@ -112,8 +110,8 @@ public class GUI extends JFrame {
                 downloadTableKeyReleased(evt);
             }
         });
-        
-        Services.getPlayService().setListener(playServiceListener);
+
+        Main.getPlayService().setListener(playServiceListener);
     }
     
     ListSelectionListener downloadListSelectionListener = new ListSelectionListener(){
@@ -186,7 +184,7 @@ public class GUI extends JFrame {
         public void statusChanged(Track track) {
             if (track.getStatus() == Track.Status.ERROR) {
                 resetPlayInfo();
-                Services.getPlayService().stop();
+                Main.getPlayService().stop();
             } else if(track.getStatus() == Track.Status.INITIALIZING) {
                 updateCurrentlyPlayingTrack(track);
             } else if(track.getStatus() == Track.Status.DOWNLOADING) {
@@ -212,7 +210,7 @@ public class GUI extends JFrame {
             SwingWorker<Image, Void> worker = new SwingWorker<Image, Void>(){
                 @Override
                 protected Image doInBackground() {
-                    return Services.getSearchService().getLastFmCover(track.getSong());
+                    return Main.getSearchService().getLastFmCover(track.getSong());
                 }
 
                 @Override
@@ -227,9 +225,9 @@ public class GUI extends JFrame {
                             albumCoverLabel.setIcon(null);
                         }
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                 }
@@ -271,7 +269,7 @@ public class GUI extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Album album : albums) {
-                        songs.addAll(Services.getSearchService().searchSongsByAlbum(album));
+                        songs.addAll(Main.getSearchService().searchSongsByAlbum(album));
                     }
                     return songs;
                 }
@@ -281,9 +279,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new SongSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -314,7 +312,7 @@ public class GUI extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Playlist playlist : playlists) {
-                        songs.addAll(Services.getSearchService().searchSongsByPlaylist(playlist));
+                        songs.addAll(Main.getSearchService().searchSongsByPlaylist(playlist));
                     }
                     return songs;
                 }
@@ -324,9 +322,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new SongSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -357,7 +355,7 @@ public class GUI extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Artist artist : artists) {
-                        songs.addAll(Services.getSearchService().searchSongsByArtist(artist));
+                        songs.addAll(Main.getSearchService().searchSongsByArtist(artist));
                     }
                     return songs;
                 }
@@ -367,9 +365,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new SongSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -408,14 +406,14 @@ public class GUI extends JFrame {
                             // open file
                             Desktop.getDesktop().open(new File(track.getPath()));
                         } catch (IOException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     } else if(Main.getConfig().getDownloadComplete() == DownloadComplete.OPEN_DIRECTORY.ordinal()) {
                         try {
                             // open dir
                             Desktop.getDesktop().open(new File(track.getPath()).getParentFile());
                         } catch (IOException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -434,7 +432,7 @@ public class GUI extends JFrame {
             if (searchTable.getModel() instanceof SongSearchTableModel) {
                 SongSearchTableModel songSearchTableModel = (SongSearchTableModel) searchTable.getModel();
                 Song song = songSearchTableModel.getSongs().get(selectedRow);
-                downloadTableModel.addRow(0, Services.getDownloadService().download(song, getDownloadListener(downloadTableModel)));
+                downloadTableModel.addRow(0, Main.getDownloadService().download(song, getDownloadListener(downloadTableModel)));
             } else if (searchTable.getModel() instanceof AlbumSearchTableModel) {
                 AlbumSearchTableModel albumSearchTableModel = (AlbumSearchTableModel) searchTable.getModel();
                 final Album album = albumSearchTableModel.getAlbums().get(selectedRow);
@@ -442,7 +440,7 @@ public class GUI extends JFrame {
 
                     @Override
                     protected List<Song> doInBackground() {
-                        return Services.getSearchService().searchSongsByAlbum(album);
+                        return Main.getSearchService().searchSongsByAlbum(album);
                     }
 
                     @Override
@@ -450,12 +448,12 @@ public class GUI extends JFrame {
                         try {
                             Iterator<Song> iterator = get().iterator();
                             while (iterator.hasNext()) {
-                                downloadTableModel.addRow(0, Services.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
+                                downloadTableModel.addRow(0, Main.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
                             }
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (ExecutionException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
                     }
@@ -469,7 +467,7 @@ public class GUI extends JFrame {
 
                     @Override
                     protected List<Song> doInBackground() {
-                        return Services.getSearchService().searchSongsByPlaylist(playlist);
+                        return Main.getSearchService().searchSongsByPlaylist(playlist);
                     }
 
                     @Override
@@ -477,12 +475,12 @@ public class GUI extends JFrame {
                         try {
                             Iterator<Song> iterator = get().iterator();
                             while (iterator.hasNext()) {
-                                downloadTableModel.addRow(0, Services.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
+                                downloadTableModel.addRow(0, Main.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
                             }
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (ExecutionException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
                     }
@@ -530,9 +528,9 @@ public class GUI extends JFrame {
         
         final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
         for (Track track : failedDownloads) {
-            Services.getDownloadService().cancelDownload(track, false);
+            Main.getDownloadService().cancelDownload(track, false);
             downloadTableModel.removeRow(track);
-            downloadTableModel.addRow(0, Services.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
+            downloadTableModel.addRow(0, Main.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
         }
         downloadTable.clearSelection();
         
@@ -564,7 +562,7 @@ public class GUI extends JFrame {
 
                 @Override
                 protected List<Song> doInBackground() {
-                    return Services.getSearchService().searchSongsByQuery(searchTextField.getText());
+                    return Main.getSearchService().searchSongsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -572,9 +570,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new SongSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -590,7 +588,7 @@ public class GUI extends JFrame {
 
                 @Override
                 protected List<Song> doInBackground() {
-                    return Services.getSearchService().searchPopular();
+                    return Main.getSearchService().searchPopular();
                 }
 
                 @Override
@@ -598,9 +596,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new SongSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -615,7 +613,7 @@ public class GUI extends JFrame {
 
                 @Override
                 protected List<Album> doInBackground() {
-                    return Services.getSearchService().searchAlbumsByQuery(searchTextField.getText());
+                    return Main.getSearchService().searchAlbumsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -623,9 +621,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new AlbumSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -641,7 +639,7 @@ public class GUI extends JFrame {
 
                 @Override
                 protected List<Playlist> doInBackground() {
-                    return Services.getSearchService().searchPlaylistsByQuery(searchTextField.getText());
+                    return Main.getSearchService().searchPlaylistsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -649,9 +647,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new PlaylistSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -668,7 +666,7 @@ public class GUI extends JFrame {
 
                 @Override
                 protected List<Artist> doInBackground() {
-                    return Services.getSearchService().searchArtistsByQuery(searchTextField.getText());
+                    return Main.getSearchService().searchArtistsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -676,9 +674,9 @@ public class GUI extends JFrame {
                     try {
                         searchTable.setModel(new ArtistSearchTableModel(get()));
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     searchTable.setEnabled(true);
@@ -723,10 +721,10 @@ public class GUI extends JFrame {
             }
         }
         selectComboBox.setSelectedIndex(0);
-    }                                              
+    }
 
-    public void formWindowClosing(java.awt.event.WindowEvent evt) {                                   
-        if(Services.getDownloadService().areCurrentlyRunningDownloads()) {
+    public void formWindowClosing(java.awt.event.WindowEvent evt) {
+        if (Main.getDownloadService().areCurrentlyRunningDownloads()) {
             if(JOptionPane.showConfirmDialog(this, Main.getLocaleString("ALERT_DOWNLOADS_IN_PROGRESS"), Main.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
                 System.exit(0);
             }
@@ -742,7 +740,7 @@ public class GUI extends JFrame {
 
                     @Override
                     protected List<String> doInBackground() {
-                        return Services.getSearchService().autocompleteByQuery(searchTextField.getText());
+                        return Main.getSearchService().autocompleteByQuery(searchTextField.getText());
                     }
 
                     @Override
@@ -757,9 +755,9 @@ public class GUI extends JFrame {
                                 searchTextField.select(newText.length() - autocompleteSub.length(), newText.length());
                             }
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (ExecutionException ex) {
-                            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 };
@@ -794,7 +792,7 @@ public class GUI extends JFrame {
     }                                
 
     public void playPauseButtonMousePressed(java.awt.event.MouseEvent evt) {
-        if (Services.getPlayService().isPlaying()) {
+        if (Main.getPlayService().isPlaying()) {
             playPauseButton.setIcon(pauseIconActive);
         } else {
             playPauseButton.setIcon(playIconActive);
@@ -802,13 +800,13 @@ public class GUI extends JFrame {
     }
 
     public void playPauseButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (Services.getPlayService().isPaused()) {
-            Services.getPlayService().resume();
-        } else if (Services.getPlayService().isPlaying()) {
-            Services.getPlayService().pause();
+        if (Main.getPlayService().isPaused()) {
+            Main.getPlayService().resume();
+        } else if (Main.getPlayService().isPlaying()) {
+            Main.getPlayService().pause();
         } else {
-            if (Services.getPlayService().getPlaylist().size() > 0) {
-                Services.getPlayService().play();
+            if (Main.getPlayService().getPlaylist().size() > 0) {
+                Main.getPlayService().play();
             } else {
                 playPauseButton.setIcon(playIcon);
             }
@@ -820,11 +818,11 @@ public class GUI extends JFrame {
     }
 
     public void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        nextButton.setIcon(nextIcon);    
-        if (Services.getPlayService().getCurrentSongIndex() < Services.getPlayService().getPlaylist().size() - 1) {
-            Services.getPlayService().skipForward();
+        nextButton.setIcon(nextIcon);
+        if (Main.getPlayService().getCurrentSongIndex() < Main.getPlayService().getPlaylist().size() - 1) {
+            Main.getPlayService().skipForward();
         } else {
-            Services.getPlayService().clearPlaylist();
+            Main.getPlayService().clearPlaylist();
             resetPlayInfo();
         }
     }
@@ -835,11 +833,11 @@ public class GUI extends JFrame {
 
     public void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {
         previousButton.setIcon(previousIcon);
-        Services.getPlayService().skipBackward();
+        Main.getPlayService().skipBackward();
     }
 
     public void trackSliderMouseDragged(java.awt.event.MouseEvent evt) {
-        if(Services.getPlayService().getCurrentTrack() != null) {
+        if (Main.getPlayService().getCurrentTrack() != null) {
             //Services.getPlayService().setCurrentPosition(trackSlider.getValue());
         }
     }                                        
@@ -858,20 +856,20 @@ public class GUI extends JFrame {
         setState(Frame.ICONIFIED);
     }
 
-    public void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        Main.getSettings().setVisible(true);
+    public void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        Main.getSettingsFrame().setVisible(true);
     }
 
-    public void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        Main.getAbout().setVisible(true);
+    public void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        Main.getAboutFrame().setVisible(true);
     }
-    
-    public void batchButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        new Batch().setVisible(true);
-    }                                              
 
-    public void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {                                          
-         Services.getPlayService().setVolume(volumeSlider.getValue());
+    public void batchButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        new BatchFrame().setVisible(true);
+    }
+
+    public void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {
+        Main.getPlayService().setVolume(volumeSlider.getValue());
     }
 
     public void removeFromListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
@@ -927,7 +925,7 @@ public class GUI extends JFrame {
                 // open dir
                 Desktop.getDesktop().open(new File(track.getPath()).getParentFile());
             } catch (IOException ex) {
-                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         downloadTable.clearSelection();
@@ -943,7 +941,7 @@ public class GUI extends JFrame {
                 // open file
                 Desktop.getDesktop().open(new File(track.getPath()));
             } catch (IOException ex) {
-                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         downloadTable.clearSelection();
@@ -953,7 +951,7 @@ public class GUI extends JFrame {
         try {
             Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getToolTipText()));
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -961,7 +959,7 @@ public class GUI extends JFrame {
         try {
             Desktop.getDesktop().browse(java.net.URI.create("http://groovesquid.com/#donate"));
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -1043,9 +1041,9 @@ public class GUI extends JFrame {
             int selectedRow = downloadTable.convertRowIndexToModel(selectedRows[i] - i);
             Track track = model.getSongDownloads().get(selectedRow);
             if(andDisk) {
-                Services.getDownloadService().cancelDownload(track, true, true);
+                Main.getDownloadService().cancelDownload(track, true, true);
             } else {
-                Services.getDownloadService().cancelDownload(track, false);
+                Main.getDownloadService().cancelDownload(track, false);
             }
             model.removeRow(selectedRow);
         }
@@ -1055,21 +1053,21 @@ public class GUI extends JFrame {
     
     public void play(List<Song> songs) {
         final Song song = songs.get(0);
-        Track track = Services.getPlayService().getCurrentTrack();
-        
-        if(track != null && track.getSong().equals(song) && Services.getPlayService().isPaused()) {
-            Services.getPlayService().resume();
+        Track track = Main.getPlayService().getCurrentTrack();
+
+        if (track != null && track.getSong().equals(song) && Main.getPlayService().isPaused()) {
+            Main.getPlayService().resume();
         } else {
-            if(Services.getPlayService().isPlaying()) {
+            if (Main.getPlayService().isPlaying()) {
                 Object[] options = { Main.getLocaleString("PLAY_NOW"), Main.getLocaleString("ADD_TO_QUEUE"), Main.getLocaleString("CANCEL") };
                 int selectedValue = JOptionPane.showOptionDialog(this, Main.getLocaleString("ALERT_PLAY_NOW_OR_QUEUE"), Main.getLocaleString("PLAY"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if(selectedValue == 0) {
-                    Services.getPlayService().add(songs, PlayService.AddMode.NOW);
+                    Main.getPlayService().add(songs, PlayService.AddMode.NOW);
                 } else if(selectedValue == 1) {
-                    Services.getPlayService().add(songs, PlayService.AddMode.NEXT);
+                    Main.getPlayService().add(songs, PlayService.AddMode.NEXT);
                 }
             } else {
-                Services.getPlayService().add(songs, PlayService.AddMode.NOW);
+                Main.getPlayService().add(songs, PlayService.AddMode.NOW);
             }
         }
     }

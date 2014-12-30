@@ -1,21 +1,26 @@
-package gui.style;
+package com.groovesquid.gui.style;
 
-import gui.*;
-import com.groovesquid.*;
+import com.groovesquid.GetAdsThread;
+import com.groovesquid.Main;
+import com.groovesquid.UpdateCheckThread;
+import com.groovesquid.gui.*;
 import com.groovesquid.util.Utils;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -23,7 +28,8 @@ import javax.swing.plaf.basic.*;
  * @author Maino
  */
 
-public class Flat extends GUI {
+@SuppressWarnings({"serial", "rawtypes"})
+public class Flat extends MainFrame {
 
     public ImageIcon minimizeButtonImage, minimizeButtonHoverImage, maximizeButtonImage, maximizeButtonHoverImage, closeButtonImage, closeButtonHoverImage, blueArrowSouth, smallBlueArrowSouth, blueArrowNorth, smallBlueArrowNorth, orangeArrowSouth, smallOrangeArrowSouth, orangeArrowNorth, smallOrangeArrowNorth, facebookIcon, twitterIcon;
     private Image blueButton, blueButtonHover, blueButtonPressed, orangeButton, orangeButtonHover, orangeButtonPressed, dividerImage;
@@ -56,270 +62,270 @@ public class Flat extends GUI {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        searchTablePopupMenu = new javax.swing.JPopupMenu();
-        downloadMenuItem = new javax.swing.JMenuItem();
-        playMenuItem = new javax.swing.JMenuItem();
-        downloadTablePopupMenu = new javax.swing.JPopupMenu();
-        removeFromListMenuItem = new javax.swing.JMenuItem();
-        removeFromDiskMenuItem = new javax.swing.JMenuItem();
-        openFileMenuItem = new javax.swing.JMenuItem();
-        openDirectoryMenuItem = new javax.swing.JMenuItem();
-        airPlayPopupMenu = new javax.swing.JPopupMenu();
-        playerPanel = new javax.swing.JPanel();
-        playPauseButton = new javax.swing.JButton();
-        currentDurationLabel = new javax.swing.JLabel();
-        currentlyPlayingLabel = new javax.swing.JLabel();
-        trackSlider = new javax.swing.JSlider();
-        durationLabel = new javax.swing.JLabel();
-        albumCoverLabel = new javax.swing.JLabel();
-        volumeSlider = new javax.swing.JSlider();
-        volumeOffLabel = new javax.swing.JLabel();
-        volumeOnLabel = new javax.swing.JLabel();
-        previousButton = new javax.swing.JButton();
-        nextButton = new javax.swing.JButton();
-        splitPane = new javax.swing.JSplitPane();
-        searchPanel = new javax.swing.JPanel();
-        searchScrollPane = new javax.swing.JScrollPane();
+        searchTablePopupMenu = new JPopupMenu();
+        downloadMenuItem = new JMenuItem();
+        playMenuItem = new JMenuItem();
+        downloadTablePopupMenu = new JPopupMenu();
+        removeFromListMenuItem = new JMenuItem();
+        removeFromDiskMenuItem = new JMenuItem();
+        openFileMenuItem = new JMenuItem();
+        openDirectoryMenuItem = new JMenuItem();
+        airPlayPopupMenu = new JPopupMenu();
+        playerPanel = new JPanel();
+        playPauseButton = new JButton();
+        currentDurationLabel = new JLabel();
+        currentlyPlayingLabel = new JLabel();
+        trackSlider = new JSlider();
+        durationLabel = new JLabel();
+        albumCoverLabel = new JLabel();
+        volumeSlider = new JSlider();
+        volumeOffLabel = new JLabel();
+        volumeOnLabel = new JLabel();
+        previousButton = new JButton();
+        nextButton = new JButton();
+        splitPane = new JSplitPane();
+        searchPanel = new JPanel();
+        searchScrollPane = new JScrollPane();
         searchTable = new SquidTable();
-        downloadButton = new javax.swing.JButton();
-        playButton = new javax.swing.JButton();
-        searchTypeComboBox = new javax.swing.JComboBox();
-        searchButton = new javax.swing.JButton();
+        downloadButton = new JButton();
+        playButton = new JButton();
+        searchTypeComboBox = new JComboBox();
+        searchButton = new JButton();
         searchTextField = new JTextField();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        downloadPanel = new javax.swing.JPanel();
-        removeFromDiskButton = new javax.swing.JButton();
-        removeFromListButton = new javax.swing.JButton();
-        downloadScrollPane = new javax.swing.JScrollPane();
-        downloadTable =  new gui.SquidTable()
+        jPanel3 = new JPanel();
+        jLabel3 = new JLabel();
+        downloadPanel = new JPanel();
+        removeFromDiskButton = new JButton();
+        removeFromListButton = new JButton();
+        downloadScrollPane = new JScrollPane();
+        downloadTable = new SquidTable()
         ;
-        selectComboBox = new javax.swing.JComboBox();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        retryFailedDownloadsButton = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        titleBarPanel = new javax.swing.JPanel();
-        titleBarLabel = new javax.swing.JLabel();
-        closeButton = new javax.swing.JButton();
-        minimizeButton = new javax.swing.JButton();
-        maximizeButton = new javax.swing.JButton();
-        aboutButton = new javax.swing.JButton();
-        settingsButton = new javax.swing.JButton();
-        twitterLabel = new javax.swing.JLabel();
-        facebookLabel = new javax.swing.JLabel();
-        donateLabel = new javax.swing.JLabel();
-        batchButton = new javax.swing.JButton();
-        adScrollPane = new javax.swing.JScrollPane();
-        adPane = new javax.swing.JEditorPane();
+        selectComboBox = new JComboBox();
+        jPanel2 = new JPanel();
+        jLabel2 = new JLabel();
+        retryFailedDownloadsButton = new JButton();
+        jPanel1 = new JPanel();
+        titleBarPanel = new JPanel();
+        titleBarLabel = new JLabel();
+        closeButton = new JButton();
+        minimizeButton = new JButton();
+        maximizeButton = new JButton();
+        aboutButton = new JButton();
+        settingsButton = new JButton();
+        twitterLabel = new JLabel();
+        facebookLabel = new JLabel();
+        donateLabel = new JLabel();
+        batchButton = new JButton();
+        adScrollPane = new JScrollPane();
+        adPane = new JEditorPane();
 
         downloadMenuItem.setText("Download");
-        downloadMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        downloadMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 downloadMenuItemActionPerformed(evt);
             }
         });
         searchTablePopupMenu.add(downloadMenuItem);
 
         playMenuItem.setText("Play");
-        playMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        playMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 playMenuItemActionPerformed(evt);
             }
         });
         searchTablePopupMenu.add(playMenuItem);
 
         removeFromListMenuItem.setText("Remove from list");
-        removeFromListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        removeFromListMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 removeFromListMenuItemActionPerformed(evt);
             }
         });
         downloadTablePopupMenu.add(removeFromListMenuItem);
 
         removeFromDiskMenuItem.setText("Remove from disk");
-        removeFromDiskMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        removeFromDiskMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 removeFromDiskMenuItemActionPerformed(evt);
             }
         });
         downloadTablePopupMenu.add(removeFromDiskMenuItem);
 
         openFileMenuItem.setText("Open File");
-        openFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        openFileMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 openFileMenuItemActionPerformed(evt);
             }
         });
         downloadTablePopupMenu.add(openFileMenuItem);
 
         openDirectoryMenuItem.setText("Open Directory");
-        openDirectoryMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        openDirectoryMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 openDirectoryMenuItemActionPerformed(evt);
             }
         });
         downloadTablePopupMenu.add(openDirectoryMenuItem);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Groovesquid");
-        setBackground(new java.awt.Color(204, 204, 204));
+        setBackground(new Color(204, 204, 204));
         setLocationByPlatform(true);
         setName("guiFrame"); // NOI18N
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt) {
                 formWindowClosingEvent(evt);
             }
         });
 
-        playerPanel.setBackground(new java.awt.Color(145, 2, 146));
-        playerPanel.setForeground(new java.awt.Color(255, 255, 255));
-        playerPanel.setPreferredSize(new java.awt.Dimension(673, 60));
+        playerPanel.setBackground(new Color(145, 2, 146));
+        playerPanel.setForeground(new Color(255, 255, 255));
+        playerPanel.setPreferredSize(new Dimension(673, 60));
 
         playPauseButton.setIcon(playIcon);
-        playPauseButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        playPauseButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         playPauseButton.setContentAreaFilled(false);
-        playPauseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        playPauseButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         playPauseButton.setFocusable(false);
         playPauseButton.setRequestFocusEnabled(false);
-        playPauseButton.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
-        playPauseButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        playPauseButton.setVerticalTextPosition(SwingConstants.TOP);
+        playPauseButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
                 playPauseButtonMousePressed(evt);
             }
         });
-        playPauseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        playPauseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 playPauseButtonActionPerformed(evt);
             }
         });
 
-        currentDurationLabel.setFont(new java.awt.Font("Lucida Grande", 0, 9)); // NOI18N
-        currentDurationLabel.setForeground(new java.awt.Color(255, 255, 255));
+        currentDurationLabel.setFont(new Font("Lucida Grande", 0, 9)); // NOI18N
+        currentDurationLabel.setForeground(new Color(255, 255, 255));
         currentDurationLabel.setText("00:00");
-        currentDurationLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 3));
+        currentDurationLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 3));
 
-        currentlyPlayingLabel.setForeground(new java.awt.Color(255, 255, 255));
-        currentlyPlayingLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(-10, 0, 0, 0));
+        currentlyPlayingLabel.setForeground(new Color(255, 255, 255));
+        currentlyPlayingLabel.setBorder(BorderFactory.createEmptyBorder(-10, 0, 0, 0));
 
         trackSlider.setUI(new SquidSliderUI(trackSlider, 11));
-        trackSlider.setBackground(new java.awt.Color(145, 2, 146));
+        trackSlider.setBackground(new Color(145, 2, 146));
         trackSlider.setValue(0);
-        trackSlider.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 6, 0));
+        trackSlider.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
         trackSlider.setEnabled(false);
         trackSlider.setFocusable(false);
         trackSlider.setRequestFocusEnabled(false);
-        trackSlider.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
+        trackSlider.addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent evt) {
                 trackSliderMouseDragged(evt);
             }
         });
 
-        durationLabel.setFont(new java.awt.Font("Lucida Grande", 0, 9)); // NOI18N
-        durationLabel.setForeground(new java.awt.Color(255, 255, 255));
+        durationLabel.setFont(new Font("Lucida Grande", 0, 9)); // NOI18N
+        durationLabel.setForeground(new Color(255, 255, 255));
         durationLabel.setText("00:00");
-        durationLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 10));
+        durationLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 10));
 
-        albumCoverLabel.setBackground(new java.awt.Color(230, 230, 230));
+        albumCoverLabel.setBackground(new Color(230, 230, 230));
         albumCoverLabel.setOpaque(true);
 
         volumeSlider.setUI(new SquidSliderUI(volumeSlider, 7));
-        volumeSlider.setBackground(new java.awt.Color(145, 2, 146));
+        volumeSlider.setBackground(new Color(145, 2, 146));
         volumeSlider.setMaximum(0);
         volumeSlider.setMinimum(-2000);
-        volumeSlider.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        volumeSlider.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         volumeSlider.setFocusable(false);
         volumeSlider.setRequestFocusEnabled(false);
-        volumeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        volumeSlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
                 volumeSliderStateChanged(evt);
             }
         });
 
-        volumeOffLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/style/flat/volumeOff.png"))); // NOI18N
+        volumeOffLabel.setIcon(new ImageIcon(getClass().getResource("/gui/style/flat/volumeOff.png"))); // NOI18N
 
-        volumeOnLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/style/flat/volumeOn.png"))); // NOI18N
+        volumeOnLabel.setIcon(new ImageIcon(getClass().getResource("/gui/style/flat/volumeOn.png"))); // NOI18N
 
         previousButton.setIcon(previousIcon);
-        previousButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        previousButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         previousButton.setContentAreaFilled(false);
-        previousButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        previousButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         previousButton.setFocusable(false);
         previousButton.setRequestFocusEnabled(false);
-        previousButton.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
-        previousButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        previousButton.setVerticalTextPosition(SwingConstants.TOP);
+        previousButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
                 previousButtonMousePressed(evt);
             }
         });
-        previousButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        previousButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 previousButtonActionPerformed(evt);
             }
         });
 
         nextButton.setIcon(nextIcon);
-        nextButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        nextButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         nextButton.setContentAreaFilled(false);
-        nextButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        nextButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         nextButton.setFocusable(false);
         nextButton.setRequestFocusEnabled(false);
-        nextButton.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
-        nextButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        nextButton.setVerticalTextPosition(SwingConstants.TOP);
+        nextButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
                 nextButtonMousePressed(evt);
             }
         });
-        nextButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        nextButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 nextButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout playerPanelLayout = new javax.swing.GroupLayout(playerPanel);
+        GroupLayout playerPanelLayout = new GroupLayout(playerPanel);
         playerPanel.setLayout(playerPanelLayout);
         playerPanelLayout.setHorizontalGroup(
-            playerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                playerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(playerPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(previousButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(playPauseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(previousButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(playPauseButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(nextButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
                 .addGap(66, 66, 66)
-                .addComponent(currentlyPlayingLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(currentlyPlayingLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(volumeOffLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(volumeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(volumeOnLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(volumeOffLabel, GroupLayout.PREFERRED_SIZE, 13, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(volumeSlider, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(volumeOnLabel, GroupLayout.PREFERRED_SIZE, 13, GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(currentDurationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(trackSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(currentDurationLabel, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(trackSlider, GroupLayout.PREFERRED_SIZE, 251, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(durationLabel)
                 .addGap(63, 63, 63)
-                .addComponent(albumCoverLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(albumCoverLabel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
         );
         playerPanelLayout.setVerticalGroup(
-            playerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(previousButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(playPauseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(nextButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, playerPanelLayout.createSequentialGroup()
-                .addGroup(playerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(currentDurationLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(volumeOnLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(volumeOffLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(trackSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
-                    .addComponent(volumeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(durationLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(currentlyPlayingLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                playerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(previousButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(playPauseButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nextButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(GroupLayout.Alignment.TRAILING, playerPanelLayout.createSequentialGroup()
+                                .addGroup(playerPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(currentDurationLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(volumeOnLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(volumeOffLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(trackSlider, GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+                                        .addComponent(volumeSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(durationLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(currentlyPlayingLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(1, 1, 1))
-            .addComponent(albumCoverLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(albumCoverLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         splitPane.setUI(new BasicSplitPaneUI() {
@@ -346,7 +352,7 @@ public class Flat extends GUI {
             }
         });
         splitPane.setBorder(null);
-        splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.5);
         splitPane.setFocusable(false);
         splitPane.setOpaque(false);
@@ -355,18 +361,18 @@ public class Flat extends GUI {
         searchPanel.setOpaque(false);
 
         searchScrollPane.getVerticalScrollBar().setUI(SquidScrollBarUI.createUI(searchScrollPane, blueArrowSouth, blueArrowNorth, new ColorUIResource(52,152,219)));
-        searchScrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        searchScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         searchScrollPane.setOpaque(false);
 
         searchTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(searchTable.getTableHeader().getDefaultRenderer(), new Color(52, 152, 219)));
         searchTable.setAutoCreateRowSorter(true);
-        searchTable.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
+        searchTable.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
         searchTable.setModel(new SongSearchTableModel());
         searchTable.setFillsViewportHeight(true);
-        searchTable.setGridColor(new java.awt.Color(204, 204, 204));
-        searchTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
+        searchTable.setGridColor(new Color(204, 204, 204));
+        searchTable.setIntercellSpacing(new Dimension(0, 0));
         searchTable.setRowHeight(20);
-        searchTable.setSelectionBackground(new java.awt.Color(15, 152, 219));
+        searchTable.setSelectionBackground(new Color(15, 152, 219));
         searchTable.setShowHorizontalLines(false);
         searchTable.setShowVerticalLines(false);
         searchTable.getTableHeader().setReorderingAllowed(false);
@@ -375,19 +381,19 @@ public class Flat extends GUI {
         downloadButton.setIcon(Utils.stretchImage(blueButton, 90, 27, this));
         downloadButton.setRolloverIcon(Utils.stretchImage(blueButtonHover, 90, 27, this));
         downloadButton.setPressedIcon(Utils.stretchImage(blueButtonPressed, 90, 27, this));
-        downloadButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        downloadButton.setForeground(new java.awt.Color(255, 255, 255));
+        downloadButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        downloadButton.setForeground(new Color(255, 255, 255));
         downloadButton.setText(Main.getLocaleString("DOWNLOAD"));
         downloadButton.setBorder(null);
         downloadButton.setBorderPainted(false);
         downloadButton.setContentAreaFilled(false);
-        downloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        downloadButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         downloadButton.setEnabled(false);
         downloadButton.setFocusable(false);
-        downloadButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        downloadButton.setHorizontalTextPosition(SwingConstants.CENTER);
         downloadButton.setRequestFocusEnabled(false);
-        downloadButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        downloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 downloadButtonActionPerformed(evt);
             }
         });
@@ -395,19 +401,19 @@ public class Flat extends GUI {
         playButton.setIcon(Utils.stretchImage(blueButton, 90, 27, this));
         playButton.setRolloverIcon(Utils.stretchImage(blueButtonHover, 90, 27, this));
         playButton.setPressedIcon(Utils.stretchImage(blueButtonPressed, 90, 27, this));
-        playButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        playButton.setForeground(new java.awt.Color(255, 255, 255));
+        playButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        playButton.setForeground(new Color(255, 255, 255));
         playButton.setText(Main.getLocaleString("PLAY"));
         playButton.setBorder(null);
         playButton.setBorderPainted(false);
         playButton.setContentAreaFilled(false);
-        playButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        playButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         playButton.setEnabled(false);
         playButton.setFocusable(false);
-        playButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        playButton.setHorizontalTextPosition(SwingConstants.CENTER);
         playButton.setRequestFocusEnabled(false);
-        playButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        playButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 playButtonActionPerformed(evt);
             }
         });
@@ -420,14 +426,14 @@ public class Flat extends GUI {
         searchTypeComboBoxModel.addElement(Main.getLocaleString("ALBUMS"));
         searchTypeComboBoxModel.addElement(Main.getLocaleString("PLAYLISTS"));
         searchTypeComboBoxModel.addElement(Main.getLocaleString("ARTISTS"));
-        searchTypeComboBox.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        searchTypeComboBox.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(52, 152, 219)), javax.swing.BorderFactory.createMatteBorder(0, 5, 0, 0, new java.awt.Color(255, 255, 255))));
+        searchTypeComboBox.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        searchTypeComboBox.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(52, 152, 219)), BorderFactory.createMatteBorder(0, 5, 0, 0, new Color(255, 255, 255))));
         searchTypeComboBox.setEnabled(false);
         searchTypeComboBox.setFocusable(false);
-        searchTypeComboBox.setPreferredSize(new java.awt.Dimension(63, 26));
+        searchTypeComboBox.setPreferredSize(new Dimension(63, 26));
         searchTypeComboBox.setRequestFocusEnabled(false);
-        searchTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        searchTypeComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 searchTypeComboBoxActionPerformed(evt);
             }
         });
@@ -435,99 +441,99 @@ public class Flat extends GUI {
         searchButton.setIcon(Utils.stretchImage(blueButton, 90, 27, this));
         searchButton.setRolloverIcon(Utils.stretchImage(blueButtonHover, 90, 27, this));
         searchButton.setPressedIcon(Utils.stretchImage(blueButtonPressed, 90, 27, this));
-        searchButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        searchButton.setForeground(new java.awt.Color(255, 255, 255));
+        searchButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        searchButton.setForeground(new Color(255, 255, 255));
         searchButton.setText(Main.getLocaleString("SEARCH"));
         searchButton.setBorder(null);
         searchButton.setBorderPainted(false);
         searchButton.setContentAreaFilled(false);
-        searchButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        searchButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         searchButton.setEnabled(false);
         searchButton.setFocusable(false);
-        searchButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        searchButton.setPreferredSize(new java.awt.Dimension(90, 27));
-        searchButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        searchButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        searchButton.setPreferredSize(new Dimension(90, 27));
+        searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 searchButtonActionPerformed(evt);
             }
         });
 
-        searchTextField.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
+        searchTextField.setFont(new Font("Lucida Grande", 0, 12)); // NOI18N
         searchTextField.setText(Main.getLocaleString("LOADING"));
-        searchTextField.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(52, 152, 219)), javax.swing.BorderFactory.createEmptyBorder(1, 5, 1, 5)));
+        searchTextField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(52, 152, 219)), BorderFactory.createEmptyBorder(1, 5, 1, 5)));
         searchTextField.setEnabled(false);
-        searchTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        searchTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 searchTextFieldActionPerformed(evt);
             }
         });
-        searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
+        searchTextField.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent evt) {
                 searchTextFieldKeyReleased(evt);
             }
         });
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(52, 152, 219)));
+        jPanel3.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(52, 152, 219)));
         jPanel3.setOpaque(false);
 
-        jLabel3.setBackground(new java.awt.Color(52, 152, 219));
-        jLabel3.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setBackground(new Color(52, 152, 219));
+        jLabel3.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        jLabel3.setForeground(new Color(255, 255, 255));
         jLabel3.setText(Main.getLocaleString("SEARCH").toUpperCase());
-        jLabel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        jLabel3.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         jLabel3.setOpaque(true);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
+        GroupLayout searchPanelLayout = new GroupLayout(searchPanel);
         searchPanel.setLayout(searchPanelLayout);
         searchPanelLayout.setHorizontalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(searchScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
                     .addGroup(searchPanelLayout.createSequentialGroup()
-                        .addComponent(searchTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addGroup(searchPanelLayout.createSequentialGroup()
-                                .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(playButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(searchTextField))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(searchButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         searchPanelLayout.setVerticalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(playButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(searchTextField, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(searchButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -538,19 +544,19 @@ public class Flat extends GUI {
         removeFromDiskButton.setIcon(Utils.stretchImage(orangeButton, 151, 27, this));
         removeFromDiskButton.setRolloverIcon(Utils.stretchImage(orangeButtonHover, 151, 27, this));
         removeFromDiskButton.setPressedIcon(Utils.stretchImage(orangeButtonPressed, 151, 27, this));
-        removeFromDiskButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        removeFromDiskButton.setForeground(new java.awt.Color(255, 255, 255));
+        removeFromDiskButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        removeFromDiskButton.setForeground(new Color(255, 255, 255));
         removeFromDiskButton.setText(Main.getLocaleString("REMOVE_FROM_DISK"));
         removeFromDiskButton.setBorder(null);
         removeFromDiskButton.setBorderPainted(false);
         removeFromDiskButton.setContentAreaFilled(false);
-        removeFromDiskButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        removeFromDiskButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         removeFromDiskButton.setEnabled(false);
         removeFromDiskButton.setFocusable(false);
-        removeFromDiskButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        removeFromDiskButton.setHorizontalTextPosition(SwingConstants.CENTER);
         removeFromDiskButton.setRequestFocusEnabled(false);
-        removeFromDiskButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        removeFromDiskButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 removeFromDiskButtonActionPerformed(evt);
             }
         });
@@ -558,37 +564,37 @@ public class Flat extends GUI {
         removeFromListButton.setIcon(Utils.stretchImage(orangeButton, 148, 27, this));
         removeFromListButton.setRolloverIcon(Utils.stretchImage(orangeButtonHover, 148, 27, this));
         removeFromListButton.setPressedIcon(Utils.stretchImage(orangeButtonPressed, 148, 27, this));
-        removeFromListButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        removeFromListButton.setForeground(new java.awt.Color(255, 255, 255));
+        removeFromListButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        removeFromListButton.setForeground(new Color(255, 255, 255));
         removeFromListButton.setText(Main.getLocaleString("REMOVE_FROM_LIST"));
         removeFromListButton.setBorder(null);
         removeFromListButton.setBorderPainted(false);
         removeFromListButton.setContentAreaFilled(false);
-        removeFromListButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        removeFromListButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         removeFromListButton.setEnabled(false);
         removeFromListButton.setFocusable(false);
-        removeFromListButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        removeFromListButton.setHorizontalTextPosition(SwingConstants.CENTER);
         removeFromListButton.setRequestFocusEnabled(false);
-        removeFromListButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        removeFromListButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 removeFromListButtonActionPerformed(evt);
             }
         });
 
         downloadScrollPane.getVerticalScrollBar().setUI(SquidScrollBarUI.createUI(downloadScrollPane, orangeArrowSouth, orangeArrowNorth, new ColorUIResource(243,156,18)));
-        downloadScrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        downloadScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         downloadScrollPane.setOpaque(false);
 
         downloadTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(downloadTable.getTableHeader().getDefaultRenderer(), new Color(243, 156, 18)));
         downloadTable.setAutoCreateRowSorter(true);
-        downloadTable.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
+        downloadTable.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
         downloadTable.setModel(new DownloadTableModel());
-        downloadTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        downloadTable.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         downloadTable.setFillsViewportHeight(true);
-        downloadTable.setGridColor(new java.awt.Color(204, 204, 204));
-        downloadTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
+        downloadTable.setGridColor(new Color(204, 204, 204));
+        downloadTable.setIntercellSpacing(new Dimension(0, 0));
         downloadTable.setRowHeight(20);
-        downloadTable.setSelectionBackground(new java.awt.Color(243, 156, 18));
+        downloadTable.setSelectionBackground(new Color(243, 156, 18));
         downloadTable.setShowHorizontalLines(false);
         downloadTable.setShowVerticalLines(false);
         downloadTable.getTableHeader().setReorderingAllowed(false);
@@ -601,111 +607,111 @@ public class Flat extends GUI {
         selectComboBoxModel.addElement(Main.getLocaleString("ALL"));
         selectComboBoxModel.addElement(Main.getLocaleString("COMPLETED"));
         selectComboBoxModel.addElement(Main.getLocaleString("FAILED"));
-        selectComboBox.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        selectComboBox.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(243, 156, 18)), javax.swing.BorderFactory.createMatteBorder(0, 5, 0, 0, new java.awt.Color(255, 255, 255))));
+        selectComboBox.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        selectComboBox.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(243, 156, 18)), BorderFactory.createMatteBorder(0, 5, 0, 0, new Color(255, 255, 255))));
         selectComboBox.setFocusable(false);
-        selectComboBox.setPreferredSize(new java.awt.Dimension(74, 26));
+        selectComboBox.setPreferredSize(new Dimension(74, 26));
         selectComboBox.setRequestFocusEnabled(false);
-        selectComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        selectComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 selectComboBoxActionPerformed(evt);
             }
         });
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(243, 156, 18)));
+        jPanel2.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(243, 156, 18)));
         jPanel2.setOpaque(false);
 
-        jLabel2.setBackground(new java.awt.Color(243, 156, 18));
-        jLabel2.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setBackground(new Color(243, 156, 18));
+        jLabel2.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        jLabel2.setForeground(new Color(255, 255, 255));
         jLabel2.setText(Main.getLocaleString("DOWNLOADS").toUpperCase());
-        jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        jLabel2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         jLabel2.setOpaque(true);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel2, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
         );
 
         retryFailedDownloadsButton.setIcon(Utils.stretchImage(orangeButton, 151, 27, this));
         retryFailedDownloadsButton.setRolloverIcon(Utils.stretchImage(orangeButtonHover, 151, 27, this));
         retryFailedDownloadsButton.setPressedIcon(Utils.stretchImage(orangeButtonPressed, 151, 27, this));
-        retryFailedDownloadsButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        retryFailedDownloadsButton.setForeground(new java.awt.Color(255, 255, 255));
+        retryFailedDownloadsButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        retryFailedDownloadsButton.setForeground(new Color(255, 255, 255));
         retryFailedDownloadsButton.setText(Main.getLocaleString("RETRY_FAILED_DOWNLOADS"));
         retryFailedDownloadsButton.setBorder(null);
         retryFailedDownloadsButton.setBorderPainted(false);
         retryFailedDownloadsButton.setContentAreaFilled(false);
-        retryFailedDownloadsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        retryFailedDownloadsButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         retryFailedDownloadsButton.setFocusable(false);
-        retryFailedDownloadsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        retryFailedDownloadsButton.setHorizontalTextPosition(SwingConstants.CENTER);
         retryFailedDownloadsButton.setRequestFocusEnabled(false);
-        retryFailedDownloadsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        retryFailedDownloadsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 retryFailedDownloadsButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout downloadPanelLayout = new javax.swing.GroupLayout(downloadPanel);
+        GroupLayout downloadPanelLayout = new GroupLayout(downloadPanel);
         downloadPanel.setLayout(downloadPanelLayout);
         downloadPanelLayout.setHorizontalGroup(
-            downloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(downloadPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(downloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(downloadPanelLayout.createSequentialGroup()
-                        .addComponent(removeFromListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeFromDiskButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(retryFailedDownloadsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(selectComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(downloadScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
+                            .addComponent(removeFromListButton, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(removeFromDiskButton, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(retryFailedDownloadsButton, GroupLayout.PREFERRED_SIZE, 193, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(selectComboBox, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE))
+                            .addComponent(downloadScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
                 .addContainerGap())
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         downloadPanelLayout.setVerticalGroup(
-            downloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(downloadPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(downloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(selectComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
-                    .addGroup(downloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(removeFromListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(removeFromDiskButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(retryFailedDownloadsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(downloadScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(selectComboBox, GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+                            .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(removeFromListButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(removeFromDiskButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(retryFailedDownloadsButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(downloadScrollPane, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         splitPane.setBottomComponent(downloadPanel);
 
-        jPanel1.setBackground(new java.awt.Color(230, 230, 230));
-        jPanel1.setPreferredSize(new java.awt.Dimension(892, 44));
+        jPanel1.setBackground(new Color(230, 230, 230));
+        jPanel1.setPreferredSize(new Dimension(892, 44));
 
-        titleBarPanel.setBackground(new java.awt.Color(255, 255, 255));
-        titleBarPanel.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(198, 2, 196)));
-        titleBarPanel.setPreferredSize(new java.awt.Dimension(0, 24));
+        titleBarPanel.setBackground(new Color(255, 255, 255));
+        titleBarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(198, 2, 196)));
+        titleBarPanel.setPreferredSize(new Dimension(0, 24));
 
         closeButton.setIcon(closeButtonImage);
         closeButton.setRolloverIcon(closeButtonHoverImage);
         closeButton.setBorderPainted(false);
         closeButton.setContentAreaFilled(false);
         closeButton.setFocusPainted(false);
-        closeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        closeButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 closeButtonMouseClicked(evt);
             }
         });
@@ -715,8 +721,8 @@ public class Flat extends GUI {
         minimizeButton.setBorderPainted(false);
         minimizeButton.setContentAreaFilled(false);
         minimizeButton.setFocusPainted(false);
-        minimizeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        minimizeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 minimizeButtonActionPerformed(evt);
             }
         });
@@ -726,144 +732,144 @@ public class Flat extends GUI {
         maximizeButton.setBorderPainted(false);
         maximizeButton.setContentAreaFilled(false);
         maximizeButton.setFocusPainted(false);
-        maximizeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        maximizeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 maximizeButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout titleBarPanelLayout = new javax.swing.GroupLayout(titleBarPanel);
+        GroupLayout titleBarPanelLayout = new GroupLayout(titleBarPanel);
         titleBarPanel.setLayout(titleBarPanelLayout);
         titleBarPanelLayout.setHorizontalGroup(
-            titleBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                titleBarPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(titleBarPanelLayout.createSequentialGroup()
-                .addComponent(titleBarLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(minimizeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(maximizeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleBarLabel, GroupLayout.PREFERRED_SIZE, 159, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(minimizeButton, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(maximizeButton, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(closeButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         titleBarPanelLayout.setVerticalGroup(
-            titleBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(titleBarLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-            .addComponent(maximizeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(minimizeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                titleBarPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(titleBarLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(closeButton, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                        .addComponent(maximizeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(minimizeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        aboutButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
+        aboutButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
         aboutButton.setText(Main.getLocaleString("ABOUT"));
-        aboutButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        aboutButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         aboutButton.setBorderPainted(false);
         aboutButton.setContentAreaFilled(false);
-        aboutButton.setMargin(new java.awt.Insets(0, 14, 2, 14));
-        aboutButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        aboutButton.setMargin(new Insets(0, 14, 2, 14));
+        aboutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 aboutButtonActionPerformed(evt);
             }
         });
 
-        settingsButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
+        settingsButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
         settingsButton.setText(Main.getLocaleString("SETTINGS"));
-        settingsButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        settingsButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         settingsButton.setBorderPainted(false);
         settingsButton.setContentAreaFilled(false);
-        settingsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        settingsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 settingsButtonActionPerformed(evt);
             }
         });
 
         twitterLabel.setIcon(Utils.stretchImage(twitterIcon, 12, 12, this));
         twitterLabel.setToolTipText("http://twitter.com/groovesquid");
-        twitterLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        twitterLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
                 facebookLabelMousePressed(evt);
             }
         });
 
         facebookLabel.setIcon(Utils.stretchImage(facebookIcon, 12, 12, this));
         facebookLabel.setToolTipText("http://facebook.com/groovesquid");
-        facebookLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        facebookLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
                 facebookLabelMousePressed(evt);
             }
         });
 
-        donateLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        donateLabel.setText("Donate");
-        donateLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        donateLabel.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        donateLabel.setText(Main.getLocaleString("DONATE"));
+        donateLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
                 donateLabelMousePressed(evt);
             }
         });
 
-        batchButton.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
-        batchButton.setText("Batch");
-        batchButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        batchButton.setFont(new Font("Lucida Grande", 0, 11)); // NOI18N
+        batchButton.setText(Main.getLocaleString("BATCH"));
+        batchButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         batchButton.setBorderPainted(false);
         batchButton.setContentAreaFilled(false);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(titleBarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
+                jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(titleBarPanel, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(aboutButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(settingsButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(batchButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(donateLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(facebookLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(twitterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(facebookLabel, GroupLayout.PREFERRED_SIZE, 12, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(twitterLabel, GroupLayout.PREFERRED_SIZE, 12, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(titleBarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(facebookLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(donateLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(aboutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(twitterLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(settingsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(titleBarPanel, GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(facebookLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(donateLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(aboutButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(twitterLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(settingsButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(batchButton))))
         );
 
-        batchButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        batchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 batchButtonActionPerformed(evt);
             }
         });
 
-        adScrollPane.setBackground(new java.awt.Color(204, 204, 204));
+        adScrollPane.setBackground(new Color(204, 204, 204));
         adScrollPane.setBorder(null);
-        adScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        adScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        adScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        adScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         adScrollPane.setOpaque(false);
         adScrollPane.setRequestFocusEnabled(false);
 
         adPane.setEditable(false);
-        adPane.setBackground(new java.awt.Color(204, 204, 204));
+        adPane.setBackground(new Color(204, 204, 204));
         adPane.setBorder(null);
         adPane.setContentType("text/html"); // NOI18N
         adPane.setAlignmentY(JComponent.CENTER_ALIGNMENT);
-        adPane.setMaximumSize(new java.awt.Dimension(160, 600));
-        adPane.setMinimumSize(new java.awt.Dimension(160, 600));
+        adPane.setMaximumSize(new Dimension(160, 600));
+        adPane.setMinimumSize(new Dimension(160, 600));
         adPane.setOpaque(false);
-        adPane.setPreferredSize(new java.awt.Dimension(160, 600));
-        adPane.setSize(new java.awt.Dimension(160, 600));
+        adPane.setPreferredSize(new Dimension(160, 600));
+        adPane.setSize(new Dimension(160, 600));
         adScrollPane.setViewportView(adPane);
         new GetAdsThread(adPane).start();
 
@@ -881,29 +887,29 @@ public class Flat extends GUI {
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(playerPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(playerPanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
+                        .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(splitPane)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(adScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(splitPane)
-                    .addComponent(adScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(playerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(playerPanel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
         );
 
         adScrollPane.getViewport().setOpaque(false);

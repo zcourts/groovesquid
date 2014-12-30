@@ -9,20 +9,22 @@
  * 
  */
 
-package gui;
+package com.groovesquid.gui;
 
 import com.groovesquid.Main;
 import com.groovesquid.model.Song;
 import com.groovesquid.model.Track;
-import com.groovesquid.service.Services;
+
+import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author Maino
  */
+
+@SuppressWarnings("serial")
 public class DownloadTableModel extends AbstractTableModel {
     
     private String[] columnNames = { Main.getLocaleString("SONG"), Main.getLocaleString("ARTIST"), Main.getLocaleString("ALBUM"), Main.getLocaleString("PATH"), Main.getLocaleString("DATE"), Main.getLocaleString("PROGRESS") };
@@ -34,8 +36,8 @@ public class DownloadTableModel extends AbstractTableModel {
     }
     
     public DownloadTableModel(List<Song> songs) {
-        for (Song song : songs) { 
-            Track track = Services.getDownloadService().download(song);
+        for (Song song : songs) {
+            Track track = Main.getDownloadService().download(song);
             songDownloads.add(track);
             fireTableDataChanged();
         }

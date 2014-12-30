@@ -1,22 +1,19 @@
-package gui;
+package com.groovesquid.gui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  *
- * @author Marius Gebhardt
+ * @author Marius
  */
+
+@SuppressWarnings("serial")
 public class SquidTable extends JTable {
     
     public SquidTable() {

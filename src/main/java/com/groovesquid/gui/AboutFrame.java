@@ -2,33 +2,35 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui;
+package com.groovesquid.gui;
 
 import com.groovesquid.Main;
-import java.awt.Desktop;
-import java.awt.Toolkit;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
 
 /**
  *
  * @author Marius
  */
-public class About extends javax.swing.JFrame {
+
+@SuppressWarnings({"serial", "rawtypes"})
+public class AboutFrame extends JFrame {
 
     /**
      * Creates new form About
      */
-    public About() {
+    public AboutFrame() {
         initComponents();
         
         // center screen
         setLocationRelativeTo(null);
         
         // icon
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/gui/icon.png")));
         
         versionLabel.setText("Version " + Main.getVersion());
     }
@@ -199,7 +201,7 @@ public class About extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getText()));
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_websiteLabelMousePressed
 
@@ -207,7 +209,7 @@ public class About extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getText()));
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_facebookLabelwebsiteLabelMousePressed
 
@@ -215,7 +217,7 @@ public class About extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getText()));
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_twitterLabelwebsiteLabelMousePressed
 
@@ -227,7 +229,7 @@ public class About extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getText()));
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_lekoLabelMousePressed
 

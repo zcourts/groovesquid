@@ -1,20 +1,37 @@
-package gui;
+package com.groovesquid.gui;
 
 import com.groovesquid.model.Track;
-import java.awt.Color;
-import java.awt.Component;
-import javax.swing.JProgressBar;
-import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
 
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicProgressBarUI;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 
-public class ProgressCellRenderer extends JProgressBar implements TableCellRenderer {
+@SuppressWarnings("serial")
+public class ProgressCellRenderer extends DefaultTableCellRenderer {
+
+    private final JPanel panel;
+    private final JProgressBar b;
+    
     public ProgressCellRenderer() {
-        super(0, 100);
-        setValue(0);
-        setString("");
-        setStringPainted(true);
-        setOpaque(false);
+        super();
+        setOpaque(true);
+        b = new JProgressBar();
+
+        b.setStringPainted(true);
+        b.setMinimum(0);
+        b.setMaximum(100);
+
+        b.setBorderPainted(true);
+        b.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        //b.setPreferredSize(new Dimension(1,1));
+        b.setOpaque(true);
+
+        b.setUI(new BasicProgressBarUI());
+
+        panel = new JPanel(new BorderLayout());
+        panel.add(b, BorderLayout.CENTER);
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     }
 
     @Override
@@ -70,25 +87,24 @@ public class ProgressCellRenderer extends JProgressBar implements TableCellRende
                 }
             }
         }
-        
-        this.setValue((Integer)value);
-        this.setString(text);
 
+        b.setValue((Integer) value);
+        b.setString(text);
+        b.setFont(table.getFont());
+        
         if (isSelected) {
-            setBackground(table.getSelectionBackground());
+            b.setForeground(new Color(255, 255, 255));
+            b.setBackground(table.getSelectionBackground());
         } else {
+            b.setForeground(new Color(243, 156, 18));
             if (row % 2 == 0) {
-                setBackground(new Color(242,242,242));
+                b.setBackground(new Color(242, 242, 242));
             } else {
-                setBackground(new Color(230,230,230));
+                b.setBackground(new Color(230, 230, 230));
             }
         }
-        
-        setOpaque(true);
-        setBorderPainted(false);
-        setForeground(new Color(243,156,18));
-        setFont(table.getFont());
-        
-        return this;
+
+        return panel;
     }
+
 }

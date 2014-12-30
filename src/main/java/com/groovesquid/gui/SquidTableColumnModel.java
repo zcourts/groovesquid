@@ -1,19 +1,19 @@
-package gui;
+package com.groovesquid.gui;
 
 import com.groovesquid.Main;
 import com.groovesquid.model.Song;
-import com.groovesquid.service.Services;
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JTable;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
+import java.awt.event.ActionEvent;
 
 /**
  *
- * @author Marius Gebhardt
+ * @author Marius
  */
+
+@SuppressWarnings("serial")
 public class SquidTableColumnModel extends DefaultTableColumnModel {
 
     private JTable table;
@@ -32,10 +32,10 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                 Action download = new AbstractAction() {
                     public void actionPerformed(ActionEvent e) { 
                         int modelRow = Integer.valueOf( e.getActionCommand() );
-                        DownloadTableModel downloadTableModel = (DownloadTableModel) Main.getGui().getDownloadTable().getModel();
-                        SongSearchTableModel songSearchTableModel = (SongSearchTableModel) Main.getGui().getSearchTable().getModel();
+                        DownloadTableModel downloadTableModel = (DownloadTableModel) Main.getMainFrame().getDownloadTable().getModel();
+                        SongSearchTableModel songSearchTableModel = (SongSearchTableModel) Main.getMainFrame().getSearchTable().getModel();
                         Song song = songSearchTableModel.getSongs().get(modelRow);
-                        downloadTableModel.addRow(0, Services.getDownloadService().download(song, Main.getGui().getDownloadListener(downloadTableModel)));
+                        downloadTableModel.addRow(0, Main.getDownloadService().download(song, Main.getMainFrame().getDownloadListener(downloadTableModel)));
                     } 
                 };
                 SquidButtonEditor buttonColumn = new SquidButtonEditor(table, download);

@@ -3,17 +3,20 @@
  * 
  */
 
-package gui;
+package com.groovesquid.gui;
 
 import com.groovesquid.Main;
 import com.groovesquid.model.Song;
+
+import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 /**
  *
  * @author Maino
  */
+
+@SuppressWarnings("serial")
 public class SongSearchTableModel extends AbstractTableModel {
 
     private final String[] columnNames = { "", Main.getLocaleString("SONG"), Main.getLocaleString("ARTIST"), Main.getLocaleString("ALBUM"), Main.getLocaleString("DURATION"), Main.getLocaleString("YEAR") };

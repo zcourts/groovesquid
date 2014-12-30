@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package gui;
+package com.groovesquid.gui;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  *  This class allows you to move a Component by using a mouse. The Component
@@ -34,7 +34,7 @@ public class ComponentMover extends MouseAdapter
 	private boolean changeCursor = true;
 	private boolean autoLayout = false;
 
-	private Class destinationClass;
+	private Class<?> destinationClass;
 	private Component destinationComponent;
 	private Component destination;
 	private Component source;
@@ -64,7 +64,7 @@ public class ComponentMover extends MouseAdapter
 	 *  @param components        the Components to be registered for forwarding
 	 *                           drag events to the ancestor Component.
 	 */
-	public ComponentMover(Class destinationClass, Component... components)
+	public ComponentMover(Class<?> destinationClass, Component... components)
 	{
 		this.destinationClass = destinationClass;
 		registerComponent( components );

@@ -4,13 +4,14 @@
  * and open the template in the editor.
  */
 
-package gui;
+package com.groovesquid.gui;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *  The ComponentResizer allows you to resize a component by dragging a border
