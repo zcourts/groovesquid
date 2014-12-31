@@ -29,7 +29,8 @@ public class SettingsFrame extends JFrame {
 
     private String originalDownloadDirectory, originalMaxParallelDownloads, originalFileNameScheme, originalProxyHost, originalProxyPort;
     private boolean originalAutocompleteEnabled;
-    private int originalDownloadComplete, originalLocale;
+    private int originalDownloadComplete;
+    private Locale originalLocale;
     
     /**
      * Creates new form Settings
@@ -295,7 +296,6 @@ public class SettingsFrame extends JFrame {
         resetSettings();
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox autocompleteEnabledCheckBox;
     private javax.swing.JComboBox downloadCompleteComboBox;
     private javax.swing.JButton downloadDirectoryButton;
@@ -319,7 +319,6 @@ public class SettingsFrame extends JFrame {
     private javax.swing.JButton reconnectButton;
     private javax.swing.JButton resetOriginalSettingsButton;
     private javax.swing.JButton saveSettingsButton;
-    // End of variables declaration//GEN-END:variables
 
     public boolean saveSettings() {
         if(checkSettings()) {
@@ -355,7 +354,7 @@ public class SettingsFrame extends JFrame {
     }
     
     public boolean settingsChanged() {
-        return !originalDownloadDirectory.equals(downloadDirectoryTextField.getText()) || !originalMaxParallelDownloads.equals(maxParallelDownloadsSpinner.getValue().toString()) || !originalFileNameScheme.equals(fileNameSchemeTextField.getText()) || originalAutocompleteEnabled != autocompleteEnabledCheckBox.isSelected() || originalDownloadComplete != downloadCompleteComboBox.getSelectedIndex() || originalLocale != languageComboBox.getSelectedIndex() && !originalProxyHost.equals(proxyHostTextField.getText()) && !originalProxyPort.equals(proxyPortTextField.getText());
+        return !originalDownloadDirectory.equals(downloadDirectoryTextField.getText()) || !originalMaxParallelDownloads.equals(maxParallelDownloadsSpinner.getValue().toString()) || !originalFileNameScheme.equals(fileNameSchemeTextField.getText()) || originalAutocompleteEnabled != autocompleteEnabledCheckBox.isSelected() || originalDownloadComplete != downloadCompleteComboBox.getSelectedIndex() || originalLocale != languageComboBox.getSelectedItem() && !originalProxyHost.equals(proxyHostTextField.getText()) && !originalProxyPort.equals(proxyPortTextField.getText());
     }
     
     public boolean checkSettings() {
@@ -419,7 +418,7 @@ public class SettingsFrame extends JFrame {
         originalFileNameScheme = fileNameSchemeTextField.getText();
         originalAutocompleteEnabled = autocompleteEnabledCheckBox.isSelected();
         originalDownloadComplete = downloadCompleteComboBox.getSelectedIndex();
-        originalLocale = languageComboBox.getSelectedIndex();
+        originalLocale = (Locale) languageComboBox.getSelectedItem();
         originalProxyHost = proxyHostTextField.getText();
         originalProxyPort = proxyPortTextField.getText();
     }
