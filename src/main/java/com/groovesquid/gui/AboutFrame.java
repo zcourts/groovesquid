@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.groovesquid.gui;
 
 import com.groovesquid.Main;
@@ -11,11 +7,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-/**
- *
- * @author Marius
- */
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class AboutFrame extends JFrame {

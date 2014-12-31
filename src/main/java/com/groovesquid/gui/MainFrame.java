@@ -23,12 +23,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-/**
- *
- * @author Maino
- */
-
 @SuppressWarnings({"serial", "rawtypes"})
 public class MainFrame extends JFrame {
     

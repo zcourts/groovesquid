@@ -2,10 +2,6 @@ package com.groovesquid.model;
 
 import java.util.HashMap;
 
-/**
- *
- * @author Maino
- */
 public class JsonRequest {
     private HashMap<String, Object> header;
     private HashMap<String, Object> parameters;

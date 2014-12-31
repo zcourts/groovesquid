@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.groovesquid.gui;
 
 import com.groovesquid.Config;
@@ -18,11 +14,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Locale;
-
-/**
- *
- * @author marius
- */
 
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class SettingsFrame extends JFrame {

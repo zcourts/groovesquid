@@ -1,8 +1,3 @@
-/*
- * Copyright (C) 2013 Marius Gebhardt
- * 
- */
-
 package com.groovesquid.gui;
 
 import com.groovesquid.Main;
@@ -11,10 +6,6 @@ import com.groovesquid.model.Song;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-/**
- *
- * @author Maino
- */
 
 @SuppressWarnings("serial")
 public class SongSearchTableModel extends AbstractTableModel {

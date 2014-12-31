@@ -8,11 +8,6 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 
-/**
- *
- * @author Marius
- */
-
 @SuppressWarnings("serial")
 public class SquidTableColumnModel extends DefaultTableColumnModel {
 

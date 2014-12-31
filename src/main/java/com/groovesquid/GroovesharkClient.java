@@ -1,14 +1,3 @@
-/*
- * Copyright (C) 2013 Maino
- * 
- * This work is licensed under the Creative Commons
- * Attribution-NonCommercial-NoDerivs 3.0 Unported License. To view a copy of
- * this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/ or send
- * a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco,
- * California, 94105, USA.
- * 
- */
-
 package com.groovesquid;
 
 import com.google.gson.Gson;
@@ -35,10 +24,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Maino
- */
 public class GroovesharkClient {
     
     private final static Logger log = Logger.getLogger(Main.class.getName());

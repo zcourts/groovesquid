@@ -1,9 +1,5 @@
 package com.groovesquid.model;
 
-/**
- *
- * @author Maino
- */
 public class Artist {
     private String id;
     private String name;

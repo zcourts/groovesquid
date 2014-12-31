@@ -35,11 +35,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- *
- * @author Maino
- */
-
 @SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class SearchService {
 

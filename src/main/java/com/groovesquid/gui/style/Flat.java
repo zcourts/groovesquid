@@ -22,12 +22,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-/**
- *
- * @author Maino
- */
-
 @SuppressWarnings({"serial", "rawtypes"})
 public class Flat extends MainFrame {
 
