@@ -1,21 +1,13 @@
-// Simple build script information
-buildscript {
-    repositories {
-        maven { url "http://jcenter.bintray.com" }
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
-    }
-}
-
 // Tasks to perform when no task is specified
 defaultTasks 'clean', 'build', 'shadowJar'
 
 // Plugins used
-apply plugin: 'java' // Specifies a java project, allows for javadoc generation etc.
-apply plugin: 'application' // Adds the 'gradle run' task
+apply plugin: 'java' // Specifies a java project
+apply plugin: 'application' // Adds the 'run' task
 apply plugin: 'project-report' // Adds project report tasks
-apply plugin: 'shadow' // Allows for dependency shading
+apply plugin: 'eclipse' // Adds eclipse project tasks
+apply plugin: 'idea' // Adds idea project tasks
+apply plugin: 'com.github.johnrengelman.shadow' // Provides dependency shading
 
 // Methods to determine detailed version string
 def gitDescribe() {
@@ -31,6 +23,7 @@ def gitDescribe() {
         return "unknown"
     }
 }
+
 def getVersionName() {
     try {
         // determine git-describe output
@@ -67,11 +60,19 @@ ext.gitDescribe = getVersionName()
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
-// Source compiler configuration
-configure([compileJava, compileTestJava]) {
-    options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
-    options.deprecation = true
-    options.encoding = 'utf8'
+// Compile encoding
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+// Simple build script information
+buildscript {
+    repositories {
+        maven { url "http://jcenter.bintray.com" }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.2'
+    }
 }
 
 // Configuration settings to check for new snapshots
@@ -98,9 +99,11 @@ dependencies {
     testCompile 'junit:junit:4.11'
 }
 
-// Shadow plugin settings
-shadow {
-    artifactAttached = false
+// Eclipse project name
+eclipse {
+    project {
+        name = 'Groovesquid'
+    }
 }
 
 // Jar manifest information
@@ -108,9 +111,3 @@ jar.manifest.mainAttributes(
         'Main-Class': mainClassName,
         'Sealed': true
 )
-
-// Exclude jar signatures
-shadow {
-    exclude 'META-INF/*.DSA'
-    exclude 'META-INF/*.RSA'
-}
