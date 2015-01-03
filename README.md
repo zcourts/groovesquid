@@ -1,4 +1,4 @@
-# Groovesquid [![Build Status](https://api.travis-ci.org/groovesquid/groovesquid.png)](https://travis-ci.org/groovesquid/groovesquid/) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/groovesquid/localized.png)](https://crowdin.com/project/groovesquid)
+# Groovesquid [![Build Status](https://api.travis-ci.org/groovesquid/groovesquid.svg)](https://travis-ci.org/groovesquid/groovesquid/) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/groovesquid/localized.png)](https://crowdin.com/project/groovesquid)
 
 Instantly search, find and download over 15 million MP3s anonymously from Grooveshark with Groovesquid!
 
