@@ -1,34 +1,47 @@
 package com.groovesquid.model;
 
+import com.groovesquid.Config;
+import com.groovesquid.Main;
 import com.groovesquid.util.Utils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import org.apache.commons.io.FilenameUtils;
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagConstant;
 import org.farng.mp3.TagException;
 import org.farng.mp3.TagOptionSingleton;
 import org.farng.mp3.id3.*;
 
+import java.io.*;
+
 public class FileStore implements Store {
 
     private static final Log log = LogFactory.getLog(FileStore.class);
     private static final Object directoryDeleteLock = new Object();
 
-    private final File file;
+    private File file;
     private final File downloadDir;
 
-    public FileStore(File file, File downloadDir) {
-        this.file = file;
+    public FileStore(String fileName, File downloadDir) {
+        // remove special characters
+        fileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+
+        this.file = new File(downloadDir, fileName);
         this.downloadDir = downloadDir;
+
+        if (file.exists()) {
+            if (Main.getConfig().getFileExists() == Config.FileExists.RENAME.ordinal()) {
+                int i = 1;
+                fileName = FilenameUtils.removeExtension(file.getAbsolutePath());
+                while (file.exists()) {
+                    file = new File(downloadDir, fileName + "_" + i + ".mp3");
+                    if (i >= 10) {
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }
     }
 
     public OutputStream getOutputStream() throws IOException {
