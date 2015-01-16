@@ -8,6 +8,18 @@ import java.util.Date;
 
 public class Track {
 
+    private final Song song;
+    private transient Store store;
+    private long totalBytes;
+    private long downloadedBytes;
+    private Status status;
+    private Date date;
+    private String path;
+    private Long startDownloadTime;
+    private Long stopDownloadTime;
+    private Double downloadRate;
+    private String downloadUrl, streamKey, streamServerID;
+
     public static enum Status {
         QUEUED, INITIALIZING, DOWNLOADING, FINISHED, CANCELLED, ERROR;
 
@@ -23,18 +35,7 @@ public class Track {
             return this == DOWNLOADING;
         }
     }
-    
-    private final Song song;
-    private transient Store store;
-    private long totalBytes;
-    private long downloadedBytes;
-    private Status status;
-    private Date date;
-    private String path;
-    private Long startDownloadTime;
-    private Long stopDownloadTime;
-    private Double downloadRate;
-    
+
     public Track(Song song, Store store) {
         this.song = song;
         this.store = store;
@@ -147,5 +148,29 @@ public class Track {
             downloadRate = 0.0D;
         return downloadRate;
     }
-    
+
+    public String getStreamKey() {
+        return streamKey;
+    }
+
+    public void setStreamKey(String streamKey) {
+        this.streamKey = streamKey;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    public String getStreamServerID() {
+        return streamServerID;
+    }
+
+    public void setStreamServerID(String streamServerID) {
+        this.streamServerID = streamServerID;
+    }
+
 }

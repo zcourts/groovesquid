@@ -1,12 +1,9 @@
 package com.groovesquid.service;
 
 import com.google.gson.Gson;
-import com.groovesquid.Config.FileExists;
-import com.groovesquid.GroovesharkClient;
 import com.groovesquid.Main;
 import com.groovesquid.model.*;
 import com.groovesquid.util.Utils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
@@ -58,29 +55,8 @@ public class DownloadService {
 
     public synchronized Track download(Song song, DownloadListener downloadListener) {
         File downloadDir = new File(Main.getConfig().getDownloadDirectory());
-        File file = new File(downloadDir, filenameSchemeParser.parse(song, Main.getConfig().getFileNameScheme()));
-        
-        if(file.exists()) {
-            if(Main.getConfig().getFileExists() == FileExists.OVERWRITE.ordinal()) {
-                
-                
-            } else if(Main.getConfig().getFileExists() == FileExists.RENAME.ordinal()) {
-                int i = 1;
-                String fileName = FilenameUtils.removeExtension(file.getAbsolutePath());
-                while(file.exists()) {
-                    file = new File(fileName + "_" + i + ".mp3");
-                    if(i >= 10) {
-                        break;
-                    }
-                    i++;
-                }
-                
-            } else if(Main.getConfig().getFileExists() == FileExists.DO_NOTHING.ordinal()) {
-                
-            }
-        }
-        
-        Store store = new FileStore(file, downloadDir);
+        String fileName = filenameSchemeParser.parse(song, Main.getConfig().getFileNameScheme());
+        Store store = new FileStore(fileName, downloadDir);
         return download(song, store, downloadListener, false);
     }
 
@@ -135,7 +111,7 @@ public class DownloadService {
             if (deleteStore) {
                 if(downloadTask.track.getStore() == null) {
                     File downloadDir = new File(Main.getConfig().getDownloadDirectory());
-                    Store store = new FileStore(new File(downloadTask.track.getPath()), downloadDir);
+                    Store store = new FileStore(downloadTask.track.getPath(), downloadDir);
                     downloadTask.track.setStore(store);
                 }
                 downloadTask.track.getStore().deleteStore();
@@ -218,8 +194,8 @@ public class DownloadService {
                 
                 Gson gson = new Gson();
 
-                Response response = gson.fromJson(GroovesharkClient.sendRequest("getStreamKeyFromSongIDEx", new HashMap() {{
-                    put("country", GroovesharkClient.getCountry());
+                Response response = gson.fromJson(Main.getGroovesharkClient().sendRequest("getStreamKeyFromSongIDEx", new HashMap() {{
+                    put("country", Main.getGroovesharkClient().getCountry());
                     put("mobile", "false");
                     put("prefetch", "false");
                     put("songID", track.getSong().getId());
@@ -232,9 +208,9 @@ public class DownloadService {
 
                 HashMap<String, Object> result = response.getResult();
 
-                String downloadUrl = "http://" + result.get("ip").toString() + "/stream.php";
-                final String streamKey = result.get("streamKey").toString();
-                final String streamServerID = result.get("streamServerID").toString();
+                track.setDownloadUrl("http://" + result.get("ip").toString() + "/stream.php");
+                track.setStreamKey(result.get("streamKey").toString());
+                track.setStreamServerID(result.get("streamServerID").toString());
                 long uSecs = Long.valueOf(result.get("uSecs").toString());
 
                 track.setStatus(Track.Status.DOWNLOADING);
@@ -243,16 +219,16 @@ public class DownloadService {
                     track.getSong().setDuration(uSecs / 1000000.0);
                 }
                 fireDownloadStatusChanged();
-                
-                download(downloadUrl, streamKey);
+
+                download(track);
                 track.setStatus(Track.Status.FINISHED);
                 fireDownloadStatusChanged();
                 log.info("finished download track " + track);
 
-                HashMap<String, Object> result2 = gson.fromJson(GroovesharkClient.sendRequest("markSongDownloadedEx", new HashMap() {{
+                HashMap<String, Object> result2 = gson.fromJson(Main.getGroovesharkClient().sendRequest("markSongDownloadedEx", new HashMap() {{
                     put("songID", track.getSong().getId());
-                    put("streamKey", streamKey);
-                    put("streamServerID", streamServerID);
+                    put("streamKey", track.getStreamKey());
+                    put("streamServerID", track.getStreamServerID());
                 }}), Response.class).getResult();
                 if(!result2.get("Return").toString().equalsIgnoreCase("true")) {
                     log.severe("markSongDownloadedEx did not return true");
@@ -290,11 +266,11 @@ public class DownloadService {
             return false;
         }
 
-        private void download(String url, String streamKey) throws IOException {
-            httpPost = new HttpPost(url);
+        private void download(Track track) throws IOException {
+            httpPost = new HttpPost(track.getDownloadUrl());
             httpPost.setHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded");
             httpPost.setHeader(HTTP.CONN_KEEP_ALIVE, "300");
-            httpPost.setEntity(new StringEntity("streamKey=" + streamKey));
+            httpPost.setEntity(new StringEntity("streamKey=" + track.getStreamKey()));
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
             if(Main.getConfig().getProxyHost() != null && Main.getConfig().getProxyPort() != null) {
                 httpClientBuilder.setProxy(new HttpHost(Main.getConfig().getProxyHost(), Main.getConfig().getProxyPort()));
@@ -323,8 +299,7 @@ public class DownloadService {
                     // write ID tags
                     store.writeTrackInfo(track);
                 } else {
-                    throw new HttpResponseException(statusCode,
-                        format("%s: %d %s", url, statusCode, statusLine.getReasonPhrase()));
+                    throw new HttpResponseException(statusCode, format("%s: %d %s", track.getDownloadUrl(), statusCode, statusLine.getReasonPhrase()));
                 }
             } finally {
                 close(httpEntity);

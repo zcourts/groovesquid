@@ -32,8 +32,9 @@ public class UpdateCheckThread extends Thread {
     @Override
     public void run() {
         UpdateCheck updateCheck = gson.fromJson(getFile(updateFile), UpdateCheck.class);
-        if(updateCheck.getClients() != null)
-            GroovesharkClient.setClients(updateCheck.getClients());
+        if (updateCheck.getClients() != null) {
+            Main.getConfig().setClients(updateCheck.getClients());
+        }
         
         if(Utils.compareVersions(updateCheck.getVersion(), Main.getVersion()) > 0) {
             if(JOptionPane.showConfirmDialog(null, "New version (v" + updateCheck.getVersion() + ") is available! Do you want to download the new version (recommended)?", "New version", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
@@ -52,7 +53,7 @@ public class UpdateCheckThread extends Thread {
         try {
             HttpGet httpGet = new HttpGet(url);
             httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
-            httpGet.setHeader(HTTP.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            httpGet.setHeader(HTTP.USER_AGENT, "Groovesquid v" + Main.getVersion());
             
             HttpClient httpClient = HttpClientBuilder.create().build();
             HttpResponse httpResponse = httpClient.execute(httpGet);
