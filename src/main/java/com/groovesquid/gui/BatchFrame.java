@@ -6,6 +6,7 @@ package com.groovesquid.gui;
 
 import com.groovesquid.Main;
 import com.groovesquid.model.Song;
+import com.groovesquid.util.I18n;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,7 +44,7 @@ public class BatchFrame extends JFrame {
         setTitle("Batch");
         setResizable(false);
 
-        downloadButton.setText(Main.getLocaleString("DOWNLOAD"));
+        downloadButton.setText(I18n.getLocaleString("DOWNLOAD"));
         downloadButton.setFocusable(false);
         downloadButton.setRequestFocusEnabled(false);
         downloadButton.addActionListener(new java.awt.event.ActionListener() {
@@ -56,7 +57,7 @@ public class BatchFrame extends JFrame {
         searchTextArea.setRows(5);
         jScrollPane1.setViewportView(searchTextArea);
 
-        jLabel1.setText(Main.getLocaleString("ONE_SEARCH_TERM_PER_LINE"));
+        jLabel1.setText(I18n.getLocaleString("ONE_SEARCH_TERM_PER_LINE"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

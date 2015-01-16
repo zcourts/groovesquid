@@ -1,9 +1,9 @@
 package com.groovesquid.gui;
 
+import com.groovesquid.Main;
 import com.groovesquid.model.Track;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicProgressBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
@@ -24,10 +24,9 @@ public class ProgressCellRenderer extends DefaultTableCellRenderer {
 
         b.setBorderPainted(true);
         b.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        //b.setPreferredSize(new Dimension(1,1));
-        b.setOpaque(true);
+        b.setOpaque(false);
 
-        b.setUI(new BasicProgressBarUI());
+        b.setUI(Main.getStyle().getProgressBarUI(b));
 
         panel = new JPanel(new BorderLayout());
         panel.add(b, BorderLayout.CENTER);
@@ -93,10 +92,10 @@ public class ProgressCellRenderer extends DefaultTableCellRenderer {
         b.setFont(table.getFont());
         
         if (isSelected) {
-            b.setForeground(new Color(255, 255, 255));
+            b.setForeground(table.getSelectionForeground());
             b.setBackground(table.getSelectionBackground());
         } else {
-            b.setForeground(new Color(243, 156, 18));
+            b.setForeground(table.getSelectionForeground());
             if (row % 2 == 0) {
                 b.setBackground(new Color(242, 242, 242));
             } else {

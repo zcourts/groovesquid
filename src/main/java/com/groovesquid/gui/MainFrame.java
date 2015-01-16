@@ -1,16 +1,20 @@
 package com.groovesquid.gui;
 
 import com.groovesquid.Config.DownloadComplete;
+import com.groovesquid.GetAdsThread;
 import com.groovesquid.Main;
+import com.groovesquid.UpdateCheckThread;
+import com.groovesquid.gui.style.Style;
 import com.groovesquid.model.*;
 import com.groovesquid.service.DownloadListener;
 import com.groovesquid.service.PlayService;
 import com.groovesquid.service.PlayServiceListener;
+import com.groovesquid.util.I18n;
+import com.groovesquid.util.Utils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -28,29 +32,18 @@ public class MainFrame extends JFrame {
     
     private ArrayList<String> autocompleteList = new ArrayList<String>();
 
-    protected ImageIcon playIcon, playIconActive, pauseIcon, pauseIconActive, nextIcon, nextIconActive, previousIcon, previousIconActive, plusIcon, plusIconHover;/*, minimizeButtonImage, minimizeButtonHoverImage, maximizeButtonImage, maximizeButtonHoverImage, closeButtonImage, closeButtonHoverImage, blueArrowSouth, smallBlueArrowSouth, blueArrowNorth, smallBlueArrowNorth, orangeArrowSouth, smallOrangeArrowSouth, orangeArrowNorth, smallOrangeArrowNorth, facebookIcon, twitterIcon;
-    private Image blueButton, blueButtonHover, blueButtonPressed, orangeButton, orangeButtonHover, orangeButtonPressed, dividerImage;*/
-
+    protected ImageIcon plusIcon, plusIconHover, facebookIcon, twitterIcon;
+    private Style style;
+    
     /**
      * Creates new form GUI
      */
     public MainFrame() {
+        style = Main.getStyle();
 
-    }
-    
-    static Point mouseDownScreenCoords;
-    static Point mouseDownCompCoords;
-    
-    protected void initGui() {
-        // undecorated
-        dispose();
-        setUndecorated(true);
-        ComponentMover cm = new ComponentMover(this, titleBarPanel);
-        cm.setEdgeInsets(null);
-        cm.setChangeCursor(false);
-        ComponentResizer cr = new ComponentResizer(this);
-        cr.setMinimumSize(new Dimension(820, 480));
-        
+        loadResources();
+        initComponents();
+
         // title
         setTitle("Groovesquid");
 
@@ -58,93 +51,945 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
 
         setVisible(true);
-        
+
         // background fix
         getContentPane().setBackground(getBackground());
-        
+
         // icon
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/gui/icon.png")));
-        
-        // titleBarPanel
-        titleBarPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e){
-                if(e.getClickCount() == 2){
-                    maximize();
-                }
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt) {
+                formWindowClosing(evt);
             }
         });
-        titleBarLabel.setIcon(new ImageIcon(getClass().getResource("/gui/titlebar.png")));
-        
+
         // tables
         ((DownloadTableModel)downloadTable.getModel()).setSongDownloads(Main.getConfig().getDownloads());
-        
-        searchTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
-        searchTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                searchTableMousePressed(evt);
-            }
-            @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                searchTableMouseReleased(evt);
-            }
-        });
-        
+
+
         downloadTable.getSelectionModel().addListSelectionListener(downloadListSelectionListener);
-        downloadTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        downloadTable.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+            public void mouseReleased(MouseEvent evt) {
                 downloadTableMouseReleased(evt);
             }
         });
-        downloadTable.addKeyListener(new java.awt.event.KeyAdapter() {
+        downloadTable.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(java.awt.event.KeyEvent evt) {
+            public void keyReleased(KeyEvent evt) {
                 downloadTableKeyReleased(evt);
             }
         });
 
         Main.getPlayService().setListener(playServiceListener);
     }
-    
-    ListSelectionListener downloadListSelectionListener = new ListSelectionListener(){
+
+    protected void loadResources() {
+        facebookIcon = new ImageIcon(getClass().getResource("/gui/facebook.png"));
+        twitterIcon = new ImageIcon(getClass().getResource("/gui/twitter.png"));
+
+        plusIcon = new ImageIcon(getClass().getResource("/gui/plus.png"));
+        plusIconHover = new ImageIcon(getClass().getResource("/gui/plusHover.png"));
+    }
+
+    protected void initComponents() {
+        setBackground(style.getMainFrameBackground());
+
+        downloadMenuItem = new JMenuItem(I18n.getLocaleString("DOWNLOAD"));
+        downloadMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMenuItemActionPerformed(evt);
+            }
+        });
+
+        playMenuItem = new JMenuItem(I18n.getLocaleString("PLAY"));
+        playMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                playMenuItemActionPerformed(evt);
+            }
+        });
+
+        searchTablePopupMenu = new JPopupMenu();
+        searchTablePopupMenu.add(downloadMenuItem);
+        searchTablePopupMenu.add(playMenuItem);
+
+        removeFromListMenuItem = new JMenuItem(I18n.getLocaleString("REMOVE_FROM_LIST"));
+        removeFromListMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                removeFromListMenuItemActionPerformed(evt);
+            }
+        });
+
+        removeFromDiskMenuItem = new JMenuItem(I18n.getLocaleString("REMOVE_FROM_DISK"));
+        removeFromDiskMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                removeFromDiskMenuItemActionPerformed(evt);
+            }
+        });
+
+        openFileMenuItem = new JMenuItem(I18n.getLocaleString("OPEN_FILE"));
+        openFileMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                openFileMenuItemActionPerformed(evt);
+            }
+        });
+
+        openDirectoryMenuItem = new JMenuItem(I18n.getLocaleString("OPEN_DIRECTORY"));
+        openDirectoryMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                openDirectoryMenuItemActionPerformed(evt);
+            }
+        });
+
+        downloadTablePopupMenu = new JPopupMenu();
+        downloadTablePopupMenu.add(removeFromListMenuItem);
+        downloadTablePopupMenu.add(removeFromDiskMenuItem);
+        downloadTablePopupMenu.add(openFileMenuItem);
+        downloadTablePopupMenu.add(openDirectoryMenuItem);
+
+        downloadsPanel = new JPanel();
+        retryFailedDownloadsButton = new JButton();
+        menuPanel = new JPanel();
+        adScrollPane = new JScrollPane();
+        adPane = new JEditorPane();
+
+        playerPanel = new JPanel();
+        playerPanel.setBackground(style.getPlayerPanelBackground());
+        playerPanel.setForeground(style.getPlayerPanelForeground());
+        playerPanel.setPreferredSize(new Dimension(673, 60));
+
+        playPauseButton = new JButton();
+        playPauseButton.setIcon(style.getPlayIcon());
+        playPauseButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        playPauseButton.setContentAreaFilled(false);
+        playPauseButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        playPauseButton.setFocusable(false);
+        playPauseButton.setRequestFocusEnabled(false);
+        playPauseButton.setVerticalTextPosition(SwingConstants.TOP);
+        playPauseButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                playPauseButtonMousePressed(evt);
+            }
+        });
+        playPauseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                playPauseButtonActionPerformed(evt);
+            }
+        });
+
+        currentDurationLabel = new JLabel("00:00");
+        currentDurationLabel.setFont(style.getFont(9));
+        currentDurationLabel.setOpaque(false);
+        currentDurationLabel.setForeground(style.getPlayerPanelForeground());
+        currentDurationLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 3));
+
+        currentlyPlayingLabel = new JLabel();
+        currentlyPlayingLabel.setForeground(style.getPlayerPanelForeground());
+        currentlyPlayingLabel.setBorder(BorderFactory.createEmptyBorder(-10, 0, 0, 0));
+
+        trackSlider = new JSlider();
+        trackSlider.setUI(style.getSliderUI(trackSlider, 11));
+        trackSlider.setOpaque(false);
+        trackSlider.setValue(0);
+        trackSlider.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
+        trackSlider.setEnabled(false);
+        trackSlider.setFocusable(false);
+        trackSlider.setRequestFocusEnabled(false);
+        trackSlider.addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent evt) {
+                trackSliderMouseDragged(evt);
+            }
+        });
+
+        durationLabel = new JLabel("00:00");
+        durationLabel.setFont(style.getFont(9));
+        durationLabel.setForeground(style.getPlayerPanelForeground());
+        durationLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 10));
+
+        albumCoverLabel = new JLabel();
+        albumCoverLabel.setBackground(new Color(230, 230, 230));
+        albumCoverLabel.setOpaque(true);
+
+        volumeSlider = new JSlider();
+        volumeSlider.setUI(style.getSliderUI(volumeSlider, 7));
+        volumeSlider.setOpaque(false);
+        volumeSlider.setMaximum(0);
+        volumeSlider.setMinimum(-2000);
+        volumeSlider.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        volumeSlider.setFocusable(false);
+        volumeSlider.setRequestFocusEnabled(false);
+        volumeSlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                volumeSliderStateChanged(evt);
+            }
+        });
+
+        volumeOffLabel = new JLabel();
+        volumeOffLabel.setIcon(style.getVolumeOffIcon());
+
+        volumeOnLabel = new JLabel();
+        volumeOnLabel.setIcon(style.getVolumeOnIcon());
+
+        previousButton = new JButton();
+        previousButton.setIcon(style.getPreviousIcon());
+        previousButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        previousButton.setContentAreaFilled(false);
+        previousButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        previousButton.setFocusable(false);
+        previousButton.setRequestFocusEnabled(false);
+        previousButton.setVerticalTextPosition(SwingConstants.TOP);
+        previousButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                previousButtonMousePressed(evt);
+            }
+        });
+        previousButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                previousButtonActionPerformed(evt);
+            }
+        });
+
+        nextButton = new JButton();
+        nextButton.setIcon(style.getNextIcon());
+        nextButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        nextButton.setContentAreaFilled(false);
+        nextButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        nextButton.setFocusable(false);
+        nextButton.setRequestFocusEnabled(false);
+        nextButton.setVerticalTextPosition(SwingConstants.TOP);
+        nextButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                nextButtonMousePressed(evt);
+            }
+        });
+        nextButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                nextButtonActionPerformed(evt);
+            }
+        });
+
+        GroupLayout playerPanelLayout = new GroupLayout(playerPanel);
+        playerPanel.setLayout(playerPanelLayout);
+        playerPanelLayout.setHorizontalGroup(
+                playerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(playerPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(previousButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(playPauseButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nextButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                .addGap(66, 66, 66)
+                                .addComponent(currentlyPlayingLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(volumeOffLabel, GroupLayout.PREFERRED_SIZE, 13, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(volumeSlider, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(volumeOnLabel, GroupLayout.PREFERRED_SIZE, 13, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(currentDurationLabel, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(trackSlider, GroupLayout.PREFERRED_SIZE, 251, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(durationLabel)
+                                .addGap(63, 63, 63)
+                                .addComponent(albumCoverLabel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
+        );
+        playerPanelLayout.setVerticalGroup(
+                playerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(previousButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(playPauseButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nextButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(GroupLayout.Alignment.TRAILING, playerPanelLayout.createSequentialGroup()
+                                .addGroup(playerPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(currentDurationLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(volumeOnLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(volumeOffLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(trackSlider, GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+                                        .addComponent(volumeSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(durationLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(currentlyPlayingLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(1, 1, 1))
+                        .addComponent(albumCoverLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        splitPane = new JSplitPane();
+        splitPane.setUI(style.getSplitPaneUI(splitPane));
+        splitPane.setBorder(null);
+        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setResizeWeight(0.5);
+        splitPane.setFocusable(false);
+        splitPane.setOpaque(false);
+        splitPane.setRequestFocusEnabled(false);
+
+        searchPanel = new JPanel();
+        searchPanel.setOpaque(false);
+
+        searchTable = new SquidTable();
+        searchTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(searchTable.getTableHeader().getDefaultRenderer(), new Color(52, 152, 219)));
+        searchTable.setAutoCreateRowSorter(true);
+        searchTable.setFont(style.getFont());
+        searchTable.setModel(new SongSearchTableModel());
+        searchTable.setFillsViewportHeight(true);
+        searchTable.setGridColor(new Color(204, 204, 204));
+        searchTable.setIntercellSpacing(new Dimension(0, 0));
+        searchTable.setRowHeight(20);
+        searchTable.setSelectionBackground(new Color(15, 152, 219));
+        searchTable.setShowHorizontalLines(false);
+        searchTable.setShowVerticalLines(false);
+        searchTable.getTableHeader().setReorderingAllowed(false);
+        searchTable.setSelectionBackground(style.getSearchTableSelectionBackground());
+        searchTable.setSelectionForeground(style.getSearchTableSelectionForeground());
+        searchTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
+        searchTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent evt) {
+                searchTableMousePressed(evt);
+            }
+            @Override
+            public void mouseReleased(MouseEvent evt) {
+                searchTableMouseReleased(evt);
+            }
+        });
+
+        searchScrollPane = new JScrollPane();
+        searchScrollPane.getVerticalScrollBar().setUI(style.getSearchScrollBarUI(searchScrollPane.getVerticalScrollBar()));
+        searchScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        searchScrollPane.setOpaque(false);
+        searchScrollPane.setViewportView(searchTable);
+
+        downloadButton = new JButton(I18n.getLocaleString("DOWNLOAD"));
+        if (style.usesButtonBackgrounds()) {
+            downloadButton.setIcon(Utils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
+            downloadButton.setRolloverIcon(Utils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
+            downloadButton.setPressedIcon(Utils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
+            downloadButton.setBorder(null);
+            downloadButton.setBorderPainted(false);
+            downloadButton.setContentAreaFilled(false);
+            downloadButton.setForeground(style.getSearchButtonsForeground());
+        }
+        downloadButton.setFont(style.getFont());
+        downloadButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        downloadButton.setEnabled(false);
+        downloadButton.setFocusable(false);
+        downloadButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        downloadButton.setRequestFocusEnabled(false);
+        downloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadButtonActionPerformed(evt);
+            }
+        });
+
+        playButton = new JButton(I18n.getLocaleString("PLAY"));
+        if (style.usesButtonBackgrounds()) {
+            playButton.setIcon(Utils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
+            playButton.setRolloverIcon(Utils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
+            playButton.setPressedIcon(Utils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
+            playButton.setBorder(null);
+            playButton.setBorderPainted(false);
+            playButton.setContentAreaFilled(false);
+            playButton.setForeground(style.getSearchButtonsForeground());
+        }
+        playButton.setFont(style.getFont());
+        playButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        playButton.setEnabled(false);
+        playButton.setFocusable(false);
+        playButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        playButton.setRequestFocusEnabled(false);
+        playButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                playButtonActionPerformed(evt);
+            }
+        });
+
+        searchTypeComboBox = new JComboBox();
+        searchTypeComboBox.setUI(style.getSearchTypeComboBoxUI(searchTypeComboBox));
+        DefaultComboBoxModel searchTypeComboBoxModel = new DefaultComboBoxModel();
+        searchTypeComboBox.setModel(searchTypeComboBoxModel);
+        searchTypeComboBoxModel.addElement(I18n.getLocaleString("SONGS"));
+        searchTypeComboBoxModel.addElement(I18n.getLocaleString("POPULAR"));
+        searchTypeComboBoxModel.addElement(I18n.getLocaleString("ALBUMS"));
+        searchTypeComboBoxModel.addElement(I18n.getLocaleString("PLAYLISTS"));
+        searchTypeComboBoxModel.addElement(I18n.getLocaleString("ARTISTS"));
+        searchTypeComboBox.setFont(style.getFont());
+        searchTypeComboBox.setBorder(style.getSearchTypeComboBoxBorder());
+        searchTypeComboBox.setEnabled(false);
+        searchTypeComboBox.setFocusable(false);
+        searchTypeComboBox.setPreferredSize(new Dimension(63, 26));
+        searchTypeComboBox.setRequestFocusEnabled(false);
+        searchTypeComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                searchTypeComboBoxActionPerformed(evt);
+            }
+        });
+
+        searchButton = new JButton(I18n.getLocaleString("SEARCH"));
+        if (style.usesButtonBackgrounds()) {
+            searchButton.setIcon(Utils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
+            searchButton.setRolloverIcon(Utils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
+            searchButton.setPressedIcon(Utils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
+            searchButton.setBorder(null);
+            searchButton.setBorderPainted(false);
+            searchButton.setContentAreaFilled(false);
+            searchButton.setForeground(style.getSearchButtonsForeground());
+        }
+        searchButton.setFont(style.getFont());
+        searchButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        searchButton.setEnabled(false);
+        searchButton.setFocusable(false);
+        searchButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        searchButton.setPreferredSize(new Dimension(90, 27));
+        searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
+
+        searchTextField = new JTextField(I18n.getLocaleString("LOADING"));
+        searchTextField.setFont(style.getFont(12));
+        searchTextField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(52, 152, 219)), BorderFactory.createEmptyBorder(1, 5, 1, 5)));
+        searchTextField.setEnabled(false);
+        searchTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                searchTextFieldActionPerformed(evt);
+            }
+        });
+        searchTextField.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent evt) {
+                searchTextFieldKeyReleased(evt);
+            }
+        });
+
+        jPanel3 = new JPanel();
+        jPanel3.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(52, 152, 219)));
+        jPanel3.setOpaque(false);
+
+        searchLabel = new JLabel();
+        searchLabel.setBackground(new Color(52, 152, 219));
+        searchLabel.setFont(style.getFont());
+        searchLabel.setForeground(new Color(255, 255, 255));
+        searchLabel.setText(I18n.getLocaleString("SEARCH").toUpperCase());
+        searchLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        searchLabel.setOpaque(true);
+
+        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+                jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(searchLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+                jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(searchLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+        );
+
+        GroupLayout searchPanelLayout = new GroupLayout(searchPanel);
+        searchPanel.setLayout(searchPanelLayout);
+        searchPanelLayout.setHorizontalGroup(
+                searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                                        .addGroup(searchPanelLayout.createSequentialGroup()
+                                                .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                        .addGroup(searchPanelLayout.createSequentialGroup()
+                                                                .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(0, 0, Short.MAX_VALUE))
+                                                        .addComponent(searchTextField))
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(searchButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap())
+        );
+        searchPanelLayout.setVerticalGroup(
+                searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(searchTextField, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(searchButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+
+        splitPane.setTopComponent(searchPanel);
+
+        downloadPanel = new JPanel();
+        downloadPanel.setOpaque(false);
+
+        removeFromDiskButton = new JButton(I18n.getLocaleString("REMOVE_FROM_DISK"));
+        if (style.usesButtonBackgrounds()) {
+            removeFromDiskButton.setIcon(Utils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
+            removeFromDiskButton.setRolloverIcon(Utils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
+            removeFromDiskButton.setPressedIcon(Utils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
+            removeFromDiskButton.setBorder(null);
+            removeFromDiskButton.setBorderPainted(false);
+            removeFromDiskButton.setContentAreaFilled(false);
+            removeFromDiskButton.setForeground(style.getDownloadButtonsForeground());
+        }
+        removeFromDiskButton.setFont(style.getFont());
+        removeFromDiskButton.setEnabled(false);
+        removeFromDiskButton.setFocusable(false);
+        removeFromDiskButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        removeFromDiskButton.setRequestFocusEnabled(false);
+        removeFromDiskButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                removeFromDiskButtonActionPerformed(evt);
+            }
+        });
+
+        removeFromListButton = new JButton(I18n.getLocaleString("REMOVE_FROM_LIST"));
+        if (style.usesButtonBackgrounds()) {
+            removeFromListButton.setIcon(Utils.stretchImage(style.getDownloadButtonsBackground(), 148, 27, this));
+            removeFromListButton.setRolloverIcon(Utils.stretchImage(style.getDownloadButtonsHoverBackground(), 148, 27, this));
+            removeFromListButton.setPressedIcon(Utils.stretchImage(style.getDownloadButtonsPressedBackground(), 148, 27, this));
+            removeFromListButton.setBorder(null);
+            removeFromListButton.setBorderPainted(false);
+            removeFromListButton.setContentAreaFilled(false);
+            removeFromListButton.setForeground(style.getDownloadButtonsForeground());
+        }
+        removeFromListButton.setFont(style.getFont());
+        removeFromListButton.setEnabled(false);
+        removeFromListButton.setFocusable(false);
+        removeFromListButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        removeFromListButton.setRequestFocusEnabled(false);
+        removeFromListButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                removeFromListButtonActionPerformed(evt);
+            }
+        });
+
+        downloadScrollPane = new JScrollPane();
+        downloadScrollPane.getVerticalScrollBar().setUI(style.getDownloadScrollBarUI(downloadScrollPane.getVerticalScrollBar()));
+        downloadScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        downloadScrollPane.setOpaque(false);
+
+        downloadTable = new SquidTable();
+        downloadTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(downloadTable.getTableHeader().getDefaultRenderer(), new Color(243, 156, 18)));
+        downloadTable.setAutoCreateRowSorter(true);
+        downloadTable.setFont(style.getFont());
+        downloadTable.setModel(new DownloadTableModel());
+        downloadTable.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        downloadTable.setFillsViewportHeight(true);
+        downloadTable.setGridColor(new Color(204, 204, 204));
+        downloadTable.setIntercellSpacing(new Dimension(0, 0));
+        downloadTable.setRowHeight(20);
+        downloadTable.setSelectionBackground(style.getDownloadTableSelectionBackground());
+        downloadTable.setSelectionForeground(style.getDownloadTableSelectionForeground());
+        downloadTable.setShowHorizontalLines(false);
+        downloadTable.setShowVerticalLines(false);
+        downloadTable.getTableHeader().setReorderingAllowed(false);
+        downloadScrollPane.setViewportView(downloadTable);
+
+        selectComboBox = new JComboBox();
+        selectComboBox.setUI(style.getSelectComboBoxUI(selectComboBox));
+        DefaultComboBoxModel selectComboBoxModel = new DefaultComboBoxModel();
+        selectComboBox.setModel(selectComboBoxModel);
+        selectComboBoxModel.addElement(I18n.getLocaleString("SELECT"));
+        selectComboBoxModel.addElement(I18n.getLocaleString("ALL"));
+        selectComboBoxModel.addElement(I18n.getLocaleString("COMPLETED"));
+        selectComboBoxModel.addElement(I18n.getLocaleString("FAILED"));
+        selectComboBox.setFont(style.getFont());
+        selectComboBox.setBorder(style.getSelectComboBoxBorder());
+        selectComboBox.setFocusable(false);
+        selectComboBox.setPreferredSize(new Dimension(74, 26));
+        selectComboBox.setRequestFocusEnabled(false);
+        selectComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                selectComboBoxActionPerformed(evt);
+            }
+        });
+
+        downloadsPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(243, 156, 18)));
+        downloadsPanel.setOpaque(false);
+
+        downloadsLabel = new JLabel(I18n.getLocaleString("DOWNLOADS").toUpperCase());
+        downloadsLabel.setBackground(new Color(243, 156, 18));
+        downloadsLabel.setFont(style.getFont());
+        downloadsLabel.setForeground(new Color(255, 255, 255));
+        downloadsLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        downloadsLabel.setOpaque(true);
+
+        GroupLayout jPanel2Layout = new GroupLayout(downloadsPanel);
+        downloadsPanel.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+                jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(downloadsLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+                jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(downloadsLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+        );
+
+        retryFailedDownloadsButton = new JButton(I18n.getLocaleString("RETRY_FAILED_DOWNLOADS"));
+        if (style.usesButtonBackgrounds()) {
+            retryFailedDownloadsButton.setIcon(Utils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
+            retryFailedDownloadsButton.setRolloverIcon(Utils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
+            retryFailedDownloadsButton.setPressedIcon(Utils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
+            retryFailedDownloadsButton.setBorder(null);
+            retryFailedDownloadsButton.setBorderPainted(false);
+            retryFailedDownloadsButton.setContentAreaFilled(false);
+            retryFailedDownloadsButton.setForeground(style.getDownloadButtonsForeground());
+        }
+        retryFailedDownloadsButton.setFont(style.getFont());
+        retryFailedDownloadsButton.setFocusable(false);
+        retryFailedDownloadsButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        retryFailedDownloadsButton.setRequestFocusEnabled(false);
+        retryFailedDownloadsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                retryFailedDownloadsButtonActionPerformed(evt);
+            }
+        });
+
+        GroupLayout downloadPanelLayout = new GroupLayout(downloadPanel);
+        downloadPanel.setLayout(downloadPanelLayout);
+        downloadPanelLayout.setHorizontalGroup(
+                downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(downloadPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(downloadPanelLayout.createSequentialGroup()
+                                                .addComponent(removeFromListButton, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(removeFromDiskButton, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(retryFailedDownloadsButton, GroupLayout.PREFERRED_SIZE, 193, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(selectComboBox, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(downloadScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
+                                .addContainerGap())
+                        .addComponent(downloadsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        downloadPanelLayout.setVerticalGroup(
+                downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(downloadPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(downloadsPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(selectComboBox, GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+                                        .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(removeFromListButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(removeFromDiskButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(retryFailedDownloadsButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(downloadScrollPane, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+
+        splitPane.setBottomComponent(downloadPanel);
+
+        menuPanel.setBackground(new Color(230, 230, 230));
+        menuPanel.setPreferredSize(new Dimension(892, 44));
+
+        if (style.isUndecorated()) {
+            titleBarPanel = new JPanel();
+            titleBarPanel.setBackground(new Color(255, 255, 255));
+            titleBarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(198, 2, 196)));
+            titleBarPanel.setPreferredSize(new Dimension(0, 24));
+            titleBarPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        maximize();
+                    }
+                }
+            });
+
+            setUndecorated(true);
+            ComponentMover cm = new ComponentMover(this, titleBarPanel);
+            cm.setEdgeInsets(null);
+            cm.setChangeCursor(false);
+            ComponentResizer cr = new ComponentResizer(this);
+            cr.setMinimumSize(new Dimension(820, 480));
+
+            closeButton = new JButton();
+            closeButton.setIcon(style.getCloseButtonIcon());
+            closeButton.setRolloverIcon(style.getCloseButtonHoverIcon());
+            closeButton.setBorderPainted(false);
+            closeButton.setContentAreaFilled(false);
+            closeButton.setFocusPainted(false);
+            closeButton.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent evt) {
+                    closeButtonMouseClicked(evt);
+                }
+            });
+
+            minimizeButton = new JButton();
+            minimizeButton.setIcon(style.getMinimizeButtonIcon());
+            minimizeButton.setRolloverIcon(style.getMinimizeButtonHoverIcon());
+            minimizeButton.setBorderPainted(false);
+            minimizeButton.setContentAreaFilled(false);
+            minimizeButton.setFocusPainted(false);
+            minimizeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    minimizeButtonActionPerformed(evt);
+                }
+            });
+
+            maximizeButton = new JButton();
+            maximizeButton.setIcon(style.getMaximizeButtonIcon());
+            maximizeButton.setRolloverIcon(style.getMaximizeButtonHoverIcon());
+            maximizeButton.setBorderPainted(false);
+            maximizeButton.setContentAreaFilled(false);
+            maximizeButton.setFocusPainted(false);
+            maximizeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    maximizeButtonActionPerformed(evt);
+                }
+            });
+
+            titleBarLabel = new JLabel();
+            titleBarLabel.setIcon(style.getTitleBarIcon());
+
+            GroupLayout titleBarPanelLayout = new GroupLayout(titleBarPanel);
+            titleBarPanel.setLayout(titleBarPanelLayout);
+            titleBarPanelLayout.setHorizontalGroup(
+                    titleBarPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(titleBarPanelLayout.createSequentialGroup()
+                                    .addComponent(titleBarLabel, GroupLayout.PREFERRED_SIZE, 159, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(minimizeButton, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(maximizeButton, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(closeButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                    .addContainerGap())
+            );
+            titleBarPanelLayout.setVerticalGroup(
+                    titleBarPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(titleBarLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(closeButton, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                            .addComponent(maximizeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(minimizeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            );
+        }
+
+        aboutButton = new JButton(I18n.getLocaleString("ABOUT"));
+        aboutButton.setFont(style.getFont());
+        aboutButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        aboutButton.setBorderPainted(false);
+        aboutButton.setContentAreaFilled(false);
+        aboutButton.setMargin(new Insets(0, 14, 2, 14));
+        aboutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                aboutButtonActionPerformed(evt);
+            }
+        });
+
+        settingsButton = new JButton(I18n.getLocaleString("SETTINGS"));
+        settingsButton.setFont(style.getFont());
+        settingsButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        settingsButton.setBorderPainted(false);
+        settingsButton.setContentAreaFilled(false);
+        settingsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                settingsButtonActionPerformed(evt);
+            }
+        });
+
+        twitterLabel = new JLabel();
+        twitterLabel.setIcon(Utils.stretchImage(twitterIcon, 12, 12, this));
+        twitterLabel.setToolTipText("http://twitter.com/groovesquid");
+        twitterLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                linkLabelMousePressed(evt);
+            }
+        });
+
+        facebookLabel = new JLabel();
+        facebookLabel.setIcon(Utils.stretchImage(facebookIcon, 12, 12, this));
+        facebookLabel.setToolTipText("http://facebook.com/groovesquid");
+        facebookLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                linkLabelMousePressed(evt);
+            }
+        });
+
+        donateLabel = new JLabel();
+        donateLabel = new JLabel(I18n.getLocaleString("DONATE"));
+        donateLabel.setFont(style.getFont());
+        donateLabel.setToolTipText("http://groovesquid.com/#donate");
+        donateLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                linkLabelMousePressed(evt);
+            }
+        });
+
+        batchButton = new JButton(I18n.getLocaleString("BATCH"));
+        batchButton.setFont(style.getFont());
+        batchButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        batchButton.setBorderPainted(false);
+        batchButton.setContentAreaFilled(false);
+
+        menuBar = new JMenuBar();
+
+        setJMenuBar(menuBar);
+
+        JMenu fileMenu = new JMenu("File");
+        JMenu editMenu = new JMenu("Edit");
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+
+        menuPanel = new JPanel();
+        GroupLayout menuPanelLayout = new GroupLayout(menuPanel);
+        menuPanel.setLayout(menuPanelLayout);
+        menuPanelLayout.setHorizontalGroup(
+                menuPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(titleBarPanel, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
+                        .addGroup(menuPanelLayout.createSequentialGroup()
+                                .addComponent(aboutButton)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(settingsButton)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(batchButton)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(donateLabel)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(facebookLabel, GroupLayout.PREFERRED_SIZE, 12, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(twitterLabel, GroupLayout.PREFERRED_SIZE, 12, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+        );
+        menuPanelLayout.setVerticalGroup(
+                menuPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(menuPanelLayout.createSequentialGroup()
+                                .addComponent(titleBarPanel, GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(menuPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(facebookLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(donateLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                                        .addGroup(menuPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(aboutButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(twitterLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(settingsButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(batchButton))))
+        );
+
+        batchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                batchButtonActionPerformed(evt);
+            }
+        });
+
+        adScrollPane.setBackground(new Color(204, 204, 204));
+        adScrollPane.setBorder(null);
+        adScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        adScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        adScrollPane.setOpaque(false);
+        adScrollPane.setRequestFocusEnabled(false);
+
+        adPane.setEditable(false);
+        adPane.setBackground(new Color(204, 204, 204));
+        adPane.setBorder(null);
+        adPane.setContentType("text/html");
+        adPane.setAlignmentY(JComponent.CENTER_ALIGNMENT);
+        adPane.setMaximumSize(new Dimension(160, 600));
+        adPane.setMinimumSize(new Dimension(160, 600));
+        adPane.setOpaque(false);
+        adPane.setPreferredSize(new Dimension(160, 600));
+        adPane.setSize(new Dimension(160, 600));
+        adScrollPane.setViewportView(adPane);
+        new GetAdsThread(adPane).start();
+
+        adPane.addHyperlinkListener(new HyperlinkListener() {
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    try {
+                        Desktop.getDesktop().browse(e.getURL().toURI());
+                    } catch (Exception ex) {
+                        Logger.getLogger(UpdateCheckThread.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(playerPanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
+                        .addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(splitPane)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(splitPane)
+                                        .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(playerPanel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
+        );
+
+        adScrollPane.getViewport().setOpaque(false);
+
+        pack();
+    }
+
+
+    private ListSelectionListener downloadListSelectionListener = new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent event) {
             if (!event.getValueIsAdjusting()) {
                 int[] selectedRows = downloadTable.getSelectedRows();
                 if(selectedRows.length > 0) {
                     removeFromListButton.setEnabled(true);
-                    removeFromListButton.setText(Main.getLocaleString("REMOVE_FROM_LIST") + " (" + selectedRows.length + ")");
+                    removeFromListButton.setText(I18n.getLocaleString("REMOVE_FROM_LIST") + " (" + selectedRows.length + ")");
                     removeFromDiskButton.setEnabled(true);
-                    removeFromDiskButton.setText(Main.getLocaleString("REMOVE_FROM_DISK") + " (" + selectedRows.length + ")");
+                    removeFromDiskButton.setText(I18n.getLocaleString("REMOVE_FROM_DISK") + " (" + selectedRows.length + ")");
                 } else {
                     removeFromListButton.setEnabled(false);
-                    removeFromListButton.setText(Main.getLocaleString("REMOVE_FROM_LIST"));
+                    removeFromListButton.setText(I18n.getLocaleString("REMOVE_FROM_LIST"));
                     removeFromDiskButton.setEnabled(false);
-                    removeFromDiskButton.setText(Main.getLocaleString("REMOVE_FROM_DISK"));
+                    removeFromDiskButton.setText(I18n.getLocaleString("REMOVE_FROM_DISK"));
                 }
             }
         }
     };
-    
-    ListSelectionListener searchListSelectionListener = new ListSelectionListener(){
+
+    private ListSelectionListener searchListSelectionListener = new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent event) {
             if (!event.getValueIsAdjusting()) {
                 int[] selectedRows = searchTable.getSelectedRows();
 
-                String playButtonText = Main.getLocaleString("PLAY");
+                String playButtonText = I18n.getLocaleString("PLAY");
 
                 if(searchTable.getModel() instanceof AlbumSearchTableModel || searchTable.getModel() instanceof PlaylistSearchTableModel || searchTable.getModel() instanceof ArtistSearchTableModel) {
-                    playButtonText = Main.getLocaleString("SHOW_SONGS");
+                    playButtonText = I18n.getLocaleString("SHOW_SONGS");
                 }
                 if(selectedRows.length > 0) {
                     downloadButton.setEnabled(true);
-                    downloadButton.setText(Main.getLocaleString("DOWNLOAD") + " (" + selectedRows.length + ")");
+                    downloadButton.setText(I18n.getLocaleString("DOWNLOAD") + " (" + selectedRows.length + ")");
                     playButton.setEnabled(true);
                     playButton.setText(playButtonText + " (" + selectedRows.length + ")");
                 } else {
                     downloadButton.setEnabled(false);
-                    downloadButton.setText(Main.getLocaleString("DOWNLOAD"));
+                    downloadButton.setText(I18n.getLocaleString("DOWNLOAD"));
                     playButton.setEnabled(false);
                     playButton.setText(playButtonText);
                 }
@@ -154,11 +999,11 @@ public class MainFrame extends JFrame {
     
     private final PlayServiceListener playServiceListener = new PlayServiceListener() {
         public void playbackStarted(Track track) {
-            playPauseButton.setIcon(pauseIcon);
+            playPauseButton.setIcon(style.getPauseIcon());
         }
 
         public void playbackPaused(Track track, int audioPosition) {
-            playPauseButton.setIcon(playIcon);
+            playPauseButton.setIcon(style.getPlayIcon());
         }
 
         public void playbackFinished(Track track, int audioPosition) {
@@ -229,8 +1074,8 @@ public class MainFrame extends JFrame {
             worker.execute();
         }
     };
-    
-    public void playButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
+
+    public void playButtonActionPerformed(ActionEvent evt) {
         int[] selectedRows = searchTable.getSelectedRows();
 
         if (searchTable.getModel() instanceof SongSearchTableModel) {
@@ -416,7 +1261,7 @@ public class MainFrame extends JFrame {
         return downloadListener;
     }
 
-    public void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
+    public void downloadButtonActionPerformed(ActionEvent evt) {
         int[] selectedRows = searchTable.getSelectedRows();
 
         final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
@@ -484,9 +1329,9 @@ public class MainFrame extends JFrame {
             }
         }
         searchTable.getSelectionModel().clearSelection();
-    }                                              
+    }
 
-    public void searchTableMousePressed(java.awt.event.MouseEvent evt) {                                         
+    public void searchTableMousePressed(MouseEvent evt) {
         /*
          * if(evt.getClickCount() >= 2) { JTable table =
          * (JTable)evt.getSource(); Point p = evt.getPoint(); int row =
@@ -496,20 +1341,20 @@ public class MainFrame extends JFrame {
          * model.getSongs().get(row); new DownloadThread(song).start(); }
          */
 
-    }                                        
+    }
 
-    public void removeFromListButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+    public void removeFromListButtonActionPerformed(ActionEvent evt) {
         removeFromList(false);
     }
 
-    public void removeFromDiskButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+    public void removeFromDiskButtonActionPerformed(ActionEvent evt) {
         int[] selectedRows = downloadTable.getSelectedRows();
-        if (JOptionPane.showConfirmDialog(null, String.format(Main.getLocaleString("ALERT_REMOVE_FILES_FROM_DISK"), Integer.toString(selectedRows.length)), Main.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+        if (JOptionPane.showConfirmDialog(null, String.format(I18n.getLocaleString("ALERT_REMOVE_FILES_FROM_DISK"), Integer.toString(selectedRows.length)), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
             removeFromList(true);
         }
     }
 
-    public void retryFailedDownloadsButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    public void retryFailedDownloadsButtonActionPerformed(ActionEvent evt) {
         List<Track> failedDownloads = new ArrayList<Track>();
         DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
@@ -529,8 +1374,8 @@ public class MainFrame extends JFrame {
         downloadTable.clearSelection();
         
     }
-    
-    public void searchTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                   
+
+    public void searchTypeComboBoxActionPerformed(ActionEvent evt) {
         // POPULAR
         if (searchTypeComboBox.getSelectedIndex() == 1) {
             searchTextField.setText("");
@@ -548,7 +1393,7 @@ public class MainFrame extends JFrame {
         searchTypeComboBox.setEnabled(false);
         searchTextField.setEnabled(false);
         searchButton.setEnabled(false);
-        playButton.setText(Main.getLocaleString("PLAY"));
+        playButton.setText(I18n.getLocaleString("PLAY"));
 
         // Songs
         if (searchTypeComboBox.getSelectedIndex() == 0) {
@@ -682,9 +1527,9 @@ public class MainFrame extends JFrame {
             worker.execute();
         }
         
-    }                                            
+    }
 
-    public void selectComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                               
+    public void selectComboBoxActionPerformed(ActionEvent evt) {
         // All
         if(selectComboBox.getSelectedIndex() == 1) {
             DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
@@ -719,15 +1564,15 @@ public class MainFrame extends JFrame {
 
     public void formWindowClosing(java.awt.event.WindowEvent evt) {
         if (Main.getDownloadService().areCurrentlyRunningDownloads()) {
-            if(JOptionPane.showConfirmDialog(this, Main.getLocaleString("ALERT_DOWNLOADS_IN_PROGRESS"), Main.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+            if (JOptionPane.showConfirmDialog(this, I18n.getLocaleString("ALERT_DOWNLOADS_IN_PROGRESS"), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
                 System.exit(0);
             }
         } else {
             System.exit(0);
         }
     }
-    
-    public void searchTextFieldKeyReleased(java.awt.event.KeyEvent evt) {
+
+    public void searchTextFieldKeyReleased(KeyEvent evt) {
         if(Main.getConfig().getAutocompleteEnabled()) {
             if (evt.getKeyCode() >= KeyEvent.VK_A && evt.getKeyCode() <= KeyEvent.VK_Z && (evt.getModifiers() & ActionEvent.CTRL_MASK) != ActionEvent.CTRL_MASK && ! evt.isControlDown()) {
                 SwingWorker<List<String>, Void> worker = new SwingWorker<List<String>, Void>() {
@@ -760,17 +1605,17 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {
+    public void searchTextFieldActionPerformed(ActionEvent evt) {
         for (ActionListener a : searchButton.getActionListeners()) {
             a.actionPerformed(evt);
         }
     }
 
-    public void downloadTableKeyReleased(java.awt.event.KeyEvent evt) {                                          
+    public void downloadTableKeyReleased(KeyEvent evt) {
         if(evt.getKeyCode() == KeyEvent.VK_DELETE) {
             int[] selectedRows = downloadTable.getSelectedRows();
-            Object[] options = { Main.getLocaleString("REMOVE_FROM_LIST"), Main.getLocaleString("REMOVE_FROM_LIST_AND_DISK"), Main.getLocaleString("CANCEL") };
-            int selectedValue = JOptionPane.showOptionDialog(this, String.format(Main.getLocaleString("ALERT_REMOVE_FROM_LIST_OR_DISK"), Integer.valueOf(selectedRows.length)), Main.getLocaleString("ALERT"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+            Object[] options = {I18n.getLocaleString("REMOVE_FROM_LIST"), I18n.getLocaleString("REMOVE_FROM_LIST_AND_DISK"), I18n.getLocaleString("CANCEL")};
+            int selectedValue = JOptionPane.showOptionDialog(this, String.format(I18n.getLocaleString("ALERT_REMOVE_FROM_LIST_OR_DISK"), Integer.valueOf(selectedRows.length)), I18n.getLocaleString("ALERT"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
             if(selectedValue == 0) {
                 removeFromList(false);
             } else if(selectedValue == 1) {
@@ -779,21 +1624,17 @@ public class MainFrame extends JFrame {
                 System.out.println(selectedValue);
             }
         }
-    }                                         
+    }
 
-    public void formKeyReleased(java.awt.event.KeyEvent evt) {                                 
-
-    }                                
-
-    public void playPauseButtonMousePressed(java.awt.event.MouseEvent evt) {
+    public void playPauseButtonMousePressed(MouseEvent evt) {
         if (Main.getPlayService().isPlaying()) {
-            playPauseButton.setIcon(pauseIconActive);
+            playPauseButton.setIcon(style.getPauseIconActive());
         } else {
-            playPauseButton.setIcon(playIconActive);
+            playPauseButton.setIcon(style.getPlayIconActive());
         }
     }
 
-    public void playPauseButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    public void playPauseButtonActionPerformed(ActionEvent evt) {
         if (Main.getPlayService().isPaused()) {
             Main.getPlayService().resume();
         } else if (Main.getPlayService().isPlaying()) {
@@ -802,17 +1643,17 @@ public class MainFrame extends JFrame {
             if (Main.getPlayService().getPlaylist().size() > 0) {
                 Main.getPlayService().play();
             } else {
-                playPauseButton.setIcon(playIcon);
+                playPauseButton.setIcon(style.getPlayIcon());
             }
         }
     }
-    
-    public void nextButtonMousePressed(java.awt.event.MouseEvent evt) {
-        nextButton.setIcon(nextIconActive);
+
+    public void nextButtonMousePressed(MouseEvent evt) {
+        nextButton.setIcon(style.getNextIconActive());
     }
 
-    public void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        nextButton.setIcon(nextIcon);
+    public void nextButtonActionPerformed(ActionEvent evt) {
+        nextButton.setIcon(style.getNextIcon());
         if (Main.getPlayService().getCurrentSongIndex() < Main.getPlayService().getPlaylist().size() - 1) {
             Main.getPlayService().skipForward();
         } else {
@@ -820,17 +1661,17 @@ public class MainFrame extends JFrame {
             resetPlayInfo();
         }
     }
-    
-    public void previousButtonMousePressed(java.awt.event.MouseEvent evt) {
-        previousButton.setIcon(previousIconActive);
+
+    public void previousButtonMousePressed(MouseEvent evt) {
+        previousButton.setIcon(style.getPreviousIconActive());
     }
 
-    public void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        previousButton.setIcon(previousIcon);
+    public void previousButtonActionPerformed(ActionEvent evt) {
+        previousButton.setIcon(style.getPreviousIcon());
         Main.getPlayService().skipBackward();
     }
 
-    public void trackSliderMouseDragged(java.awt.event.MouseEvent evt) {
+    public void trackSliderMouseDragged(MouseEvent evt) {
         if (Main.getPlayService().getCurrentTrack() != null) {
             //Services.getPlayService().setCurrentPosition(trackSlider.getValue());
         }
@@ -840,44 +1681,44 @@ public class MainFrame extends JFrame {
         for (WindowListener a : this.getWindowListeners()) {
             a.windowClosing(null);
         }
-    }                                        
+    }
 
-    public void maximizeButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    public void maximizeButtonActionPerformed(ActionEvent evt) {
         maximize();
     }
 
-    public void minimizeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
+    public void minimizeButtonActionPerformed(ActionEvent evt) {
         setState(Frame.ICONIFIED);
     }
 
-    public void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    public void settingsButtonActionPerformed(ActionEvent evt) {
         Main.getSettingsFrame().setVisible(true);
     }
 
-    public void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    public void aboutButtonActionPerformed(ActionEvent evt) {
         Main.getAboutFrame().setVisible(true);
     }
 
-    public void batchButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    public void batchButtonActionPerformed(ActionEvent evt) {
         new BatchFrame().setVisible(true);
     }
 
-    public void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {
+    public void volumeSliderStateChanged(ChangeEvent evt) {
         Main.getPlayService().setVolume(volumeSlider.getValue());
     }
 
-    public void removeFromListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
+    public void removeFromListMenuItemActionPerformed(ActionEvent evt) {
         removeFromList(false);
     }
 
-    public void removeFromDiskMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
+    public void removeFromDiskMenuItemActionPerformed(ActionEvent evt) {
         int[] selectedRows = downloadTable.getSelectedRows();
-        if (JOptionPane.showConfirmDialog(null, String.format(Main.getLocaleString("ALERT_REMOVE_FILES_FROM_DISK"), Integer.toString(selectedRows.length)), Main.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+        if (JOptionPane.showConfirmDialog(null, String.format(I18n.getLocaleString("ALERT_REMOVE_FILES_FROM_DISK"), Integer.toString(selectedRows.length)), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
             removeFromList(true);
         }
-    }                                                      
+    }
 
-    public void downloadTableMouseReleased(java.awt.event.MouseEvent evt) {                                            
+    public void downloadTableMouseReleased(MouseEvent evt) {
         int r = downloadTable.rowAtPoint(evt.getPoint());
         if (SwingUtilities.isRightMouseButton(evt) && r >= 0 && r < downloadTable.getRowCount() && !ArrayUtils.contains(downloadTable.getSelectedRows(), r) && !evt.isControlDown()) {
             downloadTable.setRowSelectionInterval(r, r);
@@ -889,9 +1730,9 @@ public class MainFrame extends JFrame {
         if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable) {
             downloadTablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
-    }                                           
+    }
 
-    public void searchTableMouseReleased(java.awt.event.MouseEvent evt) {                                          
+    public void searchTableMouseReleased(MouseEvent evt) {
         int r = searchTable.rowAtPoint(evt.getPoint());
         if (SwingUtilities.isRightMouseButton(evt) && r >= 0 && r < searchTable.getRowCount() && !ArrayUtils.contains(searchTable.getSelectedRows(), r) && !evt.isControlDown()) {
             searchTable.setRowSelectionInterval(r, r);
@@ -903,13 +1744,9 @@ public class MainFrame extends JFrame {
         if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable) {
             searchTablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
-    }                                         
+    }
 
-    public void airPlayButtonMousePressed(java.awt.event.MouseEvent evt) {                                           
-        airPlayPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-    }                                          
-
-    public void openDirectoryMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                      
+    public void openDirectoryMenuItemActionPerformed(ActionEvent evt) {
         int[] selectedRows = downloadTable.getSelectedRows();
         DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
         for (int i = 0; i < selectedRows.length; i++) {
@@ -923,9 +1760,9 @@ public class MainFrame extends JFrame {
             }
         }
         downloadTable.clearSelection();
-    }                                                     
+    }
 
-    public void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                 
+    public void openFileMenuItemActionPerformed(ActionEvent evt) {
         int[] selectedRows = downloadTable.getSelectedRows();
         DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
         for (int i = 0; i < selectedRows.length; i++) {
@@ -939,9 +1776,9 @@ public class MainFrame extends JFrame {
             }
         }
         downloadTable.clearSelection();
-    }                                                
+    }
 
-    public void facebookLabelMousePressed(java.awt.event.MouseEvent evt) {
+    public void linkLabelMousePressed(MouseEvent evt) {
         try {
             Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getToolTipText()));
         } catch (IOException ex) {
@@ -949,84 +1786,74 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void donateLabelMousePressed(java.awt.event.MouseEvent evt) {        
-        try {
-            Desktop.getDesktop().browse(java.net.URI.create("http://groovesquid.com/#donate"));
-        } catch (IOException ex) {
-            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void downloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+    public void downloadMenuItemActionPerformed(ActionEvent evt) {
         for (ActionListener a : downloadButton.getActionListeners()) {
             a.actionPerformed(evt);
         }
     }
 
-    public void playMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+    public void playMenuItemActionPerformed(ActionEvent evt) {
         for (ActionListener a : playButton.getActionListeners()) {
             a.actionPerformed(evt);
         }
     }
 
     // variables
-    protected javax.swing.JButton aboutButton;
-    protected javax.swing.JButton airPlayButton;
-    protected javax.swing.JPopupMenu airPlayPopupMenu;
-    protected javax.swing.JLabel albumCoverLabel;
-    protected javax.swing.JButton batchButton;
-    protected javax.swing.JButton closeButton;
-    protected javax.swing.JLabel currentDurationLabel;
-    protected javax.swing.JLabel currentlyPlayingLabel;
-    protected javax.swing.JLabel donateLabel;
-    protected javax.swing.JButton downloadButton;
-    protected javax.swing.JMenuItem downloadMenuItem;
-    protected javax.swing.JPanel downloadPanel;
-    protected javax.swing.JScrollPane downloadScrollPane;
-    protected javax.swing.JTable downloadTable;
-    protected javax.swing.JPopupMenu downloadTablePopupMenu;
-    protected javax.swing.JLabel durationLabel;
-    protected javax.swing.JLabel facebookLabel;
-    protected javax.swing.JLabel jLabel2;
-    protected javax.swing.JLabel jLabel3;
-    protected javax.swing.JPanel jPanel1;
-    protected javax.swing.JPanel jPanel2;
-    protected javax.swing.JPanel jPanel3;
-    protected javax.swing.JSplitPane splitPane;
-    protected javax.swing.JButton maximizeButton;
-    protected javax.swing.JButton minimizeButton;
-    protected javax.swing.JMenuItem openDirectoryMenuItem;
-    protected javax.swing.JMenuItem openFileMenuItem;
-    protected javax.swing.JButton playButton;
-    protected javax.swing.JMenuItem playMenuItem;
-    protected javax.swing.JButton playPauseButton;
-    protected javax.swing.JButton nextButton;
-    protected javax.swing.JButton previousButton;
-    protected javax.swing.JPanel playerPanel;
-    protected javax.swing.JButton removeFromDiskButton;
-    protected javax.swing.JMenuItem removeFromDiskMenuItem;
-    protected javax.swing.JButton removeFromListButton;
-    protected javax.swing.JMenuItem removeFromListMenuItem;
-    protected javax.swing.JButton retryFailedDownloadsButton;
-    protected javax.swing.JButton searchButton;
-    protected javax.swing.JPanel searchPanel;
-    protected javax.swing.JScrollPane searchScrollPane;
-    protected javax.swing.JTable searchTable;
-    protected javax.swing.JPopupMenu searchTablePopupMenu;
-    protected javax.swing.JTextField searchTextField;
-    protected javax.swing.JComboBox searchTypeComboBox;
-    protected javax.swing.JComboBox selectComboBox;
-    protected javax.swing.JButton settingsButton;
-    protected javax.swing.JLabel titleBarLabel;
-    protected javax.swing.JPanel titleBarPanel;
-    protected javax.swing.JSlider trackSlider;
-    protected javax.swing.JLabel twitterLabel;
-    protected javax.swing.JLabel volumeOffLabel;
-    protected javax.swing.JLabel volumeOnLabel;
-    protected javax.swing.JSlider volumeSlider;
-    protected javax.swing.JEditorPane adPane;
-    protected javax.swing.JScrollPane adScrollPane;
-    // End of variables declaration
+    protected JButton aboutButton;
+    protected JLabel albumCoverLabel;
+    protected JButton batchButton;
+    protected JButton closeButton;
+    protected JLabel currentDurationLabel;
+    protected JLabel currentlyPlayingLabel;
+    protected JLabel donateLabel;
+    protected JButton downloadButton;
+    protected JMenuItem downloadMenuItem;
+    protected JPanel downloadPanel;
+    protected JScrollPane downloadScrollPane;
+    protected JTable downloadTable;
+    protected JPopupMenu downloadTablePopupMenu;
+    protected JLabel durationLabel;
+    protected JLabel facebookLabel;
+    protected JLabel downloadsLabel;
+    protected JLabel searchLabel;
+    protected JPanel menuPanel;
+    protected JPanel downloadsPanel;
+    protected JPanel jPanel3;
+    protected JSplitPane splitPane;
+    protected JButton maximizeButton;
+    protected JButton minimizeButton;
+    protected JMenuItem openDirectoryMenuItem;
+    protected JMenuItem openFileMenuItem;
+    protected JButton playButton;
+    protected JMenuItem playMenuItem;
+    protected JButton playPauseButton;
+    protected JButton nextButton;
+    protected JButton previousButton;
+    protected JPanel playerPanel;
+    protected JButton removeFromDiskButton;
+    protected JMenuItem removeFromDiskMenuItem;
+    protected JButton removeFromListButton;
+    protected JMenuItem removeFromListMenuItem;
+    protected JButton retryFailedDownloadsButton;
+    protected JButton searchButton;
+    protected JPanel searchPanel;
+    protected JScrollPane searchScrollPane;
+    protected JTable searchTable;
+    protected JPopupMenu searchTablePopupMenu;
+    protected JTextField searchTextField;
+    protected JComboBox searchTypeComboBox;
+    protected JComboBox selectComboBox;
+    protected JButton settingsButton;
+    protected JLabel titleBarLabel;
+    protected JPanel titleBarPanel;
+    protected JSlider trackSlider;
+    protected JLabel twitterLabel;
+    protected JLabel volumeOffLabel;
+    protected JLabel volumeOnLabel;
+    protected JSlider volumeSlider;
+    protected JEditorPane adPane;
+    protected JScrollPane adScrollPane;
+    protected JMenuBar menuBar;
 
     private void removeFromList(boolean andDisk) {
         int[] selectedRows = downloadTable.getSelectedRows();
@@ -1043,8 +1870,7 @@ public class MainFrame extends JFrame {
         }
         downloadTable.getSelectionModel().clearSelection();
     }
-    
-    
+
     public void play(List<Song> songs) {
         final Song song = songs.get(0);
         Track track = Main.getPlayService().getCurrentTrack();
@@ -1053,8 +1879,8 @@ public class MainFrame extends JFrame {
             Main.getPlayService().resume();
         } else {
             if (Main.getPlayService().isPlaying()) {
-                Object[] options = { Main.getLocaleString("PLAY_NOW"), Main.getLocaleString("ADD_TO_QUEUE"), Main.getLocaleString("CANCEL") };
-                int selectedValue = JOptionPane.showOptionDialog(this, Main.getLocaleString("ALERT_PLAY_NOW_OR_QUEUE"), Main.getLocaleString("PLAY"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                Object[] options = {I18n.getLocaleString("PLAY_NOW"), I18n.getLocaleString("ADD_TO_QUEUE"), I18n.getLocaleString("CANCEL")};
+                int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_PLAY_NOW_OR_QUEUE"), I18n.getLocaleString("PLAY"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if(selectedValue == 0) {
                     Main.getPlayService().add(songs, PlayService.AddMode.NOW);
                 } else if(selectedValue == 1) {
@@ -1068,7 +1894,7 @@ public class MainFrame extends JFrame {
     
     public void resetPlayInfo() {
         currentlyPlayingLabel.setText("");
-        playPauseButton.setIcon(playIcon);
+        playPauseButton.setIcon(style.getPlayIcon());
         trackSlider.setValue(0);
         trackSlider.setEnabled(false);
         currentlyPlayingLabel.setText("");
@@ -1097,10 +1923,6 @@ public class MainFrame extends JFrame {
         return searchTypeComboBox;
     }
     
-    public JPopupMenu getAirPlayPopupMenu() {
-        return airPlayPopupMenu;
-    }
-
     public void initDone() {
         searchTypeComboBox.setEnabled(true);
         searchTextField.setText("");
@@ -1110,7 +1932,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, Main.getLocaleString("ERROR"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, I18n.getLocaleString("ERROR"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void maximize() {
@@ -1122,5 +1944,8 @@ public class MainFrame extends JFrame {
             setExtendedState(JFrame.MAXIMIZED_BOTH);
         }
     }
-    
+
+    public Style getStyle() {
+        return style;
+    }
 }

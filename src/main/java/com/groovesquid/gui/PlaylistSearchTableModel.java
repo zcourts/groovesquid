@@ -1,7 +1,7 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Main;
 import com.groovesquid.model.Playlist;
+import com.groovesquid.util.I18n;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class PlaylistSearchTableModel extends AbstractTableModel {
 
-    private String[] columnNames = { Main.getLocaleString("NAME"), Main.getLocaleString("AUTHOR"), Main.getLocaleString("SONGS") };
+    private String[] columnNames = {I18n.getLocaleString("NAME"), I18n.getLocaleString("AUTHOR"), I18n.getLocaleString("SONGS")};
     
     private List<Playlist> playlists = new ArrayList<Playlist>();
 

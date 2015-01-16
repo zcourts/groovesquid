@@ -1,6 +1,7 @@
 package com.groovesquid.gui;
 
 import com.groovesquid.Main;
+import com.groovesquid.util.I18n;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +49,7 @@ public class AboutFrame extends JFrame {
         jLabel6 = new javax.swing.JLabel();
         versionLabel = new javax.swing.JLabel();
 
-        setTitle(Main.getLocaleString("ABOUT"));
+        setTitle(I18n.getLocaleString("ABOUT"));
         setResizable(false);
 
         jLabel3.setFont(new java.awt.Font("Lucida Grande", 0, 11)); // NOI18N
@@ -94,7 +95,7 @@ public class AboutFrame extends JFrame {
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
         jLabel2.setText("Copyright (c) 2014 by Maino Development. All rights reserved.");
 
-        closeButton.setText(Main.getLocaleString("CLOSE"));
+        closeButton.setText(I18n.getLocaleString("CLOSE"));
         closeButton.setFocusable(false);
         closeButton.setRequestFocusEnabled(false);
         closeButton.addActionListener(new java.awt.event.ActionListener() {

@@ -1,8 +1,8 @@
 package com.groovesquid.gui;
 
 import com.groovesquid.Config;
-import com.groovesquid.InitThread;
 import com.groovesquid.Main;
+import com.groovesquid.util.I18n;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 
@@ -68,14 +68,14 @@ public class SettingsFrame extends JFrame {
         proxyPortTextField = new JTextField();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle(Main.getLocaleString("SETTINGS"));
+        setTitle(I18n.getLocaleString("SETTINGS"));
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
 
-        reconnectButton.setText(Main.getLocaleString("RECONNECT"));
+        reconnectButton.setText(I18n.getLocaleString("RECONNECT"));
         reconnectButton.setFocusable(false);
         reconnectButton.setRequestFocusEnabled(false);
         reconnectButton.addActionListener(new ActionListener() {
@@ -85,17 +85,17 @@ public class SettingsFrame extends JFrame {
         });
 
         jLabel6.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel6.setText(Main.getLocaleString("MAX_PARALLEL_DOWNLOADS"));
+        jLabel6.setText(I18n.getLocaleString("MAX_PARALLEL_DOWNLOADS"));
 
         jLabel1.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel1.setText(Main.getLocaleString("DOWNLOAD_DIRECTORY"));
+        jLabel1.setText(I18n.getLocaleString("DOWNLOAD_DIRECTORY"));
 
         downloadDirectoryTextField.setRequestFocusEnabled(false);
 
         maxParallelDownloadsSpinner.setModel(new SpinnerNumberModel(Integer.valueOf(10), Integer.valueOf(1), null, Integer.valueOf(1)));
         maxParallelDownloadsSpinner.setValue(10);
 
-        saveSettingsButton.setText(Main.getLocaleString("SAVE_AND_CLOSE"));
+        saveSettingsButton.setText(I18n.getLocaleString("SAVE_AND_CLOSE"));
         saveSettingsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 saveSettingsButtonActionPerformed(evt);
@@ -111,25 +111,25 @@ public class SettingsFrame extends JFrame {
         });
 
         jLabel2.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel2.setText(Main.getLocaleString("FILENAME_SCHEME"));
+        jLabel2.setText(I18n.getLocaleString("FILENAME_SCHEME"));
 
         jLabel3.setFont(new Font("Lucida Grande", 0, 10)); // NOI18N
         jLabel3.setLabelFor(fileNameSchemeTextField);
         jLabel3.setText("<html><body>This is a format string for file path of downloaded files. Use / to create a subdirectory. Use &lt;Artist&gt; to insert the artist's name, &lt;Album&gt; to insert the album title, &lt;Title&gt; to insert the track's name, &lt;#&gt; to insert the track number (if any), &lt;%&gt; to insert the track order (for playlists only). Use &lt;##&gt; or &lt;###&gt; to pad the track number with leading zeroes (&lt;%%&gt; or &lt;%%%&gt; respectively for playlist track order). &lt;ALBUM&gt; inserts the album name in uppercase, &lt;album&gt; in lowercase (likewise for &lt;Artist&gt; and &lt;Title&gt;). &lt;Album?text&gt; inserts 'text' only if the album name is not empty (likewise for &lt;Artist&gt;, &lt;Title&gt;, &lt;#&gt; and &lt;%&gt;).</body></html>");
 
         jLabel4.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel4.setText(Main.getLocaleString("SEARCH_AUTOCOMPLETE"));
+        jLabel4.setText(I18n.getLocaleString("SEARCH_AUTOCOMPLETE"));
 
         autocompleteEnabledCheckBox.setFont(new Font("Arial", 0, 11)); // NOI18N
-        autocompleteEnabledCheckBox.setText(Main.getLocaleString("ENABLED"));
+        autocompleteEnabledCheckBox.setText(I18n.getLocaleString("ENABLED"));
 
         jLabel5.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel5.setText(Main.getLocaleString("DOWNLOAD_COMPLETED"));
+        jLabel5.setText(I18n.getLocaleString("DOWNLOAD_COMPLETED"));
 
         jLabel7.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel7.setText(Main.getLocaleString("LANGUAGE"));
+        jLabel7.setText(I18n.getLocaleString("LANGUAGE"));
 
-        resetOriginalSettingsButton.setText(Main.getLocaleString("RESET_ORIGINAL_SETTINGS"));
+        resetOriginalSettingsButton.setText(I18n.getLocaleString("RESET_ORIGINAL_SETTINGS"));
         resetOriginalSettingsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 resetOriginalSettingsButtonActionPerformed(evt);
@@ -137,13 +137,13 @@ public class SettingsFrame extends JFrame {
         });
 
         jLabel8.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel8.setText(Main.getLocaleString("FILE_EXISTS"));
+        jLabel8.setText(I18n.getLocaleString("FILE_EXISTS"));
 
         jLabel9.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel9.setText(Main.getLocaleString("PROXY_HOST"));
+        jLabel9.setText(I18n.getLocaleString("PROXY_HOST"));
 
         jLabel10.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
-        jLabel10.setText(Main.getLocaleString("PROXY_PORT"));
+        jLabel10.setText(I18n.getLocaleString("PROXY_PORT"));
 
         org.jdesktop.layout.GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -263,7 +263,7 @@ public class SettingsFrame extends JFrame {
 
     private void reconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reconnectButtonActionPerformed
         // init grooveshark
-        new InitThread().start();
+        Main.getGroovesharkClient().init();
     }//GEN-LAST:event_reconnectButtonActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -320,8 +320,7 @@ public class SettingsFrame extends JFrame {
             Main.getConfig().setDownloadComplete(downloadCompleteComboBox.getSelectedIndex());
             if (originalLocale != languageComboBox.getSelectedItem()) {
                 Locale locale = (Locale) languageComboBox.getSelectedItem();
-                Main.setCurrentLocale(locale);
-                Main.getConfig().setLocale(locale.toString());
+                I18n.setCurrentLocale(locale);
                 Main.resetGui();
             }
             if(!proxyHostTextField.getText().isEmpty() && !proxyPortTextField.getText().isEmpty()) {
@@ -375,7 +374,7 @@ public class SettingsFrame extends JFrame {
         DefaultComboBoxModel downloadCompleteComboBoxModel = new DefaultComboBoxModel();
         downloadCompleteComboBox.setModel(downloadCompleteComboBoxModel);
         for(String downloadCompleteAction : downloadCompleteActions) {
-            downloadCompleteComboBoxModel.addElement(Main.getLocaleString(downloadCompleteAction));
+            downloadCompleteComboBoxModel.addElement(I18n.getLocaleString(downloadCompleteAction));
         }
         downloadCompleteComboBox.setSelectedIndex(Main.getConfig().getDownloadComplete());
         
@@ -383,16 +382,16 @@ public class SettingsFrame extends JFrame {
         DefaultComboBoxModel fileExistsComboBoxModel = new DefaultComboBoxModel();
         fileExistsComboBox.setModel(fileExistsComboBoxModel);
         for(String fileExistsAction : fileExistsActions) {
-            fileExistsComboBoxModel.addElement(Main.getLocaleString(fileExistsAction));
+            fileExistsComboBoxModel.addElement(I18n.getLocaleString(fileExistsAction));
         }
         fileExistsComboBox.setSelectedIndex(Main.getConfig().getFileExists());
         
         DefaultComboBoxModel languageComboBoxModel = new DefaultComboBoxModel();
         languageComboBox.setModel(languageComboBoxModel);
         languageComboBox.setRenderer(new ComboBoxLocaleRenderer());
-        for (Locale locale : Main.getLocales()) {
+        for (Locale locale : I18n.getLocales()) {
             languageComboBoxModel.addElement(locale);
-            if (locale.equals(Main.getCurrentLocale())) {
+            if (locale.equals(I18n.getCurrentLocale())) {
                 languageComboBox.setSelectedItem(locale);
             }
         }
