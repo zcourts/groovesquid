@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings({"serial", "rawtypes"})
+@SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class MainFrame extends JFrame {
     
     private ArrayList<String> autocompleteList = new ArrayList<String>();
