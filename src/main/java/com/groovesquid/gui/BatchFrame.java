@@ -21,9 +21,6 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class BatchFrame extends JFrame {
 
-    /**
-     * Creates new form About
-     */
     public BatchFrame() {
         initComponents();
         
@@ -35,13 +32,12 @@ public class BatchFrame extends JFrame {
     }
 
     private void initComponents() {
-
         downloadButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         searchTextArea = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
 
-        setTitle("Batch");
+        setTitle(I18n.getLocaleString("BATCH"));
         setResizable(false);
 
         downloadButton.setText(I18n.getLocaleString("DOWNLOAD"));
@@ -70,7 +66,7 @@ public class BatchFrame extends JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 388, Short.MAX_VALUE)
-                        .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -86,9 +82,9 @@ public class BatchFrame extends JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
+    private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String terms[] = searchTextArea.getText().split("\\r?\\n");
         final DownloadTableModel downloadTableModel = (DownloadTableModel) Main.getMainFrame().getDownloadTable().getModel();
         List<Song> songs = new ArrayList<Song>();
@@ -102,12 +98,10 @@ public class BatchFrame extends JFrame {
         for (Song song : songs) {
             downloadTableModel.addRow(0, Main.getDownloadService().download(song, Main.getMainFrame().getDownloadListener(downloadTableModel)));
         }
-    }//GEN-LAST:event_downloadButtonActionPerformed
+    }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton downloadButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea searchTextArea;
-    // End of variables declaration//GEN-END:variables
+    private JButton downloadButton;
+    private JLabel jLabel1;
+    private JScrollPane jScrollPane1;
+    private JTextArea searchTextArea;
 }

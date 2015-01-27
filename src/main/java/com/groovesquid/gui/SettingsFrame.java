@@ -22,10 +22,7 @@ public class SettingsFrame extends JFrame {
     private boolean originalAutocompleteEnabled;
     private int originalDownloadComplete;
     private Locale originalLocale;
-    
-    /**
-     * Creates new form Settings
-     */
+
     public SettingsFrame() {
         initComponents();
 
@@ -84,10 +81,10 @@ public class SettingsFrame extends JFrame {
             }
         });
 
-        jLabel6.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel6.setFont(new Font("Lucida Grande", 1, 11));
         jLabel6.setText(I18n.getLocaleString("MAX_PARALLEL_DOWNLOADS"));
 
-        jLabel1.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel1.setFont(new Font("Lucida Grande", 1, 11));
         jLabel1.setText(I18n.getLocaleString("DOWNLOAD_DIRECTORY"));
 
         downloadDirectoryTextField.setRequestFocusEnabled(false);
@@ -110,23 +107,23 @@ public class SettingsFrame extends JFrame {
             }
         });
 
-        jLabel2.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel2.setFont(new Font("Lucida Grande", 1, 11));
         jLabel2.setText(I18n.getLocaleString("FILENAME_SCHEME"));
 
-        jLabel3.setFont(new Font("Lucida Grande", 0, 10)); // NOI18N
+        jLabel3.setFont(new Font("Lucida Grande", 0, 10));
         jLabel3.setLabelFor(fileNameSchemeTextField);
-        jLabel3.setText("<html><body>This is a format string for file path of downloaded files. Use / to create a subdirectory. Use &lt;Artist&gt; to insert the artist's name, &lt;Album&gt; to insert the album title, &lt;Title&gt; to insert the track's name, &lt;#&gt; to insert the track number (if any), &lt;%&gt; to insert the track order (for playlists only). Use &lt;##&gt; or &lt;###&gt; to pad the track number with leading zeroes (&lt;%%&gt; or &lt;%%%&gt; respectively for playlist track order). &lt;ALBUM&gt; inserts the album name in uppercase, &lt;album&gt; in lowercase (likewise for &lt;Artist&gt; and &lt;Title&gt;). &lt;Album?text&gt; inserts 'text' only if the album name is not empty (likewise for &lt;Artist&gt;, &lt;Title&gt;, &lt;#&gt; and &lt;%&gt;).</body></html>");
+        jLabel3.setText("<html><body>" + I18n.getLocaleString("FILENAME_SCHEME_DESCRIPTION") + "</body></html>");
 
-        jLabel4.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel4.setFont(new Font("Lucida Grande", 1, 11));
         jLabel4.setText(I18n.getLocaleString("SEARCH_AUTOCOMPLETE"));
 
-        autocompleteEnabledCheckBox.setFont(new Font("Arial", 0, 11)); // NOI18N
+        autocompleteEnabledCheckBox.setFont(new Font("Arial", 0, 11));
         autocompleteEnabledCheckBox.setText(I18n.getLocaleString("ENABLED"));
 
-        jLabel5.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel5.setFont(new Font("Lucida Grande", 1, 11));
         jLabel5.setText(I18n.getLocaleString("DOWNLOAD_COMPLETED"));
 
-        jLabel7.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel7.setFont(new Font("Lucida Grande", 1, 11));
         jLabel7.setText(I18n.getLocaleString("LANGUAGE"));
 
         resetOriginalSettingsButton.setText(I18n.getLocaleString("RESET_ORIGINAL_SETTINGS"));
@@ -136,13 +133,13 @@ public class SettingsFrame extends JFrame {
             }
         });
 
-        jLabel8.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel8.setFont(new Font("Lucida Grande", 1, 11));
         jLabel8.setText(I18n.getLocaleString("FILE_EXISTS"));
 
-        jLabel9.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel9.setFont(new Font("Lucida Grande", 1, 11));
         jLabel9.setText(I18n.getLocaleString("PROXY_HOST"));
 
-        jLabel10.setFont(new Font("Lucida Grande", 1, 11)); // NOI18N
+        jLabel10.setFont(new Font("Lucida Grande", 1, 11));
         jLabel10.setText(I18n.getLocaleString("PROXY_PORT"));
 
         org.jdesktop.layout.GroupLayout layout = new GroupLayout(getContentPane());
@@ -192,16 +189,16 @@ public class SettingsFrame extends JFrame {
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
+                    .addContainerGap()
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
                             .add(downloadDirectoryTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .add(downloadDirectoryButton)
+                            .add(downloadDirectoryButton)
                             .add(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addPreferredGap(LayoutStyle.UNRELATED)
                     .add(layout.createParallelGroup(GroupLayout.LEADING, false)
-                    .add(maxParallelDownloadsSpinner)
+                            .add(maxParallelDownloadsSpinner)
                             .add(jLabel6, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
+                    .add(18, 18, 18)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
                             .add(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(fileNameSchemeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -210,39 +207,41 @@ public class SettingsFrame extends JFrame {
                     .addPreferredGap(LayoutStyle.UNRELATED)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
                             .add(jLabel4, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-                    .add(autocompleteEnabledCheckBox))
-                .add(18, 18, 18)
+                            .add(autocompleteEnabledCheckBox))
+                    .add(18, 18, 18)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                    .add(jLabel5)
+                            .add(jLabel5)
                             .add(downloadCompleteComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .add(15, 15, 15)
+                    .add(15, 15, 15)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                    .add(jLabel8)
+                            .add(jLabel8)
                             .add(fileExistsComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
+                    .add(18, 18, 18)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                    .add(jLabel7)
+                            .add(jLabel7)
                             .add(languageComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
+                    .add(18, 18, 18)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                    .add(jLabel9)
+                            .add(jLabel9)
                             .add(proxyHostTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
+                    .add(18, 18, 18)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                    .add(jLabel10)
+                            .add(jLabel10)
                             .add(proxyPortTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .add(131, 131, 131)
+                    .add(50, 50, 50)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                    .add(reconnectButton)
-                    .add(saveSettingsButton)
-                    .add(resetOriginalSettingsButton))
-                .addContainerGap())
+                            .add(reconnectButton)
+                            .add(saveSettingsButton)
+                            .add(resetOriginalSettingsButton))
+                    .addContainerGap())
         );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+        setMinimumSize(new Dimension(600, 600));
 
-    private void downloadDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadDirectoryButtonActionPerformed
+        pack();
+    }
+
+    private void downloadDirectoryButtonActionPerformed(ActionEvent evt) {
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File(Main.getConfig().getDownloadDirectory()));
         chooser.setDialogTitle("Select Download Directory");
@@ -253,22 +252,22 @@ public class SettingsFrame extends JFrame {
             Main.getConfig().setDownloadDirectory(downloadDirectory);
             downloadDirectoryTextField.setText(downloadDirectory);
         }
-    }//GEN-LAST:event_downloadDirectoryButtonActionPerformed
+    }
 
-    private void saveSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsButtonActionPerformed
+    private void saveSettingsButtonActionPerformed(ActionEvent evt) {
         if(saveSettings()) {
             dispose();
         }
-    }//GEN-LAST:event_saveSettingsButtonActionPerformed
+    }
 
-    private void reconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reconnectButtonActionPerformed
+    private void reconnectButtonActionPerformed(ActionEvent evt) {
         // init grooveshark
         Main.getGroovesharkClient().init();
-    }//GEN-LAST:event_reconnectButtonActionPerformed
+    }
 
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+    private void formWindowClosing(WindowEvent evt) {
         if(settingsChanged()) {
-            if(JOptionPane.showConfirmDialog(this, "You did made changes to the settings. Do you want to save them?", "Save", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+            if (JOptionPane.showConfirmDialog(this, I18n.getLocaleString("ALERT_UNSAVED_CHANGES"), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
                 if(saveSettings()) {
                     dispose();
                 }
@@ -279,9 +278,9 @@ public class SettingsFrame extends JFrame {
         } else {
             dispose();
         }
-    }//GEN-LAST:event_formWindowClosing
+    }
 
-    private void resetOriginalSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void resetOriginalSettingsButtonActionPerformed(ActionEvent evt) {
         Main.getConfig().resetSettings();
         Main.saveConfig();
         resetSettings();
@@ -328,7 +327,7 @@ public class SettingsFrame extends JFrame {
                 try {
                     Main.getConfig().setProxyPort(Integer.parseInt(proxyPortTextField.getText()));
                 } catch(NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Proxy Port must be numeric.");
+                    JOptionPane.showMessageDialog(this, I18n.getLocaleString("INVALID_PROXY_PORT"));
                     return false;
                 }
             } else {
@@ -336,7 +335,7 @@ public class SettingsFrame extends JFrame {
                 Main.getConfig().setProxyPort(null);
             }
             setOriginalSettings();
-            JOptionPane.showMessageDialog(this, "Settings have been successfully saved.");
+            JOptionPane.showMessageDialog(this, I18n.getLocaleString("SETTINGS_SAVED"));
             return true;
         } else {
             return false;
@@ -348,10 +347,10 @@ public class SettingsFrame extends JFrame {
     }
     
     public boolean checkSettings() {
-        if(new File(downloadDirectoryTextField.getText()).exists()) {
+        if (new File(downloadDirectoryTextField.getText()).exists()) {
             return true;
         } else {
-            JOptionPane.showMessageDialog(this, "The given download directory does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, I18n.getLocaleString("INVALID_DOWNLOAD_DIRECTORY"), I18n.getLocaleString("ERROR"), JOptionPane.ERROR_MESSAGE);
         }
         return false;
     }

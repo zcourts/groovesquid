@@ -5,6 +5,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,7 +19,7 @@ import java.util.logging.Logger;
 public class I18n {
 
     private final static Logger log = Logger.getLogger(I18n.class.getName());
-    private static LinkedList<Locale> locales;
+    private static Map<Locale, Properties> translations;
     private static Locale currentLocale, defaultLocale = new Locale("en");
 
     public static void load() {
@@ -55,24 +57,38 @@ public class I18n {
             }
         }
 
-        locales = new LinkedList<Locale>();
+        translations = new HashMap<Locale, Properties>();
         for (String fileName : fileNames) {
             String localeString = FilenameUtils.getBaseName(fileName);
-            String parts[] = localeString.split("_", -1);
+            String parts[] = localeString.split("-", -1);
             Locale locale;
-            if (parts.length == 2) locale = new Locale(parts[1]);
-            else if (parts.length == 3) locale = new Locale(parts[1], parts[2]);
-            else if (parts.length == 4) locale = new Locale(parts[1], parts[2], parts[3]);
+            if (parts.length == 1) locale = new Locale(parts[0]);
+            else if (parts.length == 2) locale = new Locale(parts[0], parts[1]);
+            else if (parts.length == 3) locale = new Locale(parts[0], parts[1], parts[2]);
             else locale = defaultLocale;
-            locales.add(locale);
+
+            FileInputStream stream;
+            try {
+                stream = new FileInputStream(new File(fileName, "general.properties"));
+                Properties properties = new Properties();
+                properties.load(stream);
+                translations.put(locale, properties);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Locale configLocale = LocaleUtils.toLocale(Main.getConfig().getLocale());
-        if (locales.contains(configLocale)) {
+        Locale configLangLocale = new Locale(configLocale.getLanguage());
+        if (translations.keySet().contains(configLocale)) {
             currentLocale = configLocale;
+        } else if (translations.keySet().contains(configLangLocale)) {
+            currentLocale = configLangLocale;
         } else {
             Locale defaultLocale = Locale.getDefault();
-            if (locales.contains(defaultLocale)) {
+            if (translations.keySet().contains(defaultLocale)) {
                 currentLocale = defaultLocale;
             } else {
                 currentLocale = defaultLocale;
@@ -80,15 +96,19 @@ public class I18n {
         }
 
         // sort locales
-        Collections.sort(locales, new Comparator<Locale>() {
+        Collections.sort(new ArrayList<Locale>(translations.keySet()), new Comparator<Locale>() {
             public int compare(Locale l1, Locale l2) {
                 return l1.getDisplayName(l1).compareTo(l2.getDisplayName(l2));
             }
         });
+
+        for (Locale locale : translations.keySet()) {
+            log.info(locale.getDisplayName());
+        }
     }
 
-    public static List<Locale> getLocales() {
-        return locales;
+    public static Set<Locale> getLocales() {
+        return translations.keySet();
     }
 
 
@@ -102,14 +122,21 @@ public class I18n {
     }
 
     public static String getLocaleString(String string) {
-        try {
-            return ResourceBundle.getBundle("locales.general", currentLocale).getString(string);
-        } catch (MissingResourceException ex) {
-            try {
-                return ResourceBundle.getBundle("locales.general", defaultLocale).getString(string);
-            } catch (Exception ex2) {
-                return string;
+        Properties properties = translations.get(currentLocale);
+        if (properties == null) {
+            properties = translations.get(defaultLocale);
+        }
+        if (properties != null) {
+            String translation = properties.getProperty(string);
+            if (translation != null && !translation.isEmpty()) {
+                return translation;
+            } else {
+                return translations.get(defaultLocale).getProperty(string);
             }
         }
+        if (string == "FILENAME_SCHEME_DESCRIPTION") {
+            log.warning(properties.getProperty(string));
+        }
+        return string;
     }
 }

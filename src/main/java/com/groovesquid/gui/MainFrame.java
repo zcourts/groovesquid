@@ -1349,7 +1349,8 @@ public class MainFrame extends JFrame {
 
     public void removeFromDiskButtonActionPerformed(ActionEvent evt) {
         int[] selectedRows = downloadTable.getSelectedRows();
-        if (JOptionPane.showConfirmDialog(null, String.format(I18n.getLocaleString("ALERT_REMOVE_FILES_FROM_DISK"), Integer.toString(selectedRows.length)), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+        Object[] options = {I18n.getLocaleString("YES"), I18n.getLocaleString("NO")};
+        if (JOptionPane.showOptionDialog(null, String.format(I18n.getLocaleString("ALERT_REMOVE_FILES_FROM_DISK"), Integer.toString(selectedRows.length)), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]) == 0) {
             removeFromList(true);
         }
     }
@@ -1712,10 +1713,7 @@ public class MainFrame extends JFrame {
     }
 
     public void removeFromDiskMenuItemActionPerformed(ActionEvent evt) {
-        int[] selectedRows = downloadTable.getSelectedRows();
-        if (JOptionPane.showConfirmDialog(null, String.format(I18n.getLocaleString("ALERT_REMOVE_FILES_FROM_DISK"), Integer.toString(selectedRows.length)), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
-            removeFromList(true);
-        }
+        removeFromDiskButtonActionPerformed(evt);
     }
 
     public void downloadTableMouseReleased(MouseEvent evt) {
