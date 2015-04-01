@@ -100,10 +100,6 @@ public class I18n {
                 return l1.getDisplayName(l1).compareTo(l2.getDisplayName(l2));
             }
         });
-
-        for (Locale locale : translations.keySet()) {
-            log.info(locale.getDisplayName());
-        }
     }
 
     public static Set<Locale> getLocales() {
@@ -127,7 +123,6 @@ public class I18n {
         }
         if (properties != null) {
             String translation = properties.getProperty(string);
-            log.info(translation);
             if (translation != null && !translation.isEmpty()) {
                 return translation;
             } else {
