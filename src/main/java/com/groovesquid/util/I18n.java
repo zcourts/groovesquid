@@ -1,13 +1,9 @@
 package com.groovesquid.util;
 
 import com.groovesquid.Main;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -35,7 +31,7 @@ public class I18n {
                 final Enumeration<JarEntry> entries = jar.entries(); // gives ALL entries in jar
                 while (entries.hasMoreElements()) {
                     final String name = entries.nextElement().getName();
-                    if (name.startsWith(path + "/")) { // filter according to the path
+                    if (name.startsWith(path + "/") && name.endsWith("/") && name.length() > path.length() + 1) { // filter according to the path
                         fileNames.add(name);
                     }
                 }
@@ -59,7 +55,7 @@ public class I18n {
 
         translations = new HashMap<Locale, Properties>();
         for (String fileName : fileNames) {
-            String localeString = FilenameUtils.getBaseName(fileName);
+            String localeString = new File(fileName).getName();
             String parts[] = localeString.split("-", -1);
             Locale locale;
             if (parts.length == 1) locale = new Locale(parts[0]);
@@ -67,9 +63,12 @@ public class I18n {
             else if (parts.length == 3) locale = new Locale(parts[0], parts[1], parts[2]);
             else locale = defaultLocale;
 
-            FileInputStream stream;
+            InputStream stream;
             try {
-                stream = new FileInputStream(new File(fileName, "general.properties"));
+                stream = I18n.class.getResourceAsStream("/" + fileName + "general.properties");
+                if (stream == null) {
+                    stream = new FileInputStream(new File(fileName, "general.properties").getAbsolutePath());
+                }
                 Properties properties = new Properties();
                 properties.load(stream);
                 translations.put(locale, properties);
@@ -128,14 +127,12 @@ public class I18n {
         }
         if (properties != null) {
             String translation = properties.getProperty(string);
+            log.info(translation);
             if (translation != null && !translation.isEmpty()) {
                 return translation;
             } else {
                 return translations.get(defaultLocale).getProperty(string);
             }
-        }
-        if (string == "FILENAME_SCHEME_DESCRIPTION") {
-            log.warning(properties.getProperty(string));
         }
         return string;
     }
