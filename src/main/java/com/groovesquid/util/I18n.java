@@ -16,7 +16,7 @@ public class I18n {
 
     private final static Logger log = Logger.getLogger(I18n.class.getName());
     private static Map<Locale, Properties> translations;
-    private static Locale currentLocale, defaultLocale = new Locale("en");
+    private static Locale currentLocale, defaultLocale = new Locale("en", "US");
 
     public static void load() {
         // find available locales
@@ -53,7 +53,14 @@ public class I18n {
             }
         }
 
-        translations = new HashMap<Locale, Properties>();
+        Comparator<Locale> comparator = new Comparator<Locale>() {
+            public int compare(Locale l1, Locale l2) {
+                return l1.getDisplayName(l1).compareTo(l2.getDisplayName(l2));
+            }
+        };
+
+
+        translations = new TreeMap<Locale, Properties>(comparator);
         for (String fileName : fileNames) {
             String localeString = new File(fileName).getName();
             String parts[] = localeString.split("-", -1);
@@ -93,13 +100,6 @@ public class I18n {
                 currentLocale = defaultLocale;
             }
         }
-
-        // sort locales
-        Collections.sort(new ArrayList<Locale>(translations.keySet()), new Comparator<Locale>() {
-            public int compare(Locale l1, Locale l2) {
-                return l1.getDisplayName(l1).compareTo(l2.getDisplayName(l2));
-            }
-        });
     }
 
     public static Set<Locale> getLocales() {
