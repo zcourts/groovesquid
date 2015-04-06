@@ -1,10 +1,11 @@
 package com.groovesquid;
 
+import com.apple.eawt.*;
 import com.google.gson.Gson;
 import com.groovesquid.gui.AboutFrame;
 import com.groovesquid.gui.MainFrame;
 import com.groovesquid.gui.SettingsFrame;
-import com.groovesquid.gui.style.FlatStyle;
+import com.groovesquid.gui.style.DefaultStyle;
 import com.groovesquid.gui.style.Style;
 import com.groovesquid.model.Clients;
 import com.groovesquid.service.DownloadService;
@@ -53,12 +54,38 @@ public class Main {
         searchService = new SearchService();
         downloadService = new DownloadService();
         playService = new PlayService(downloadService);
-        
+
         // GUI
         if (!GraphicsEnvironment.isHeadless()) {
-            // apple os x
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.aboutFrame.name", "Groovesquid");
+
+            // platform specific stuff
+            String OS = System.getProperty("os.name").toLowerCase();
+
+            if (OS.indexOf("mac") >= 0) {
+                // mac os x
+
+                System.setProperty("apple.laf.useScreenMenuBar", "true");
+                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Groovesquid");
+
+                Application.getApplication().setAboutHandler(new AboutHandler() {
+                    public void handleAbout(AppEvent.AboutEvent aboutEvent) {
+                        aboutFrame.setVisible(true);
+                    }
+                });
+
+                Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
+                    public void handlePreferences(AppEvent.PreferencesEvent preferencesEvent) {
+                        settingsFrame.setVisible(true);
+                    }
+                });
+
+                Application.getApplication().setQuitHandler(new QuitHandler() {
+                    public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
+                        mainFrame.formWindowClosing(null);
+                    }
+                });
+
+            }
             // antialising
             System.setProperty("awt.useSystemAAFontSettings", "lcd");
             System.setProperty("swing.aatext", "true");
@@ -74,10 +101,15 @@ public class Main {
                 log.log(Level.SEVERE, null, ex);
             }
 
-            style = new FlatStyle();
+            style = new DefaultStyle();
             mainFrame = new MainFrame();
             settingsFrame = new SettingsFrame();
             aboutFrame = new AboutFrame();
+
+            if (OS.indexOf("win") >= 0 || OS.indexOf("nux") >= 0) {
+                // windows & linux
+                mainFrame.addMenuBarButtons();
+            }
         }
 
         // check for updates
