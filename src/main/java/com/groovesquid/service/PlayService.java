@@ -2,6 +2,9 @@ package com.groovesquid.service;
 
 import com.groovesquid.model.Song;
 import com.groovesquid.model.Track;
+import javazoom.jl.player.MP3Player;
+import javazoom.jl.player.PlayThread;
+import javazoom.jl.player.PlaybackListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -9,9 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javazoom.jl.player.MP3Player;
-import javazoom.jl.player.PlayThread;
-import javazoom.jl.player.PlaybackListener;
 
 public class PlayService {
 
@@ -295,16 +295,15 @@ public class PlayService {
             log.error("error fetching next song for radio", ex);
         }
     }*/
-    
-    // sliderValue is from -2000 to 0
+
     public void setVolume(int sliderValue) {
         if(playThread != null) {
-            int minSliderValue = -2000;
+            int minSliderValue = -80;
             if(sliderValue <= minSliderValue) {
                 // mute
                 sliderValue = -10000;
             }
-            gain = (float) (Math.sqrt(sliderValue * (-1)) * (-1));
+            gain = sliderValue;
             setGain();
         }
     }

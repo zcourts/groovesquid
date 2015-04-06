@@ -456,17 +456,9 @@ public class SearchService {
         }
         return resultList;
     }
-    
-    public Image getLastFmCover(Song song) {
-        // Album Info
-        String url = "";
-        try {
-            url = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=3a7cb1cc7d5b8537eb05ec2e5fd7ae2a&format=json&artist=" + URLEncoder.encode(song.getArtist().getName(), "UTF-8") + "&album=" + URLEncoder.encode(song.getAlbum().getName(), "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(SearchService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+    public String getHttp(String url) {
         String responseContent = null;
-        BufferedImage img = null;
         HttpEntity httpEntity = null;
         try {
             HttpGet httpGet = new HttpGet(url);
@@ -474,7 +466,7 @@ public class SearchService {
             HttpResponse httpResponse = httpClient.execute(httpGet);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             httpEntity = httpResponse.getEntity();
-            
+
             StatusLine statusLine = httpResponse.getStatusLine();
             int statusCode = statusLine.getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
@@ -494,10 +486,35 @@ public class SearchService {
                 log.log(Level.SEVERE, null, ex);
             }
         }
-        
-        LastFmAlbumResponse response = gson.fromJson(responseContent, LastFmAlbumResponse.class);
-        String imageUrl = response.getAlbum().getImage()[1].get("#text"); // 64px
-        
+
+        return responseContent;
+    }
+
+    public Image getLastFmCover(Song song) {
+        BufferedImage img = null;
+        String url = "";
+        try {
+            url = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=47259cb6297abb73eb1ec3f6ae62db3e&format=json&artist=" + URLEncoder.encode(song.getArtist().getName(), "UTF-8") + "&album=" + URLEncoder.encode(song.getAlbum().getName(), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(SearchService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String responseContent = getHttp(url);
+        String imageUrl;
+
+        if (!responseContent.contains("\"error\":6")) {
+            LastFmAlbumResponse response = gson.fromJson(responseContent, LastFmAlbumResponse.class);
+            imageUrl = response.getAlbum().getImage()[2].get("#text");
+        } else {
+            try {
+                url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=47259cb6297abb73eb1ec3f6ae62db3e&format=json&artist=" + URLEncoder.encode(song.getArtist().getName(), "UTF-8") + "&album=" + URLEncoder.encode(song.getAlbum().getName(), "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(SearchService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            responseContent = getHttp(url);
+            LastFmArtistResponse response = gson.fromJson(responseContent, LastFmArtistResponse.class);
+            imageUrl = response.getArtist().getImage()[2].get("#text");
+        }
+
         if(imageUrl.isEmpty()) {
             return null;
         }
@@ -639,6 +656,25 @@ public class SearchService {
                 return image;
             }
         }
-        
+    }
+
+    class LastFmArtistResponse {
+        private LastFmArtistResponse.Artist artist;
+
+        public LastFmArtistResponse(LastFmArtistResponse.Artist artist) {
+            this.artist = artist;
+        }
+
+        public LastFmArtistResponse.Artist getArtist() {
+            return artist;
+        }
+
+        class Artist {
+            private HashMap<String, String>[] image;
+
+            public HashMap<String, String>[] getImage() {
+                return image;
+            }
+        }
     }
 }
