@@ -39,7 +39,8 @@ public class ArtistSearchTableModel extends AbstractTableModel {
         Artist artist = artists.get(row);
 
         switch (col) {
-            case 0: return artist.getName();
+            case 0:
+                return artist;
         }
         return null;
     }

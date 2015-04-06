@@ -39,7 +39,8 @@ public class PlaylistSearchTableModel extends AbstractTableModel {
         Playlist playlist = playlists.get(row);
 
         switch (col) {
-            case 0: return playlist.getName();
+            case 0:
+                return playlist;
             case 1: return playlist.getAuthor();
             case 2: return playlist.getNumSongs();
         }

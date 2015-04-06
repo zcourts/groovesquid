@@ -87,9 +87,9 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
             editButton.setBackground(table.getSelectionBackground());
         } else {
             if (row % 2 == 0) {
-                editButton.setBackground(new Color(242,242,242));
+                editButton.setBackground(new Color(255, 255, 255));
             } else {
-                editButton.setBackground(new Color(230,230,230));
+                editButton.setBackground(new Color(245, 245, 245));
             }
         }
 

@@ -39,8 +39,10 @@ public class AlbumSearchTableModel extends AbstractTableModel {
         Album album = albums.get(row);
 
         switch (col) {
-            case 0: return album.getName();
-            case 1: return album.getArtist().getName();
+            case 0:
+                return album;
+            case 1:
+                return album.getArtist();
         }
         return null;
     }

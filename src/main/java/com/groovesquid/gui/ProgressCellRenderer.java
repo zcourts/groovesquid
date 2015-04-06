@@ -92,10 +92,10 @@ public class ProgressCellRenderer extends DefaultTableCellRenderer {
         b.setFont(table.getFont());
         
         if (isSelected) {
-            b.setForeground(table.getSelectionForeground());
+            //b.setForeground(table.getSelectionForeground());
             b.setBackground(table.getSelectionBackground());
         } else {
-            b.setForeground(table.getSelectionForeground());
+            //b.setForeground(table.getSelectionForeground());
             if (row % 2 == 0) {
                 b.setBackground(new Color(242, 242, 242));
             } else {

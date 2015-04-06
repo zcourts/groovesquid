@@ -1,9 +1,7 @@
 package com.groovesquid.gui;
 
 import com.groovesquid.Config.DownloadComplete;
-import com.groovesquid.GetAdsThread;
 import com.groovesquid.Main;
-import com.groovesquid.UpdateCheckThread;
 import com.groovesquid.gui.style.Style;
 import com.groovesquid.model.*;
 import com.groovesquid.service.DownloadListener;
@@ -12,9 +10,20 @@ import com.groovesquid.service.PlayServiceListener;
 import com.groovesquid.util.I18n;
 import com.groovesquid.util.Utils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jdesktop.swingx.JXHyperlink;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
+import org.jdesktop.swingx.renderer.CellContext;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+import org.jdesktop.swingx.renderer.HyperlinkProvider;
+import org.jdesktop.swingx.renderer.JXRendererHyperlink;
+import org.jdesktop.swingx.rollover.RolloverProducer;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -86,9 +95,6 @@ public class MainFrame extends JFrame {
     }
 
     protected void loadResources() {
-        facebookIcon = new ImageIcon(getClass().getResource("/gui/facebook.png"));
-        twitterIcon = new ImageIcon(getClass().getResource("/gui/twitter.png"));
-
         plusIcon = new ImageIcon(getClass().getResource("/gui/plus.png"));
         plusIconHover = new ImageIcon(getClass().getResource("/gui/plusHover.png"));
     }
@@ -148,9 +154,7 @@ public class MainFrame extends JFrame {
         downloadTablePopupMenu.add(openFileMenuItem);
         downloadTablePopupMenu.add(openDirectoryMenuItem);
 
-        downloadsPanel = new JPanel();
         retryFailedDownloadsButton = new JButton();
-        menuPanel = new JPanel();
         adScrollPane = new JScrollPane();
         adPane = new JEditorPane();
 
@@ -187,6 +191,7 @@ public class MainFrame extends JFrame {
         currentlyPlayingLabel = new JLabel();
         currentlyPlayingLabel.setForeground(style.getPlayerPanelForeground());
         currentlyPlayingLabel.setBorder(BorderFactory.createEmptyBorder(-10, 0, 0, 0));
+        currentlyPlayingLabel.setFont(style.getFont(12));
 
         trackSlider = new JSlider();
         trackSlider.setUI(style.getSliderUI(trackSlider, 11));
@@ -208,14 +213,13 @@ public class MainFrame extends JFrame {
         durationLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 10));
 
         albumCoverLabel = new JLabel();
-        albumCoverLabel.setBackground(new Color(230, 230, 230));
-        albumCoverLabel.setOpaque(true);
+        albumCoverLabel.setOpaque(false);
 
         volumeSlider = new JSlider();
         volumeSlider.setUI(style.getSliderUI(volumeSlider, 7));
         volumeSlider.setOpaque(false);
-        volumeSlider.setMaximum(0);
-        volumeSlider.setMinimum(-2000);
+        volumeSlider.setMaximum(6);
+        volumeSlider.setMinimum(-80);
         volumeSlider.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         volumeSlider.setFocusable(false);
         volumeSlider.setRequestFocusEnabled(false);
@@ -275,11 +279,12 @@ public class MainFrame extends JFrame {
                 playerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(playerPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(previousButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(previousButton, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(playPauseButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(playPauseButton, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(nextButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(nextButton, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
                                 .addGap(66, 66, 66)
                                 .addComponent(currentlyPlayingLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
@@ -315,20 +320,22 @@ public class MainFrame extends JFrame {
                         .addComponent(albumCoverLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        splitPane = new JSplitPane();
+        /*splitPane = new JSplitPane();
         splitPane.setUI(style.getSplitPaneUI(splitPane));
         splitPane.setBorder(null);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.5);
         splitPane.setFocusable(false);
         splitPane.setOpaque(false);
-        splitPane.setRequestFocusEnabled(false);
+        splitPane.setRequestFocusEnabled(false);*/
 
         searchPanel = new JPanel();
         searchPanel.setOpaque(false);
 
         searchTable = new SquidTable();
-        searchTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(searchTable.getTableHeader().getDefaultRenderer(), new Color(52, 152, 219)));
+        if (style.getSearchTableHeaderCellRendererColor() != null) {
+            searchTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(searchTable.getTableHeader().getDefaultRenderer(), style.getSearchTableHeaderCellRendererColor()));
+        }
         searchTable.setAutoCreateRowSorter(true);
         searchTable.setFont(style.getFont());
         searchTable.setModel(new SongSearchTableModel());
@@ -336,7 +343,7 @@ public class MainFrame extends JFrame {
         searchTable.setGridColor(new Color(204, 204, 204));
         searchTable.setIntercellSpacing(new Dimension(0, 0));
         searchTable.setRowHeight(20);
-        searchTable.setSelectionBackground(new Color(15, 152, 219));
+        searchTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         searchTable.setShowHorizontalLines(false);
         searchTable.setShowVerticalLines(false);
         searchTable.getTableHeader().setReorderingAllowed(false);
@@ -353,6 +360,101 @@ public class MainFrame extends JFrame {
                 searchTableMouseReleased(evt);
             }
         });
+        AbstractHyperlinkAction<Object> act = new AbstractHyperlinkAction<Object>() {
+            public void actionPerformed(ActionEvent ev) {
+                if (target instanceof Artist) {
+                    SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
+                        @Override
+                        protected List<Song> doInBackground() {
+                            List<Song> songs = new ArrayList<Song>();
+                            songs.addAll(Main.getSearchService().searchSongsByArtist((Artist) target));
+                            return songs;
+                        }
+
+                        @Override
+                        protected void done() {
+                            try {
+                                searchTable.setModel(new SongSearchTableModel(get()));
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (ExecutionException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    };
+                    worker.execute();
+                } else if (target instanceof Album) {
+                    SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
+                        @Override
+                        protected List<Song> doInBackground() {
+                            List<Song> songs = new ArrayList<Song>();
+                            songs.addAll(Main.getSearchService().searchSongsByAlbum((Album) target));
+                            return songs;
+                        }
+
+                        @Override
+                        protected void done() {
+                            try {
+                                searchTable.setModel(new SongSearchTableModel(get()));
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (ExecutionException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    };
+                    worker.execute();
+                } else if (target instanceof Playlist) {
+                    SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
+                        @Override
+                        protected List<Song> doInBackground() {
+                            List<Song> songs = new ArrayList<Song>();
+                            songs.addAll(Main.getSearchService().searchSongsByPlaylist((Playlist) target));
+                            return songs;
+                        }
+
+                        @Override
+                        protected void done() {
+                            try {
+                                searchTable.setModel(new SongSearchTableModel(get()));
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (ExecutionException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    };
+                    worker.execute();
+                }
+            }
+        };
+        HyperlinkProvider hp = new HyperlinkProvider(act) {
+            @Override
+            protected JXHyperlink createRendererComponent() {
+                JXRendererHyperlink renderer = new JXRendererHyperlink();
+                renderer.setUnclickedColor(Color.BLACK);
+                return renderer;
+            }
+
+            @Override
+            protected void configureState(CellContext context) {
+                if (context.getComponent() == null) {
+                    return;
+                }
+                Point p = (Point) context.getComponent().getClientProperty(RolloverProducer.ROLLOVER_KEY);
+                if (p != null && (p.x >= 0)
+                        && (p.x == context.getColumn()) && (p.y == context.getRow())
+                        && SquidTable.isRolloverText((JXTable) context.getComponent(), p.y, p.x)
+                        && !rendererComponent.getModel().isRollover()) {
+                    rendererComponent.getModel().setRollover(true);
+                } else if (rendererComponent.getModel().isRollover()) {
+                    rendererComponent.getModel().setRollover(false);
+                }
+            }
+        };
+        searchTable.setDefaultRenderer(Album.class, new DefaultTableRenderer(hp));
+        searchTable.setDefaultRenderer(Artist.class, new DefaultTableRenderer(hp));
+        searchTable.setDefaultRenderer(Playlist.class, new DefaultTableRenderer(hp));
 
         searchScrollPane = new JScrollPane();
         searchScrollPane.getVerticalScrollBar().setUI(style.getSearchScrollBarUI(searchScrollPane.getVerticalScrollBar()));
@@ -448,8 +550,11 @@ public class MainFrame extends JFrame {
         });
 
         searchTextField = new JTextField(I18n.getLocaleString("LOADING"));
+        searchTextField.setUI(style.getSearchTextFieldUI(searchTextField));
         searchTextField.setFont(style.getFont(12));
-        searchTextField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(52, 152, 219)), BorderFactory.createEmptyBorder(1, 5, 1, 5)));
+        if (style.getSearchTextFieldBorder() != null) {
+            searchTextField.setBorder(style.getSearchTextFieldBorder());
+        }
         searchTextField.setEnabled(false);
         searchTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -462,48 +567,22 @@ public class MainFrame extends JFrame {
             }
         });
 
-        jPanel3 = new JPanel();
-        jPanel3.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(52, 152, 219)));
-        jPanel3.setOpaque(false);
-
-        searchLabel = new JLabel();
-        searchLabel.setBackground(new Color(52, 152, 219));
-        searchLabel.setFont(style.getFont());
-        searchLabel.setForeground(new Color(255, 255, 255));
-        searchLabel.setText(I18n.getLocaleString("SEARCH").toUpperCase());
-        searchLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        searchLabel.setOpaque(true);
-
-        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-                jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(searchLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-                jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(searchLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
-        );
-
         GroupLayout searchPanelLayout = new GroupLayout(searchPanel);
         searchPanel.setLayout(searchPanelLayout);
         searchPanelLayout.setHorizontalGroup(
                 searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
                                         .addGroup(searchPanelLayout.createSequentialGroup()
-                                                .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                 .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                         .addGroup(searchPanelLayout.createSequentialGroup()
-                                                                .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
                                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(0, 0, Short.MAX_VALUE))
                                                         .addComponent(searchTextField))
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -513,10 +592,9 @@ public class MainFrame extends JFrame {
         searchPanelLayout.setVerticalGroup(
                 searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
-                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(searchTextField, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(searchTextField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(searchButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
@@ -528,10 +606,13 @@ public class MainFrame extends JFrame {
                                 .addContainerGap())
         );
 
-        splitPane.setTopComponent(searchPanel);
-
         downloadPanel = new JPanel();
         downloadPanel.setOpaque(false);
+
+        tabbedPane = new JTabbedPane();
+        tabbedPane.addTab(I18n.getLocaleString("SEARCH"), null, searchPanel, null);
+        tabbedPane.addTab(I18n.getLocaleString("DOWNLOADS"), null, downloadPanel, null);
+
 
         removeFromDiskButton = new JButton(I18n.getLocaleString("REMOVE_FROM_DISK"));
         if (style.usesButtonBackgrounds()) {
@@ -581,7 +662,9 @@ public class MainFrame extends JFrame {
         downloadScrollPane.setOpaque(false);
 
         downloadTable = new SquidTable();
-        downloadTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(downloadTable.getTableHeader().getDefaultRenderer(), new Color(243, 156, 18)));
+        if (style.getDownloadTableHeaderCellRendererColor() != null) {
+            downloadTable.getTableHeader().setDefaultRenderer(new TableHeaderCellRenderer(downloadTable.getTableHeader().getDefaultRenderer(), style.getDownloadTableHeaderCellRendererColor()));
+        }
         downloadTable.setAutoCreateRowSorter(true);
         downloadTable.setFont(style.getFont());
         downloadTable.setModel(new DownloadTableModel());
@@ -608,36 +691,13 @@ public class MainFrame extends JFrame {
         selectComboBox.setFont(style.getFont());
         selectComboBox.setBorder(style.getSelectComboBoxBorder());
         selectComboBox.setFocusable(false);
-        selectComboBox.setPreferredSize(new Dimension(74, 26));
+        selectComboBox.setPreferredSize(new Dimension(90, 26));
         selectComboBox.setRequestFocusEnabled(false);
         selectComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 selectComboBoxActionPerformed(evt);
             }
         });
-
-        downloadsPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(243, 156, 18)));
-        downloadsPanel.setOpaque(false);
-
-        downloadsLabel = new JLabel(I18n.getLocaleString("DOWNLOADS").toUpperCase());
-        downloadsLabel.setBackground(new Color(243, 156, 18));
-        downloadsLabel.setFont(style.getFont());
-        downloadsLabel.setForeground(new Color(255, 255, 255));
-        downloadsLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        downloadsLabel.setOpaque(true);
-
-        GroupLayout jPanel2Layout = new GroupLayout(downloadsPanel);
-        downloadsPanel.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-                jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(downloadsLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-                jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(downloadsLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
-        );
 
         retryFailedDownloadsButton = new JButton(I18n.getLocaleString("RETRY_FAILED_DOWNLOADS"));
         if (style.usesButtonBackgrounds()) {
@@ -673,16 +733,14 @@ public class MainFrame extends JFrame {
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(retryFailedDownloadsButton, GroupLayout.PREFERRED_SIZE, 193, GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(selectComboBox, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(selectComboBox, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
                                         .addComponent(downloadScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
                                 .addContainerGap())
-                        .addComponent(downloadsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         downloadPanelLayout.setVerticalGroup(
                 downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(downloadPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(downloadsPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(selectComboBox, GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
@@ -695,13 +753,25 @@ public class MainFrame extends JFrame {
                                 .addContainerGap())
         );
 
-        splitPane.setBottomComponent(downloadPanel);
+        menuBar = new JMenuBar();
+        menuBar.setBackground(new Color(230, 230, 230));
+        setJMenuBar(menuBar);
 
-        menuPanel.setBackground(new Color(230, 230, 230));
-        menuPanel.setPreferredSize(new Dimension(892, 44));
+        fileMenu = new JMenu("File");
+        editMenu = new JMenu("Edit");
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+
+        JMenuItem batchMenuItem = new JMenuItem(I18n.getLocaleString("BATCH"));
+        batchMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new BatchFrame().setVisible(true);
+            }
+        });
+        fileMenu.add(batchMenuItem);
 
         if (style.isUndecorated()) {
-            titleBarPanel = new JPanel();
+            /*titleBarPanel = new JPanel();
             titleBarPanel.setBackground(new Color(255, 255, 255));
             titleBarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(198, 2, 196)));
             titleBarPanel.setPreferredSize(new Dimension(0, 24));
@@ -780,7 +850,7 @@ public class MainFrame extends JFrame {
                             .addComponent(closeButton, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                             .addComponent(maximizeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(minimizeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            );
+            );*/
         }
 
         aboutButton = new JButton(I18n.getLocaleString("ABOUT"));
@@ -806,24 +876,6 @@ public class MainFrame extends JFrame {
             }
         });
 
-        twitterLabel = new JLabel();
-        twitterLabel.setIcon(Utils.stretchImage(twitterIcon, 12, 12, this));
-        twitterLabel.setToolTipText("http://twitter.com/groovesquid");
-        twitterLabel.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
-                linkLabelMousePressed(evt);
-            }
-        });
-
-        facebookLabel = new JLabel();
-        facebookLabel.setIcon(Utils.stretchImage(facebookIcon, 12, 12, this));
-        facebookLabel.setToolTipText("http://facebook.com/groovesquid");
-        facebookLabel.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
-                linkLabelMousePressed(evt);
-            }
-        });
-
         donateLabel = new JLabel();
         donateLabel = new JLabel(I18n.getLocaleString("DONATE"));
         donateLabel.setFont(style.getFont());
@@ -840,18 +892,8 @@ public class MainFrame extends JFrame {
         batchButton.setBorderPainted(false);
         batchButton.setContentAreaFilled(false);
 
-        menuBar = new JMenuBar();
-
-        setJMenuBar(menuBar);
-
-        JMenu fileMenu = new JMenu("File");
-        JMenu editMenu = new JMenu("Edit");
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-
-        menuPanel = new JPanel();
-        GroupLayout menuPanelLayout = new GroupLayout(menuPanel);
-        menuPanel.setLayout(menuPanelLayout);
+        /*GroupLayout menuPanelLayout = new GroupLayout(menuBar);
+        menuBar.setLayout(menuPanelLayout);
         menuPanelLayout.setHorizontalGroup(
                 menuPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(titleBarPanel, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
@@ -882,7 +924,7 @@ public class MainFrame extends JFrame {
                                                 .addComponent(twitterLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(settingsButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(batchButton))))
-        );
+        );*/
 
         batchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -897,7 +939,7 @@ public class MainFrame extends JFrame {
         adScrollPane.setOpaque(false);
         adScrollPane.setRequestFocusEnabled(false);
 
-        adPane.setEditable(false);
+        /*adPane.setEditable(false);
         adPane.setBackground(new Color(204, 204, 204));
         adPane.setBorder(null);
         adPane.setContentType("text/html");
@@ -920,34 +962,35 @@ public class MainFrame extends JFrame {
                     }
                 }
             }
-        });
+        });*/
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(playerPanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
-                        .addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
+                                //.addComponent(menuBar, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(splitPane)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(tabbedPane)
+                                /*.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)*/
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addContainerGap()
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(splitPane)
-                                        .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                                .addComponent(tabbedPane)
+                                        /*.addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)*/)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(playerPanel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
         );
 
         adScrollPane.getViewport().setOpaque(false);
+        setMinimumSize(new Dimension(600, 300));
 
         pack();
     }
@@ -1812,14 +1855,9 @@ public class MainFrame extends JFrame {
     protected JPopupMenu downloadTablePopupMenu;
     protected JLabel durationLabel;
     protected JLabel facebookLabel;
-    protected JLabel downloadsLabel;
-    protected JLabel searchLabel;
-    protected JPanel menuPanel;
-    protected JPanel downloadsPanel;
-    protected JPanel jPanel3;
-    protected JSplitPane splitPane;
-    protected JButton maximizeButton;
-    protected JButton minimizeButton;
+    protected JMenuBar menuBar;
+    protected JMenu fileMenu;
+    protected JMenu editMenu;
     protected JMenuItem openDirectoryMenuItem;
     protected JMenuItem openFileMenuItem;
     protected JButton playButton;
@@ -1842,8 +1880,6 @@ public class MainFrame extends JFrame {
     protected JComboBox searchTypeComboBox;
     protected JComboBox selectComboBox;
     protected JButton settingsButton;
-    protected JLabel titleBarLabel;
-    protected JPanel titleBarPanel;
     protected JSlider trackSlider;
     protected JLabel twitterLabel;
     protected JLabel volumeOffLabel;
@@ -1851,7 +1887,7 @@ public class MainFrame extends JFrame {
     protected JSlider volumeSlider;
     protected JEditorPane adPane;
     protected JScrollPane adScrollPane;
-    protected JMenuBar menuBar;
+    protected JTabbedPane tabbedPane;
 
     private void removeFromList(boolean andDisk) {
         int[] selectedRows = downloadTable.getSelectedRows();
@@ -1945,5 +1981,31 @@ public class MainFrame extends JFrame {
 
     public Style getStyle() {
         return style;
+    }
+
+    public void addMenuBarButtons() {
+        JMenuItem aboutMenuItem = new JMenuItem(I18n.getLocaleString("ABOUT"));
+        aboutMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Main.getAboutFrame().setVisible(true);
+            }
+        });
+        fileMenu.add(aboutMenuItem);
+
+        JMenuItem quitMenuItem = new JMenuItem(I18n.getLocaleString("QUIT"));
+        quitMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                formWindowClosing(null);
+            }
+        });
+        fileMenu.add(quitMenuItem);
+
+        JMenuItem settingsMenuItem = new JMenuItem(I18n.getLocaleString("SETTINGS"));
+        settingsMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Main.getSettingsFrame().setVisible(true);
+            }
+        });
+        editMenu.add(settingsMenuItem);
     }
 }

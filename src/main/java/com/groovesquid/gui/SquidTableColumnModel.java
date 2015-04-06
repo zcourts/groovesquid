@@ -37,6 +37,8 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                 
                 tc.setCellRenderer(buttonColumn);
                 tc.setCellEditor(buttonColumn);
+            } else if (tc.getModelIndex() >= 4) {
+                tc.setMaxWidth(100);
             }
         } else if(table.getModel() instanceof DownloadTableModel) {
             if(tc.getModelIndex() == 5) {
@@ -46,5 +48,6 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
         }
         super.addColumn(tc);
     }
+
 
 }

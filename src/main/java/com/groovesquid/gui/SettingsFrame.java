@@ -1,5 +1,6 @@
 package com.groovesquid.gui;
 
+import com.bulenkov.iconloader.IconLoader;
 import com.groovesquid.Config;
 import com.groovesquid.Main;
 import com.groovesquid.util.I18n;
@@ -236,7 +237,7 @@ public class SettingsFrame extends JFrame {
                     .addContainerGap())
         );
 
-        setMinimumSize(new Dimension(600, 600));
+        setMinimumSize(new Dimension(650, 620));
 
         pack();
     }
@@ -244,7 +245,7 @@ public class SettingsFrame extends JFrame {
     private void downloadDirectoryButtonActionPerformed(ActionEvent evt) {
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File(Main.getConfig().getDownloadDirectory()));
-        chooser.setDialogTitle("Select Download Directory");
+        chooser.setDialogTitle(I18n.getLocaleString("SELECT_DOWNLOAD_DIRECTORY"));
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -394,6 +395,27 @@ public class SettingsFrame extends JFrame {
                 languageComboBox.setSelectedItem(locale);
             }
         }
+        languageComboBox.setRenderer(new DefaultListCellRenderer() {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                JLabel label = new JLabel();
+                label.setOpaque(true);
+                label.setForeground(comp.getForeground());
+                label.setBackground(comp.getBackground());
+                label.setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 6));
+
+                Locale locale = (Locale) value;
+                Icon icon = IconLoader.getIcon("/gui/flags/" + locale.getCountry() + ".png");
+                if (icon == null) {
+                    icon = IconLoader.getIcon("/gui/flags/" + locale.getLanguage() + ".png");
+                }
+
+                label.setIcon(icon);
+                label.setText(Character.toString(locale.getDisplayName(locale).charAt(0)).toUpperCase() + locale.getDisplayName(locale).substring(1));
+
+                return label;
+            }
+        });
         
         if(Main.getConfig().getProxyHost() != null && Main.getConfig().getProxyPort() != null) {
             proxyHostTextField.setText(Main.getConfig().getProxyHost());

@@ -10,7 +10,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class SongSearchTableModel extends AbstractTableModel {
 
-    private final String[] columnNames = {"", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("DURATION"), I18n.getLocaleString("YEAR")};
+    private final String[] columnNames = {"", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("DURATION"), I18n.getLocaleString("YEAR"), I18n.getLocaleString("TRACK_NUMBER")};
     
     private List<Song> songs = new ArrayList<Song>();
 
@@ -41,10 +41,14 @@ public class SongSearchTableModel extends AbstractTableModel {
         switch (col) {
             case 0: return song.isDownloaded();
             case 1: return song.getName();
-            case 2: return song.getArtist().getName();
-            case 3: return song.getAlbum().getName();
+            case 2:
+                return song.getArtist();
+            case 3:
+                return song.getAlbum();
             case 4: return song.getReadableDuration();
             case 5: return song.getYear();
+            case 6:
+                return song.getTrackNum();
         }
         return null;
     }
