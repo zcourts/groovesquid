@@ -29,8 +29,8 @@ public class Main {
     private static MainFrame mainFrame;
     private static SettingsFrame settingsFrame;
     private static AboutFrame aboutFrame;
-      
-    private static String version = "0.7.0";
+
+    private static String version = "0.8.0";
     private static Clients clients = new Clients(new Clients.Client("htmlshark", "20130520", "nuggetsOfBaller"), new Clients.Client("jsqueue", "20130520", "chickenFingers"));
     private static Gson gson = new Gson();
     private static File configDir;
