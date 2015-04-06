@@ -8,6 +8,8 @@ apply plugin: 'project-report' // Adds project report tasks
 apply plugin: 'eclipse' // Adds eclipse project tasks
 apply plugin: 'idea' // Adds idea project tasks
 apply plugin: 'com.github.johnrengelman.shadow' // Provides dependency shading
+apply plugin: 'com.github.cr0.macappbundle'
+apply plugin: 'launch4j'
 
 // Methods to determine detailed version string
 def gitDescribe() {
@@ -71,7 +73,9 @@ buildscript {
         maven { url "http://jcenter.bintray.com" }
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
+        classpath 'com.github.cr0:gradle-macappbundle-plugin:3.0.1'
+        classpath 'edu.sc.seis.gradle:launch4j:1.0.6'
     }
 }
 
@@ -96,6 +100,10 @@ dependencies {
     compile 'commons-validator:commons-validator:1.4.0'
     compile 'commons-collections:commons-collections:3.2.1'
     compile 'org.swinglabs:swing-layout:1.0.3'
+    compile 'org.swinglabs:swingx:1.6.1'
+    compile 'com.typesafe:config:1.2.1'
+    compile 'com.yuvimasory:orange-extensions:1.3.0'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.11'
 }
 
@@ -108,6 +116,36 @@ eclipse {
 
 // Jar manifest information
 jar.manifest.mainAttributes(
-        'Main-Class': mainClassName,
+        'Main-Class': "com.groovesquid.Main",
         'Sealed': true
 )
+
+// Used to create .app bundle
+macAppBundle {
+    appName = "Groovesquid"
+    appCategory = "public.app-category.utilities"
+    icon = "gradle/icon/icon.icns"
+
+    mainClassName = "com.groovesquid.Main"
+
+    bundleJRE = false
+    bundleExecutable = "Groovesquid"
+    bundleIdentifier = "com.groovesquid"
+
+    bundleExtras.put("NSHighResolutionCapable", "true")
+
+    javaProperties.put("file.encoding", "utf-8")
+    javaProperties.put("apple.laf.useScreenMenuBar", true)
+}
+
+launch4j {
+    mainClassName = "com.groovesquid.Main"
+    icon = "../../gradle/icon/icon.ico"
+    launch4jCmd = "/usr/local/bin/launch4j"
+    jar = "lib/" + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
+}
+
+shadowJar {
+    classifier = ''
+}
+
