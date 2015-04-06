@@ -37,4 +37,8 @@ public class Album {
     public String getImageUrl() {
         return imageUrl;
     }
+
+    public String toString() {
+        return getName();
+    }
 }

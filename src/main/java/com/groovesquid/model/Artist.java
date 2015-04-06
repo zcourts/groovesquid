@@ -16,4 +16,8 @@ public class Artist {
     public String getName() {
         return name;
     }
+
+    public String toString() {
+        return getName();
+    }
 }

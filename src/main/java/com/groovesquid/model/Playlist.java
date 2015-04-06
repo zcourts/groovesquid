@@ -35,4 +35,8 @@ public class Playlist {
         }
         return numSongs;
     }
+
+    public String toString() {
+        return getName();
+    }
 }
