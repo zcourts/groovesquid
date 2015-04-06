@@ -29,17 +29,23 @@ public class Song {
         this.name = name.toString().trim();
         this.artist = new Artist(artistId, artistName);
         this.album = new Album(albumId.toString(), albumName.toString(), artist);
-        if(duration != null) {
+
+        // the API gives us 4096 if it doesn't know the duration
+        if (duration != null && !duration.toString().equals("4096")) {
             this.duration = Double.valueOf(duration.toString());
         } else {
             this.duration = 0.0D;
         }
+
         this.bitrate = 0;
-        if(year != null) {
+
+        // the API gives us 1901 if it doesn't know the year
+        if (year != null && !year.toString().equals("1901")) {
             this.year = year.toString();
         } else {
             this.year = "";
         }
+
         if(trackNum != null) {
             this.trackNum = Long.valueOf(trackNum.toString());
         } else {
