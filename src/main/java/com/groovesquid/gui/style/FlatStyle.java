@@ -55,6 +55,10 @@ public class FlatStyle extends Style {
         // borders
         searchTypeComboBoxBorder = BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, blue), BorderFactory.createMatteBorder(0, 5, 0, 0, Color.WHITE));
         selectComboBoxBorder = BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, orange), BorderFactory.createMatteBorder(0, 5, 0, 0, Color.WHITE));
+        searchTextFieldBorder = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(52, 152, 219)), BorderFactory.createEmptyBorder(0, 4, 0, 4));
+
+        searchTableHeaderCellRendererColor = blue;
+        downloadTableHeaderCellRendererColor = orange;
     }
 
     public SliderUI getSliderUI(JSlider slider, int thumbHeight) {

@@ -9,13 +9,13 @@ public class Style {
 
     protected boolean undecorated, buttonBackgrounds;
     protected Color mainFrameBackground, playerPanelForeground, playerPanelBackground, searchButtonsForeground, downloadButtonsForeground, downloadTableSelectionBackground, downloadTableSelectionForeground, searchTableSelectionBackground, searchTableSelectionForeground;
-    protected ImageIcon playIcon, playIconActive, pauseIcon, pauseIconActive, nextIcon, nextIconActive, previousIcon, previousIconActive, minimizeButtonIcon, minimizeButtonHoverIcon, maximizeButtonIcon, maximizeButtonHoverIcon, closeButtonIcon, closeButtonHoverIcon, volumeOnIcon, volumeOffIcon, titleBarIcon;
+    protected Icon playIcon, playIconActive, pauseIcon, pauseIconActive, nextIcon, nextIconActive, previousIcon, previousIconActive, minimizeButtonIcon, minimizeButtonHoverIcon, maximizeButtonIcon, maximizeButtonHoverIcon, closeButtonIcon, closeButtonHoverIcon, volumeOnIcon, volumeOffIcon, titleBarIcon;
     protected Image searchButtonsBackground, searchButtonsHoverBackground, searchButtonsPressedBackground, downloadButtonsBackground, downloadButtonsHoverBackground, downloadButtonsPressedBackground;
     protected Font font = new Font("Lucida Grande", 0, 11);
-    protected Border searchTypeComboBoxBorder, selectComboBoxBorder;
+    protected Border searchTypeComboBoxBorder, selectComboBoxBorder, searchTextFieldBorder;
+    protected Color searchTableHeaderCellRendererColor, downloadTableHeaderCellRendererColor;
 
     public Style() {
-
 
     }
 
@@ -27,7 +27,7 @@ public class Style {
         return buttonBackgrounds;
     }
 
-    public ImageIcon getTitleBarIcon() {
+    public Icon getTitleBarIcon() {
         return titleBarIcon;
     }
 
@@ -55,68 +55,68 @@ public class Style {
         return downloadButtonsForeground;
     }
 
-    public ImageIcon getPlayIcon() {
+    public Icon getPlayIcon() {
         return playIcon;
     }
 
-    public ImageIcon getPlayIconActive() {
+    public Icon getPlayIconActive() {
         return playIconActive;
     }
 
-    public ImageIcon getPauseIcon() {
+    public Icon getPauseIcon() {
         return pauseIcon;
     }
 
-    public ImageIcon getPauseIconActive() {
+    public Icon getPauseIconActive() {
         return pauseIconActive;
     }
 
-    public ImageIcon getNextIcon() {
+    public Icon getNextIcon() {
         return nextIcon;
     }
 
-    public ImageIcon getNextIconActive() {
+    public Icon getNextIconActive() {
         return nextIconActive;
     }
 
-    public ImageIcon getPreviousIcon() {
+    public Icon getPreviousIcon() {
         return previousIcon;
     }
 
-    public ImageIcon getVolumeOffIcon() {
+    public Icon getVolumeOffIcon() {
         return volumeOffIcon;
     }
 
-    public ImageIcon getVolumeOnIcon() {
+    public Icon getVolumeOnIcon() {
         return volumeOnIcon;
     }
 
-    public ImageIcon getPreviousIconActive() {
+    public Icon getPreviousIconActive() {
 
         return previousIconActive;
     }
 
-    public ImageIcon getMinimizeButtonIcon() {
+    public Icon getMinimizeButtonIcon() {
         return minimizeButtonIcon;
     }
 
-    public ImageIcon getMinimizeButtonHoverIcon() {
+    public Icon getMinimizeButtonHoverIcon() {
         return minimizeButtonHoverIcon;
     }
 
-    public ImageIcon getMaximizeButtonIcon() {
+    public Icon getMaximizeButtonIcon() {
         return maximizeButtonIcon;
     }
 
-    public ImageIcon getMaximizeButtonHoverIcon() {
+    public Icon getMaximizeButtonHoverIcon() {
         return maximizeButtonHoverIcon;
     }
 
-    public ImageIcon getCloseButtonIcon() {
+    public Icon getCloseButtonIcon() {
         return closeButtonIcon;
     }
 
-    public ImageIcon getCloseButtonHoverIcon() {
+    public Icon getCloseButtonHoverIcon() {
         return closeButtonHoverIcon;
     }
 
@@ -142,6 +142,10 @@ public class Style {
 
     public SplitPaneUI getSplitPaneUI(JSplitPane splitPane) {
         return splitPane.getUI();
+    }
+
+    public TextUI getSearchTextFieldUI(JTextField text) {
+        return text.getUI();
     }
 
     public Color getMainFrameBackground() {
@@ -198,5 +202,17 @@ public class Style {
 
     public ProgressBarUI getProgressBarUI(JProgressBar progressBar) {
         return progressBar.getUI();
+    }
+
+    public Border getSearchTextFieldBorder() {
+        return searchTextFieldBorder;
+    }
+
+    public Color getSearchTableHeaderCellRendererColor() {
+        return searchTableHeaderCellRendererColor;
+    }
+
+    public Color getDownloadTableHeaderCellRendererColor() {
+        return downloadTableHeaderCellRendererColor;
     }
 }
