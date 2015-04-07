@@ -138,6 +138,8 @@ macAppBundle {
     javaProperties.put("apple.laf.useScreenMenuBar", true)
 }
 
+assemble.dependsOn.remove(createDmg)
+
 launch4j {
     mainClassName = "com.groovesquid.Main"
     icon = "../../gradle/icon/icon.ico"
@@ -148,4 +150,5 @@ launch4j {
 shadowJar {
     classifier = ''
 }
+
 
