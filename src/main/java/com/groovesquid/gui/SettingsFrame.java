@@ -407,7 +407,7 @@ public class SettingsFrame extends JFrame {
                 Locale locale = (Locale) value;
                 Icon icon = IconLoader.getIcon("/gui/flags/" + locale.getCountry() + ".png");
                 if (icon == null) {
-                    icon = IconLoader.getIcon("/gui/flags/" + locale.getLanguage() + ".png");
+                    icon = IconLoader.getIcon("/gui/flags/" + locale.getLanguage().toUpperCase() + ".png");
                 }
 
                 label.setIcon(icon);
