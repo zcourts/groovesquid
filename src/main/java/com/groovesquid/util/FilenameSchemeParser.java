@@ -1,6 +1,7 @@
-package com.groovesquid.service;
+package com.groovesquid.util;
 
 import com.groovesquid.model.Song;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
@@ -9,6 +10,7 @@ public class FilenameSchemeParser {
     public static final String DEFAULT_FILENAME_SCHEME = "<Artist?<Artist>/><Album?<Album>/><##?<##> - ><Title>.mp3";
     public static final char DEFAULT_WHITESPACE_REPLACE_CHAR = ' ';
     public static final char DEFAULT_ILLEGAL_REPLACE_CHAR = '_';
+    public static final char[] DEFAULT_ALLOWED_SPECIAL_CHARS = {'.', '-', '(', ')'};
 
     private static final char BRACKET_OPEN = '<';
     private static final char BRACKET_CLOSE = '>';
@@ -20,6 +22,7 @@ public class FilenameSchemeParser {
     private String filenameScheme = DEFAULT_FILENAME_SCHEME;
     private char whitespaceReplaceChar = DEFAULT_WHITESPACE_REPLACE_CHAR;
     private char illegalReplaceChar = DEFAULT_ILLEGAL_REPLACE_CHAR;
+    private char[] allowedSpecialChars = DEFAULT_ALLOWED_SPECIAL_CHARS;
 
     public String getFilenameScheme() {
         return filenameScheme;
@@ -170,13 +173,12 @@ public class FilenameSchemeParser {
         StringBuilder sb = new StringBuilder(name.length());
         for (int i = 0; i < name.length(); i++) {
             char c = name.charAt(i);
-            if (c == '/' || c == '\\' || c == ':' || c == '*' || c == '?'
-                    || c == '"' || c == '<' || c == '>' || c == '|' || c == '.') {
-                sb.append(illegalReplaceChar);
-            } else if (Character.isWhitespace(c)) {
+            if (Character.isWhitespace(c)) {
                 sb.append(whitespaceReplaceChar);
-            } else {
+            } else if (Character.isAlphabetic(c) || Character.isDigit(c) || ArrayUtils.contains(allowedSpecialChars, c)) {
                 sb.append(c);
+            } else {
+                sb.append(illegalReplaceChar);
             }
         }
         return sb.toString();

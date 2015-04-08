@@ -3,6 +3,7 @@ package com.groovesquid.service;
 import com.google.gson.Gson;
 import com.groovesquid.Main;
 import com.groovesquid.model.*;
+import com.groovesquid.util.FilenameSchemeParser;
 import com.groovesquid.util.Utils;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
