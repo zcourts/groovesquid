@@ -2,6 +2,7 @@ package com.groovesquid.util;
 
 import com.groovesquid.Main;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -55,7 +56,7 @@ public class I18n {
 
         Comparator<Locale> comparator = new Comparator<Locale>() {
             public int compare(Locale l1, Locale l2) {
-                return l1.getDisplayName(l1).compareTo(l2.getDisplayName(l2));
+                return WordUtils.capitalize(l1.getDisplayName(l1)).compareTo(WordUtils.capitalize(l2.getDisplayName(l2)));
             }
         };
 

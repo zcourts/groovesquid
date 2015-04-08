@@ -2,7 +2,7 @@ package com.groovesquid;
 
 import com.groovesquid.model.Clients;
 import com.groovesquid.model.Track;
-import com.groovesquid.service.FilenameSchemeParser;
+import com.groovesquid.util.FilenameSchemeParser;
 
 import java.util.ArrayList;
 import java.util.List;

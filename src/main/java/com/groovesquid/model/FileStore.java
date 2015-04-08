@@ -121,7 +121,7 @@ public class FileStore implements Store {
             }
                         
             // let's advertise ourself a bit
-            String comment = "Downloaded with Groovesquid (com.groovesquid.com)";
+            String comment = "Downloaded with Groovesquid (groovesquid.com)";
             id3v1.setComment(comment);
             ID3v2_3Frame frame;
             AbstractID3v2FrameBody frameBody;

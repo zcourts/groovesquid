@@ -6,7 +6,7 @@ import com.groovesquid.gui.style.Style;
 import com.groovesquid.model.*;
 import com.groovesquid.service.DownloadListener;
 import com.groovesquid.service.PlayService;
-import com.groovesquid.service.PlayServiceListener;
+import com.groovesquid.service.PlaybackListener;
 import com.groovesquid.util.I18n;
 import com.groovesquid.util.Utils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -91,7 +91,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-        Main.getPlayService().setListener(playServiceListener);
+        Main.getPlayService().setListener(playbackListener);
     }
 
     protected void loadResources() {
@@ -757,8 +757,8 @@ public class MainFrame extends JFrame {
         menuBar.setBackground(new Color(230, 230, 230));
         setJMenuBar(menuBar);
 
-        fileMenu = new JMenu("File");
-        editMenu = new JMenu("Edit");
+        fileMenu = new JMenu(I18n.getLocaleString("FILE"));
+        editMenu = new JMenu(I18n.getLocaleString("EDIT"));
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
 
@@ -1039,8 +1039,8 @@ public class MainFrame extends JFrame {
             }
         }
     };
-    
-    private final PlayServiceListener playServiceListener = new PlayServiceListener() {
+
+    private final PlaybackListener playbackListener = new PlaybackListener() {
         public void playbackStarted(Track track) {
             playPauseButton.setIcon(style.getPauseIcon());
         }

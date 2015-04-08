@@ -2,7 +2,7 @@ package com.groovesquid.service;
 
 import com.groovesquid.model.Track;
 
-public interface PlayServiceListener extends DownloadListener {
+public interface PlaybackListener extends DownloadListener {
     void playbackStarted(Track track);
 
     void playbackPaused(Track track, int audioPosition);

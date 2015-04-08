@@ -4,7 +4,6 @@ import com.groovesquid.model.Song;
 import com.groovesquid.model.Track;
 import javazoom.jl.player.MP3Player;
 import javazoom.jl.player.PlayThread;
-import javazoom.jl.player.PlaybackListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,7 +31,7 @@ public class PlayService {
     private Track currentTrack;
     private int pausedFrame = -1;
     private int pausedAudioPosition = 0;
-    private PlayServiceListener listener;
+    private PlaybackListener listener;
     private PlayThread playThread;
     private boolean radio;
     private float gain = 0.0f;
@@ -42,7 +41,7 @@ public class PlayService {
         this.playThread = new PlayThread();
     }
 
-    public void setListener(PlayServiceListener listener) {
+    public void setListener(PlaybackListener listener) {
         this.listener = listener;
     }
 
@@ -218,7 +217,7 @@ public class PlayService {
             stopPlaying();
         log.info("starting from " + framePosition + ": " + song);
         if (currentTrack == null || currentTrack.getSong() != song) {
-            currentTrack = downloadService.downloadToMemory(song, new ChainedPlayServiceListener(listener) {
+            currentTrack = downloadService.downloadToMemory(song, new ChainedPlaybackListener(listener) {
                 @Override public void downloadedBytesChanged(Track track) {
                     if (!isPlaying() && !isPaused() && track == currentTrack && track.getDownloadedBytes() > PLAY_BUFFER_SIZE) {
                         startPlayingCurrentTrack(framePosition, audioPosition);
@@ -320,7 +319,7 @@ public class PlayService {
     }
 
 
-    private class PlayThreadListener implements PlaybackListener {
+    private class PlayThreadListener implements javazoom.jl.player.PlaybackListener {
         private final Track track;
         private final int audioPositionOffset;
 
@@ -355,10 +354,10 @@ public class PlayService {
         }
     }
 
-    private abstract class ChainedPlayServiceListener implements PlayServiceListener {
-        private final PlayServiceListener origListener;
+    private abstract class ChainedPlaybackListener implements PlaybackListener {
+        private final PlaybackListener origListener;
 
-        private ChainedPlayServiceListener(PlayServiceListener origListener) {
+        private ChainedPlaybackListener(PlaybackListener origListener) {
             this.origListener = origListener;
         }
 
