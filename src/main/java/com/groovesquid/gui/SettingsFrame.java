@@ -1,9 +1,9 @@
 package com.groovesquid.gui;
 
-import com.bulenkov.iconloader.IconLoader;
 import com.groovesquid.Config;
 import com.groovesquid.Groovesquid;
 import com.groovesquid.util.I18n;
+import com.groovesquid.util.Utils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.net.URL;
 import java.util.Locale;
 
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
@@ -164,14 +165,23 @@ public class SettingsFrame extends JFrame {
                 list.applyComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 
                 Locale locale = (Locale) value;
-
-                Icon icon = IconLoader.getIcon("/gui/flags/" + locale.getCountry().toUpperCase() + ".png");
-                if (icon == null) {
-                    icon = IconLoader.getIcon("/gui/flags/" + locale.getLanguage().toUpperCase() + ".png");
+                URL url = getClass().getResource("/gui/flags/" + locale.toString().replace("_", "-") + ".png");
+                ImageIcon icon = null;
+                if (url == null) {
+                    url = getClass().getResource("/gui/flags/" + locale.getLanguage() + ".png");
+                }
+                if (url != null) {
+                    icon = new ImageIcon(url);
+                    icon = Utils.stretchImage(icon, 18, 18, this);
                 }
 
                 String languageNameForeign = WordUtils.capitalize(locale.getDisplayName(locale));
                 String languageNameOwn = WordUtils.capitalize(locale.getDisplayName(I18n.getCurrentLocale()));
+
+                if (locale.toString() == "en_PT") {
+                    languageNameForeign = "Pirate English";
+                    languageNameOwn = languageNameForeign;
+                }
 
                 label.setIcon(icon);
                 label.setText("<html>" + "\u202A" + languageNameForeign + (!isSelected ? "<font color=gray>" : "") + " — " + languageNameOwn + (!isSelected ? "</font>" : "") + "</html>");
