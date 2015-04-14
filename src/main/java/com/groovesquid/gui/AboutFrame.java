@@ -6,13 +6,22 @@ import com.groovesquid.util.I18n;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class AboutFrame extends JFrame {
+
+    private LinkLabel websiteLabel;
+    private LinkLabel facebookLabel;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
+    private LinkLabel lekoLabel;
+    private LinkLabel twitterLabel;
+    private JLabel versionLabel;
+    private JButton closeButton;
 
     public AboutFrame() {
         initComponents();
@@ -28,62 +37,41 @@ public class AboutFrame extends JFrame {
 
     private void initComponents() {
         jLabel3 = new JLabel();
-        websiteLabel = new JLabel();
-        facebookLabel = new JLabel();
+        websiteLabel = new LinkLabel();
+        facebookLabel = new LinkLabel();
         jLabel4 = new JLabel();
         jLabel5 = new JLabel();
-        twitterLabel = new JLabel();
+        twitterLabel = new LinkLabel();
         jLabel2 = new JLabel();
         closeButton = new JButton();
         jLabel1 = new JLabel();
-        lekoLabel = new JLabel();
+        lekoLabel = new LinkLabel();
         jLabel6 = new JLabel();
         versionLabel = new JLabel();
 
         setTitle(I18n.getLocaleString("ABOUT"));
         setResizable(false);
 
-        jLabel3.setFont(new java.awt.Font("Lucida Grande", 0, 11));
+        jLabel3.setFont(new Font(jLabel3.getFont().getName(), Font.PLAIN, 11));
         jLabel3.setText("Website:");
 
-        websiteLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11));
-        websiteLabel.setForeground(java.awt.Color.blue);
+        websiteLabel.setFont(new Font(websiteLabel.getFont().getName(), Font.PLAIN, 11));
         websiteLabel.setText("http://groovesquid.com");
-        websiteLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        websiteLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                websiteLabelMousePressed(evt);
-            }
-        });
 
-        facebookLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11));
-        facebookLabel.setForeground(java.awt.Color.blue);
+        facebookLabel.setFont(new Font(facebookLabel.getFont().getName(), Font.PLAIN, 11));
         facebookLabel.setText("http://facebook.com/groovesquid");
-        facebookLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        facebookLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                websiteLabelMousePressed(evt);
-            }
-        });
 
-        jLabel4.setFont(new java.awt.Font("Lucida Grande", 0, 11));
+        jLabel4.setFont(new Font(jLabel4.getFont().getName(), Font.PLAIN, 11));
         jLabel4.setText("Facebook:");
 
-        jLabel5.setFont(new java.awt.Font("Lucida Grande", 0, 11));
+        jLabel5.setFont(new Font(jLabel5.getFont().getName(), Font.PLAIN, 11));
         jLabel5.setText("Twitter:");
 
-        twitterLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11));
-        twitterLabel.setForeground(java.awt.Color.blue);
+        twitterLabel.setFont(new Font(twitterLabel.getFont().getName(), Font.PLAIN, 11));
         twitterLabel.setText("http://twitter.com/groovesquid");
-        twitterLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        twitterLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                websiteLabelMousePressed(evt);
-            }
-        });
 
-        jLabel2.setFont(new java.awt.Font("Lucida Grande", 0, 11));
-        jLabel2.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel2.setFont(new Font(jLabel2.getFont().getName(), Font.PLAIN, 10));
+        jLabel2.setForeground(new Color(102, 102, 102));
         jLabel2.setText("Copyright (c) 2014 by Maino Development. All rights reserved.");
 
         closeButton.setText(I18n.getLocaleString("CLOSE"));
@@ -95,25 +83,18 @@ public class AboutFrame extends JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Lucida Grande", 0, 11));
+        jLabel1.setFont(new Font(jLabel1.getFont().getName(), Font.PLAIN, 11));
         jLabel1.setText("Logo & UI:");
 
-        lekoLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11));
-        lekoLabel.setForeground(java.awt.Color.blue);
+        lekoLabel.setFont(new Font(lekoLabel.getFont().getName(), Font.PLAIN, 11));
         lekoLabel.setText("http://facebook.com/LeKoArtsDE");
-        lekoLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        lekoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                websiteLabelMousePressed(evt);
-            }
-        });
 
         jLabel6.setIcon(new ImageIcon(getClass().getResource("/gui/logo.png")));
 
-        versionLabel.setFont(new java.awt.Font("Lucida Grande", 0, 11));
+        versionLabel.setFont(new Font(versionLabel.getFont().getName(), Font.PLAIN, 11));
         versionLabel.setText("Version");
 
-        javax.swing.GroupLayout layout = new GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,7 +122,7 @@ public class AboutFrame extends JFrame {
                                             .addComponent(facebookLabel)
                                             .addComponent(twitterLabel))))
                                 .addGap(74, 74, 74))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addComponent(jLabel2, GroupLayout.Alignment.LEADING))
                         .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(versionLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -180,28 +161,8 @@ public class AboutFrame extends JFrame {
         pack();
     }
 
-    private void websiteLabelMousePressed(MouseEvent evt) {
-        try {
-            Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getText()));
-        } catch (IOException ex) {
-            Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     private void closeButtonActionPerformed(ActionEvent evt) {
         dispose();
     }
 
-    private JButton closeButton;
-    private JLabel facebookLabel;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
-    private JLabel jLabel5;
-    private JLabel jLabel6;
-    private JLabel lekoLabel;
-    private JLabel twitterLabel;
-    private JLabel versionLabel;
-    private JLabel websiteLabel;
 }

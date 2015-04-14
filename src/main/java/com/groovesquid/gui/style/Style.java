@@ -11,7 +11,6 @@ public class Style {
     protected Color mainFrameBackground, playerPanelForeground, playerPanelBackground, searchButtonsForeground, downloadButtonsForeground, downloadTableSelectionBackground, downloadTableSelectionForeground, searchTableSelectionBackground, searchTableSelectionForeground;
     protected Icon playIcon, playIconActive, pauseIcon, pauseIconActive, nextIcon, nextIconActive, previousIcon, previousIconActive, minimizeButtonIcon, minimizeButtonHoverIcon, maximizeButtonIcon, maximizeButtonHoverIcon, closeButtonIcon, closeButtonHoverIcon, volumeOnIcon, volumeOffIcon, titleBarIcon;
     protected Image searchButtonsBackground, searchButtonsHoverBackground, searchButtonsPressedBackground, downloadButtonsBackground, downloadButtonsHoverBackground, downloadButtonsPressedBackground;
-    protected Font font = new Font("Lucida Grande", 0, 11);
     protected Border searchTypeComboBoxBorder, selectComboBoxBorder, searchTextFieldBorder;
     protected Color searchTableHeaderCellRendererColor, downloadTableHeaderCellRendererColor;
 
@@ -29,14 +28,6 @@ public class Style {
 
     public Icon getTitleBarIcon() {
         return titleBarIcon;
-    }
-
-    public Font getFont() {
-        return font;
-    }
-
-    public Font getFont(int size) {
-        return new Font(font.getName(), font.getStyle(), size);
     }
 
     public Color getPlayerPanelForeground() {

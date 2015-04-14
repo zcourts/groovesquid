@@ -84,10 +84,10 @@ public class SettingsFrame extends JFrame {
         });
 
         maxParallelDownloadsLabel = new JLabel(I18n.getLocaleString("MAX_PARALLEL_DOWNLOADS"));
-        maxParallelDownloadsLabel.setFont(new Font("Lucida Grande", 1, 11));
+        maxParallelDownloadsLabel.setFont(new Font(maxParallelDownloadsLabel.getFont().getName(), Font.BOLD, 11));
 
         downloadDirectoryLabel = new JLabel(I18n.getLocaleString("DOWNLOAD_DIRECTORY"));
-        downloadDirectoryLabel.setFont(new Font("Lucida Grande", 1, 11));
+        downloadDirectoryLabel.setFont(new Font(downloadDirectoryLabel.getFont().getName(), Font.BOLD, 11));
 
         downloadDirectoryTextField = new JTextField();
         downloadDirectoryTextField.setRequestFocusEnabled(false);
@@ -115,27 +115,27 @@ public class SettingsFrame extends JFrame {
         fileNameSchemeTextField.setFont(new Font(Font.MONOSPACED, 0, 12));
 
         filenameSchemeLabel = new JLabel(I18n.getLocaleString("FILENAME_SCHEME"));
-        filenameSchemeLabel.setFont(new Font("Lucida Grande", 1, 11));
+        filenameSchemeLabel.setFont(new Font(filenameSchemeLabel.getFont().getName(), Font.BOLD, 11));
 
         filenameSchemeDescriptionLabel = new JLabel();
-        filenameSchemeDescriptionLabel.setFont(new Font("Lucida Grande", 0, 11));
+        filenameSchemeDescriptionLabel.setFont(new Font(filenameSchemeDescriptionLabel.getFont().getName(), Font.PLAIN, 11));
         filenameSchemeDescriptionLabel.setLabelFor(fileNameSchemeTextField);
         String tagStyle = "font-family: Monospaced; font-weight: bold;";
         filenameSchemeDescriptionLabel.setText("<html><body>" + I18n.getLocaleString("FILENAME_SCHEME_DESCRIPTION").replace("&lt;", "<span style=\"" + tagStyle + "\">&lt;").replace("&gt;", "&gt;</span>").replaceFirst("/", "<span style=\"" + tagStyle + "\">/</span>") + "</body></html>");
 
         searchAutocompleteLabel = new JLabel(I18n.getLocaleString("SEARCH_AUTOCOMPLETE"));
-        searchAutocompleteLabel.setFont(new Font("Lucida Grande", 1, 11));
+        searchAutocompleteLabel.setFont(new Font(searchAutocompleteLabel.getFont().getName(), Font.BOLD, 11));
 
         searchAutocompleteCheckBox = new JCheckBox(I18n.getLocaleString("ENABLED"));
-        searchAutocompleteCheckBox.setFont(new Font("Arial", 0, 11));
+        searchAutocompleteCheckBox.setFont(new Font(searchAutocompleteCheckBox.getFont().getName(), Font.BOLD, 11));
 
         downloadCompletedLabel = new JLabel(I18n.getLocaleString("DOWNLOAD_COMPLETED"));
-        downloadCompletedLabel.setFont(new Font("Lucida Grande", 1, 11));
+        downloadCompletedLabel.setFont(new Font(downloadCompletedLabel.getFont().getName(), Font.BOLD, 11));
 
         downloadCompletedComboBox = new JComboBox();
 
         languageLabel = new JLabel(I18n.getLocaleString("LANGUAGE"));
-        languageLabel.setFont(new Font("Lucida Grande", 1, 11));
+        languageLabel.setFont(new Font(languageLabel.getFont().getName(), Font.BOLD, 11));
 
         languageComboBox = new JComboBox();
         DefaultComboBoxModel languageComboBoxModel = new DefaultComboBoxModel();
@@ -174,7 +174,7 @@ public class SettingsFrame extends JFrame {
                 String languageNameOwn = WordUtils.capitalize(locale.getDisplayName(I18n.getCurrentLocale()));
 
                 label.setIcon(icon);
-                label.setText("<html>" + languageNameForeign + (!isSelected ? "<font color=gray>" : "") + " — " + languageNameOwn + (!isSelected ? "</font>" : "") + "</html>");
+                label.setText("<html>" + "\u202A" + languageNameForeign + (!isSelected ? "<font color=gray>" : "") + " — " + languageNameOwn + (!isSelected ? "</font>" : "") + "</html>");
 
                 return label;
             }
@@ -188,18 +188,18 @@ public class SettingsFrame extends JFrame {
         });
 
         fileExistsLabel = new JLabel();
-        fileExistsLabel.setFont(new Font("Lucida Grande", 1, 11));
+        fileExistsLabel.setFont(new Font(fileExistsLabel.getFont().getName(), Font.BOLD, 11));
         fileExistsLabel.setText(I18n.getLocaleString("FILE_EXISTS"));
 
         fileExistsComboBox = new JComboBox();
 
         proxyHostLabel = new JLabel(I18n.getLocaleString("PROXY_HOST"));
-        proxyHostLabel.setFont(new Font("Lucida Grande", 1, 11));
+        proxyHostLabel.setFont(new Font(proxyHostLabel.getFont().getName(), Font.BOLD, 11));
 
         proxyHostTextField = new JTextField();
 
         proxyPortLabel = new JLabel(I18n.getLocaleString("PROXY_PORT"));
-        proxyPortLabel.setFont(new Font("Lucida Grande", 1, 11));
+        proxyPortLabel.setFont(new Font(proxyPortLabel.getFont().getName(), Font.BOLD, 11));
 
         proxyPortTextField = new JTextField();
 
@@ -372,7 +372,7 @@ public class SettingsFrame extends JFrame {
                 Main.getConfig().setProxyPort(null);
             }
             setOriginalSettings();
-            JOptionPane.showMessageDialog(this, I18n.getLocaleString("SETTINGS_SAVED"));
+            JOptionPane.showMessageDialog(this, I18n.getLocaleString("SETTINGS_SAVED"), I18n.getLocaleString("SETTINGS"), JOptionPane.INFORMATION_MESSAGE);
             return true;
         } else {
             return false;
