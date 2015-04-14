@@ -2,7 +2,7 @@ package com.groovesquid.gui;
 
 import com.bulenkov.iconloader.IconLoader;
 import com.groovesquid.Config;
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.util.I18n;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jdesktop.layout.GroupLayout;
@@ -304,13 +304,13 @@ public class SettingsFrame extends JFrame {
 
     private void downloadDirectoryButtonActionPerformed(ActionEvent evt) {
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File(Main.getConfig().getDownloadDirectory()));
+        chooser.setCurrentDirectory(new File(Groovesquid.getConfig().getDownloadDirectory()));
         chooser.setDialogTitle(I18n.getLocaleString("SELECT_DOWNLOAD_DIRECTORY"));
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             String downloadDirectory = chooser.getSelectedFile().getPath();
-            Main.getConfig().setDownloadDirectory(downloadDirectory);
+            Groovesquid.getConfig().setDownloadDirectory(downloadDirectory);
             downloadDirectoryTextField.setText(downloadDirectory);
         }
     }
@@ -323,7 +323,7 @@ public class SettingsFrame extends JFrame {
 
     private void reconnectButtonActionPerformed(ActionEvent evt) {
         // init grooveshark
-        Main.getGroovesharkClient().init();
+        Groovesquid.getGroovesharkClient().init();
     }
 
     private void formWindowClosing(WindowEvent evt) {
@@ -342,34 +342,34 @@ public class SettingsFrame extends JFrame {
     }
 
     private void resetOriginalSettingsButtonActionPerformed(ActionEvent evt) {
-        Main.getConfig().resetSettings();
-        Main.saveConfig();
+        Groovesquid.getConfig().resetSettings();
+        Groovesquid.saveConfig();
         resetSettings();
     }
 
     public boolean saveSettings() {
         if(checkSettings()) {
-            Main.getConfig().setDownloadDirectory(downloadDirectoryTextField.getText());
-            Main.getConfig().setMaxParallelDownloads((Integer) (maxParallelDownloadsSpinner.getValue()));
-            Main.getConfig().setFileNameScheme(fileNameSchemeTextField.getText());
-            Main.getConfig().setAutocompleteEnabled(searchAutocompleteCheckBox.isSelected());
-            Main.getConfig().setDownloadComplete(downloadCompletedComboBox.getSelectedIndex());
+            Groovesquid.getConfig().setDownloadDirectory(downloadDirectoryTextField.getText());
+            Groovesquid.getConfig().setMaxParallelDownloads((Integer) (maxParallelDownloadsSpinner.getValue()));
+            Groovesquid.getConfig().setFileNameScheme(fileNameSchemeTextField.getText());
+            Groovesquid.getConfig().setAutocompleteEnabled(searchAutocompleteCheckBox.isSelected());
+            Groovesquid.getConfig().setDownloadComplete(downloadCompletedComboBox.getSelectedIndex());
             if (originalLocale != languageComboBox.getSelectedItem()) {
                 Locale locale = (Locale) languageComboBox.getSelectedItem();
                 I18n.setCurrentLocale(locale);
-                Main.resetGui();
+                Groovesquid.resetGui();
             }
             if(!proxyHostTextField.getText().isEmpty() && !proxyPortTextField.getText().isEmpty()) {
-                Main.getConfig().setProxyHost(proxyHostTextField.getText());
+                Groovesquid.getConfig().setProxyHost(proxyHostTextField.getText());
                 try {
-                    Main.getConfig().setProxyPort(Integer.parseInt(proxyPortTextField.getText()));
+                    Groovesquid.getConfig().setProxyPort(Integer.parseInt(proxyPortTextField.getText()));
                 } catch(NumberFormatException e) {
                     JOptionPane.showMessageDialog(this, I18n.getLocaleString("INVALID_PROXY_PORT"));
                     return false;
                 }
             } else {
-                Main.getConfig().setProxyHost(null);
-                Main.getConfig().setProxyPort(null);
+                Groovesquid.getConfig().setProxyHost(null);
+                Groovesquid.getConfig().setProxyPort(null);
             }
             setOriginalSettings();
             JOptionPane.showMessageDialog(this, I18n.getLocaleString("SETTINGS_SAVED"), I18n.getLocaleString("SETTINGS"), JOptionPane.INFORMATION_MESSAGE);
@@ -401,10 +401,10 @@ public class SettingsFrame extends JFrame {
     }
 
     private void resetSettings() {
-        downloadDirectoryTextField.setText(Main.getConfig().getDownloadDirectory());
-        maxParallelDownloadsSpinner.setValue(Main.getConfig().getMaxParallelDownloads());
-        fileNameSchemeTextField.setText(Main.getConfig().getFileNameScheme());
-        searchAutocompleteCheckBox.setSelected(Main.getConfig().getAutocompleteEnabled());
+        downloadDirectoryTextField.setText(Groovesquid.getConfig().getDownloadDirectory());
+        maxParallelDownloadsSpinner.setValue(Groovesquid.getConfig().getMaxParallelDownloads());
+        fileNameSchemeTextField.setText(Groovesquid.getConfig().getFileNameScheme());
+        searchAutocompleteCheckBox.setSelected(Groovesquid.getConfig().getAutocompleteEnabled());
         
         String[] downloadCompleteActions = Config.DownloadComplete.names();
         DefaultComboBoxModel downloadCompleteComboBoxModel = new DefaultComboBoxModel();
@@ -412,7 +412,7 @@ public class SettingsFrame extends JFrame {
         for(String downloadCompleteAction : downloadCompleteActions) {
             downloadCompleteComboBoxModel.addElement(I18n.getLocaleString(downloadCompleteAction));
         }
-        downloadCompletedComboBox.setSelectedIndex(Main.getConfig().getDownloadComplete());
+        downloadCompletedComboBox.setSelectedIndex(Groovesquid.getConfig().getDownloadComplete());
         
         String[] fileExistsActions = Config.FileExists.names();
         DefaultComboBoxModel fileExistsComboBoxModel = new DefaultComboBoxModel();
@@ -420,11 +420,11 @@ public class SettingsFrame extends JFrame {
         for(String fileExistsAction : fileExistsActions) {
             fileExistsComboBoxModel.addElement(I18n.getLocaleString(fileExistsAction));
         }
-        fileExistsComboBox.setSelectedIndex(Main.getConfig().getFileExists());
+        fileExistsComboBox.setSelectedIndex(Groovesquid.getConfig().getFileExists());
 
-        if(Main.getConfig().getProxyHost() != null && Main.getConfig().getProxyPort() != null) {
-            proxyHostTextField.setText(Main.getConfig().getProxyHost());
-            proxyPortTextField.setText(Main.getConfig().getProxyPort().toString());
+        if (Groovesquid.getConfig().getProxyHost() != null && Groovesquid.getConfig().getProxyPort() != null) {
+            proxyHostTextField.setText(Groovesquid.getConfig().getProxyHost());
+            proxyPortTextField.setText(Groovesquid.getConfig().getProxyPort().toString());
         }
     }
 

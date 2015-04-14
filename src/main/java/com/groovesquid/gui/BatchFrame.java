@@ -4,7 +4,7 @@
  */
 package com.groovesquid.gui;
 
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.model.Song;
 import com.groovesquid.util.I18n;
 
@@ -86,17 +86,17 @@ public class BatchFrame extends JFrame {
 
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String terms[] = searchTextArea.getText().split("\\r?\\n");
-        final DownloadTableModel downloadTableModel = (DownloadTableModel) Main.getMainFrame().getDownloadTable().getModel();
+        final DownloadTableModel downloadTableModel = (DownloadTableModel) Groovesquid.getMainFrame().getDownloadTable().getModel();
         List<Song> songs = new ArrayList<Song>();
         
         for (String term : terms) {
-            List<Song> results = Main.getSearchService().searchSongsByQuery(term);
+            List<Song> results = Groovesquid.getSearchService().searchSongsByQuery(term);
             if(results.size() > 0) {
                 songs.add(results.get(0));
             }
         }
         for (Song song : songs) {
-            downloadTableModel.addRow(0, Main.getDownloadService().download(song, Main.getMainFrame().getDownloadListener(downloadTableModel)));
+            downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(song, Groovesquid.getMainFrame().getDownloadListener(downloadTableModel)));
         }
     }
 

@@ -1,6 +1,6 @@
 package com.groovesquid.model;
 
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 
 import java.io.File;
 import java.util.Arrays;
@@ -122,7 +122,7 @@ public class Song {
                 cleanName.append((char)c);
             }
         }
-        return Main.getConfig().getDownloadDirectory() + File.separator + cleanName.toString();
+        return Groovesquid.getConfig().getDownloadDirectory() + File.separator + cleanName.toString();
     }
     
     public Long getTrackNum() {

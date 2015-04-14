@@ -1,7 +1,7 @@
 package com.groovesquid.model;
 
 import com.groovesquid.Config;
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.util.Utils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
@@ -30,7 +30,7 @@ public class FileStore implements Store {
         this.downloadDir = downloadDir;
 
         if (file.exists()) {
-            if (Main.getConfig().getFileExists() == Config.FileExists.RENAME.ordinal()) {
+            if (Groovesquid.getConfig().getFileExists() == Config.FileExists.RENAME.ordinal()) {
                 int i = 1;
                 fileName = FilenameUtils.removeExtension(file.getAbsolutePath());
                 while (file.exists()) {

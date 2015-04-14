@@ -1,7 +1,7 @@
 package com.groovesquid.service;
 
 import com.google.gson.Gson;
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.model.*;
 import com.groovesquid.util.FilenameSchemeParser;
 import com.groovesquid.util.Utils;
@@ -31,7 +31,7 @@ import static java.lang.String.format;
 @SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class DownloadService {
 
-    private final static Logger log = Logger.getLogger(Main.class.getName());
+    private final static Logger log = Logger.getLogger(Groovesquid.class.getName());
 
     private final ExecutorService executorService;
     private final ExecutorService executorServiceForPlay;
@@ -41,7 +41,7 @@ public class DownloadService {
     private long nextSongMustSleepUntil;
 
     public DownloadService() {
-        this.executorService = Executors.newFixedThreadPool(Main.getConfig().getMaxParallelDownloads());
+        this.executorService = Executors.newFixedThreadPool(Groovesquid.getConfig().getMaxParallelDownloads());
         this.executorServiceForPlay = Executors.newFixedThreadPool(1);
         this.filenameSchemeParser = new FilenameSchemeParser();
     }
@@ -55,8 +55,8 @@ public class DownloadService {
     }
 
     public synchronized Track download(Song song, DownloadListener downloadListener) {
-        File downloadDir = new File(Main.getConfig().getDownloadDirectory());
-        String fileName = filenameSchemeParser.parse(song, Main.getConfig().getFileNameScheme());
+        File downloadDir = new File(Groovesquid.getConfig().getDownloadDirectory());
+        String fileName = filenameSchemeParser.parse(song, Groovesquid.getConfig().getFileNameScheme());
         Store store = new FileStore(fileName, downloadDir);
         return download(song, store, downloadListener, false);
     }
@@ -111,7 +111,7 @@ public class DownloadService {
             downloadWasInterrupted = downloadTask.abort();
             if (deleteStore) {
                 if(downloadTask.track.getStore() == null) {
-                    File downloadDir = new File(Main.getConfig().getDownloadDirectory());
+                    File downloadDir = new File(Groovesquid.getConfig().getDownloadDirectory());
                     Store store = new FileStore(downloadTask.track.getPath(), downloadDir);
                     downloadTask.track.setStore(store);
                 }
@@ -195,8 +195,8 @@ public class DownloadService {
                 
                 Gson gson = new Gson();
 
-                Response response = gson.fromJson(Main.getGroovesharkClient().sendRequest("getStreamKeyFromSongIDEx", new HashMap() {{
-                    put("country", Main.getGroovesharkClient().getCountry());
+                Response response = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getStreamKeyFromSongIDEx", new HashMap() {{
+                    put("country", Groovesquid.getGroovesharkClient().getCountry());
                     put("mobile", "false");
                     put("prefetch", "false");
                     put("songID", track.getSong().getId());
@@ -226,7 +226,7 @@ public class DownloadService {
                 fireDownloadStatusChanged();
                 log.info("finished download track " + track);
 
-                HashMap<String, Object> result2 = gson.fromJson(Main.getGroovesharkClient().sendRequest("markSongDownloadedEx", new HashMap() {{
+                HashMap<String, Object> result2 = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("markSongDownloadedEx", new HashMap() {{
                     put("songID", track.getSong().getId());
                     put("streamKey", track.getStreamKey());
                     put("streamServerID", track.getStreamServerID());
@@ -273,8 +273,8 @@ public class DownloadService {
             httpPost.setHeader(HTTP.CONN_KEEP_ALIVE, "300");
             httpPost.setEntity(new StringEntity("streamKey=" + track.getStreamKey()));
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-            if(Main.getConfig().getProxyHost() != null && Main.getConfig().getProxyPort() != null) {
-                httpClientBuilder.setProxy(new HttpHost(Main.getConfig().getProxyHost(), Main.getConfig().getProxyPort()));
+            if (Groovesquid.getConfig().getProxyHost() != null && Groovesquid.getConfig().getProxyPort() != null) {
+                httpClientBuilder.setProxy(new HttpHost(Groovesquid.getConfig().getProxyHost(), Groovesquid.getConfig().getProxyPort()));
             }
             HttpClient httpClient = httpClientBuilder.build();
             HttpResponse httpResponse = httpClient.execute(httpPost);

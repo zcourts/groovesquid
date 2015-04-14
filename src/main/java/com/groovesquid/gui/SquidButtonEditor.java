@@ -1,6 +1,6 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -76,8 +76,8 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         if(!((Boolean) value)) {
-            editButton.setIcon(Main.getMainFrame().plusIcon);
-            editButton.setRolloverIcon(Main.getMainFrame().plusIconHover);
+            editButton.setIcon(Groovesquid.getMainFrame().plusIcon);
+            editButton.setRolloverIcon(Groovesquid.getMainFrame().plusIconHover);
         } else {
             editButton.setIcon(null);
             editButton.setRolloverIcon(null);
@@ -103,8 +103,8 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if(!((Boolean) value)) {
-            renderButton.setIcon(Main.getMainFrame().plusIcon);
-            renderButton.setRolloverIcon(Main.getMainFrame().plusIconHover);
+            renderButton.setIcon(Groovesquid.getMainFrame().plusIcon);
+            renderButton.setRolloverIcon(Groovesquid.getMainFrame().plusIconHover);
         } else {
             renderButton.setIcon(null);
             renderButton.setRolloverIcon(null);

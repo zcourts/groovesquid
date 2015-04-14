@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Main {
-    
-    private final static Logger log = Logger.getLogger(Main.class.getName());
+public class Groovesquid {
+
+    private final static Logger log = Logger.getLogger(Groovesquid.class.getName());
 
     private static MainFrame mainFrame;
     private static SettingsFrame settingsFrame;
@@ -215,7 +215,7 @@ public class Main {
     }
 
     public static void setStyle(Style style) {
-        Main.style = style;
+        Groovesquid.style = style;
     }
 
 }

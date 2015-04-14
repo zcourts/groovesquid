@@ -1,6 +1,6 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.model.Song;
 import com.groovesquid.model.Track;
 import com.groovesquid.util.I18n;
@@ -22,7 +22,7 @@ public class DownloadTableModel extends AbstractTableModel {
     
     public DownloadTableModel(List<Song> songs) {
         for (Song song : songs) {
-            Track track = Main.getDownloadService().download(song);
+            Track track = Groovesquid.getDownloadService().download(song);
             songDownloads.add(track);
             fireTableDataChanged();
         }
@@ -123,7 +123,7 @@ public class DownloadTableModel extends AbstractTableModel {
     }
     
     public void updateSongDownloads() {
-        Main.getConfig().setDownloads(songDownloads);
+        Groovesquid.getConfig().setDownloads(songDownloads);
     }
 
     public void fireTableCellUpdated(Song song, int col) {

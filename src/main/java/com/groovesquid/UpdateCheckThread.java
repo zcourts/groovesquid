@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UpdateCheckThread extends Thread {
-    private final static Logger log = Logger.getLogger(Main.class.getName());
+    private final static Logger log = Logger.getLogger(Groovesquid.class.getName());
     private static Gson gson = new Gson();
     private static String updateFile = "http://groovesquid.com/updatecheck.php";
     
@@ -33,10 +33,10 @@ public class UpdateCheckThread extends Thread {
     public void run() {
         UpdateCheck updateCheck = gson.fromJson(getFile(updateFile), UpdateCheck.class);
         if (updateCheck.getClients() != null) {
-            Main.getConfig().setClients(updateCheck.getClients());
+            Groovesquid.getConfig().setClients(updateCheck.getClients());
         }
-        
-        if(Utils.compareVersions(updateCheck.getVersion(), Main.getVersion()) > 0) {
+
+        if (Utils.compareVersions(updateCheck.getVersion(), Groovesquid.getVersion()) > 0) {
             if(JOptionPane.showConfirmDialog(null, "New version (v" + updateCheck.getVersion() + ") is available! Do you want to download the new version (recommended)?", "New version", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
                 try {
                     Desktop.getDesktop().browse(java.net.URI.create("http://groovesquid.com/#download"));
@@ -53,7 +53,7 @@ public class UpdateCheckThread extends Thread {
         try {
             HttpGet httpGet = new HttpGet(url);
             httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
-            httpGet.setHeader(HTTP.USER_AGENT, "Groovesquid v" + Main.getVersion());
+            httpGet.setHeader(HTTP.USER_AGENT, "Groovesquid v" + Groovesquid.getVersion());
             
             HttpClient httpClient = HttpClientBuilder.create().build();
             HttpResponse httpResponse = httpClient.execute(httpGet);

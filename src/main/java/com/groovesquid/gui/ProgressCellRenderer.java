@@ -1,6 +1,6 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.model.Track;
 
 import javax.swing.*;
@@ -26,7 +26,7 @@ public class ProgressCellRenderer extends DefaultTableCellRenderer {
         b.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         b.setOpaque(false);
 
-        b.setUI(Main.getStyle().getProgressBarUI(b));
+        b.setUI(Groovesquid.getStyle().getProgressBarUI(b));
 
         panel = new JPanel(new BorderLayout());
         panel.add(b, BorderLayout.CENTER);

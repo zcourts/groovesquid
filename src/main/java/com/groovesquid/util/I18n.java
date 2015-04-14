@@ -1,7 +1,7 @@
 package com.groovesquid.util;
 
 import com.google.common.io.ByteStreams;
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.LocaleUtils;
@@ -19,7 +19,7 @@ public class I18n {
     private final static Logger log = Logger.getLogger(I18n.class.getName());
     private static Map<Locale, Properties> translations;
     private static Locale currentLocale, defaultLocale = new Locale("en", "US");
-    private static File localTranslations = new File(Main.getDataDirectory(), "translations.zip");
+    private static File localTranslations = new File(Groovesquid.getDataDirectory(), "translations.zip");
 
     public static void load() {
         log.info("Loading language files!");
@@ -101,7 +101,7 @@ public class I18n {
             return;
         }
 
-        Locale configLocale = LocaleUtils.toLocale(Main.getConfig().getLocale());
+        Locale configLocale = LocaleUtils.toLocale(Groovesquid.getConfig().getLocale());
         Locale configLangLocale = new Locale(configLocale.getLanguage());
         if (translations.keySet().contains(configLocale)) {
             currentLocale = configLocale;
@@ -128,7 +128,7 @@ public class I18n {
 
     public static void setCurrentLocale(Locale locale) {
         currentLocale = locale;
-        Main.getConfig().setLocale(locale.toString());
+        Groovesquid.getConfig().setLocale(locale.toString());
     }
 
     public static String getLocaleString(String string) {

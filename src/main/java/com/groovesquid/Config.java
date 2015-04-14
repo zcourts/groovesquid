@@ -52,8 +52,8 @@ public class Config {
     private Integer proxyPort, originalProxyPort;
 
     public Config() {
-        originalVersion = Main.getVersion();
-        originalClients = Main.getClients();
+        originalVersion = Groovesquid.getVersion();
+        originalClients = Groovesquid.getClients();
         originalDownloads = new ArrayList<Track>();
         originalDownloadDirectory = System.getProperty("user.home");
         originalMaxParallelDownloads = 10;
@@ -87,7 +87,7 @@ public class Config {
 
     public synchronized void setDownloads(List<Track> downloads) {
         this.downloads = downloads;
-        Main.saveConfig();
+        Groovesquid.saveConfig();
     }
     
     public synchronized String getDownloadDirectory() {
@@ -96,7 +96,7 @@ public class Config {
     
     public synchronized void setDownloadDirectory(String downloadDirectory) {
         this.downloadDirectory = downloadDirectory;
-        Main.saveConfig();
+        Groovesquid.saveConfig();
     }
 
     public synchronized Clients getClients() {
@@ -105,7 +105,7 @@ public class Config {
     
     public synchronized void setClients(Clients clients) {
         this.clients = clients;
-        Main.saveConfig();
+        Groovesquid.saveConfig();
     }
     
     public synchronized int getMaxParallelDownloads() {
@@ -114,12 +114,12 @@ public class Config {
     
     public synchronized void setMaxParallelDownloads(int maxParallelDownloads) {
         this.maxParallelDownloads = maxParallelDownloads;
-        Main.saveConfig();
+        Groovesquid.saveConfig();
     }
     
     public synchronized void setFileNameScheme(String fileNameScheme) {
         this.fileNameScheme = fileNameScheme;
-        Main.saveConfig();
+        Groovesquid.saveConfig();
     }
     
     public synchronized String getFileNameScheme() {
@@ -152,7 +152,7 @@ public class Config {
     
     public void setLocale(String locale) {
         this.locale = locale;
-        Main.saveConfig();
+        Groovesquid.saveConfig();
     }
     
     public String getProxyHost() {

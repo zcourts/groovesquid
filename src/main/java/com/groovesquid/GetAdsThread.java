@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GetAdsThread extends Thread {
-    private final static Logger log = Logger.getLogger(Main.class.getName());
+    private final static Logger log = Logger.getLogger(Groovesquid.class.getName());
     private static final Gson gson = new Gson();
     private static final String getAdsUrl = "http://groovesquid.com/ads/inc/api.php?getAds";
     private List<AdsResponse.Ad> ads;

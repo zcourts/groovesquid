@@ -52,7 +52,7 @@ def getVersionName() {
 group = 'com.groovesquid'
 version = '0.8.1-SNAPSHOT'
 description = "Groovesquid"
-mainClassName = "com.groovesquid.Main"
+mainClassName = "com.groovesquid.Groovesquid"
 
 // Extended project information
 ext.url = 'https://github.com/groovesquid/groovesquid'
@@ -118,7 +118,7 @@ eclipse {
 
 // Jar manifest information
 jar.manifest.mainAttributes(
-        'Main-Class': "com.groovesquid.Main",
+        'Main-Class': "com.groovesquid.Groovesquid",
         'Sealed': true
 )
 
@@ -128,7 +128,7 @@ macAppBundle {
     appCategory = "public.app-category.utilities"
     icon = "gradle/icon/icon.icns"
 
-    mainClassName = "com.groovesquid.Main"
+    mainClassName = "com.groovesquid.Groovesquid"
 
     bundleJRE = false
     bundleExecutable = "Groovesquid"
@@ -138,12 +138,14 @@ macAppBundle {
 
     javaProperties.put("file.encoding", "utf-8")
     javaProperties.put("apple.laf.useScreenMenuBar", true)
+
+    archiveName = "Groovesquid"
 }
 
 assemble.dependsOn.remove(createDmg)
 
 launch4j {
-    mainClassName = "com.groovesquid.Main"
+    mainClassName = "com.groovesquid.Groovesquid"
     icon = "../../gradle/icon/icon.ico"
     launch4jCmd = "/usr/local/bin/launch4j"
     jar = "lib/" + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name

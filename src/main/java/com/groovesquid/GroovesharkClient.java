@@ -34,7 +34,7 @@ public class GroovesharkClient {
 
     private String[] jsQueueMethods = {"getCountry", "getStreamKeyFromSongIDEx", "markSongDownloadedEx"};
     // http://www.scilor.com/grooveshark/xml/GrooveFix.xml
-    private Clients clients = Main.getConfig().getClients();
+    private Clients clients = Groovesquid.getConfig().getClients();
     private HashMap<String, Object> header = new HashMap<String, Object>();
     private String commToken = "";
     private String session = "";
@@ -104,8 +104,8 @@ public class GroovesharkClient {
             httpPost.setEntity(new StringEntity(jsonString, "UTF-8"));
        
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-            if(Main.getConfig().getProxyHost() != null && Main.getConfig().getProxyPort() != null) {
-                httpClientBuilder.setProxy(new HttpHost(Main.getConfig().getProxyHost(), Main.getConfig().getProxyPort()));
+            if (Groovesquid.getConfig().getProxyHost() != null && Groovesquid.getConfig().getProxyPort() != null) {
+                httpClientBuilder.setProxy(new HttpHost(Groovesquid.getConfig().getProxyHost(), Groovesquid.getConfig().getProxyPort()));
             }
             HttpClient httpClient = httpClientBuilder.build();
             HttpResponse httpResponse = httpClient.execute(httpPost);
@@ -188,8 +188,8 @@ public class GroovesharkClient {
                 httpGet.setHeader("Accept-Encoding", "gzip,deflate,sdch");
 
                 HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-                if (Main.getConfig().getProxyHost() != null && Main.getConfig().getProxyPort() != null) {
-                    httpClientBuilder.setProxy(new HttpHost(Main.getConfig().getProxyHost(), Main.getConfig().getProxyPort()));
+                if (Groovesquid.getConfig().getProxyHost() != null && Groovesquid.getConfig().getProxyPort() != null) {
+                    httpClientBuilder.setProxy(new HttpHost(Groovesquid.getConfig().getProxyHost(), Groovesquid.getConfig().getProxyPort()));
                 }
                 HttpClient httpClient = httpClientBuilder.build();
                 HttpResponse httpResponse = httpClient.execute(httpGet);
@@ -235,7 +235,7 @@ public class GroovesharkClient {
                 try {
                     session = gson.fromJson(sendRequest("initiateSession", null), Response.class).getResult();
                 } catch (Exception ex) {
-                    Main.getMainFrame().showError(I18n.getLocaleString("ERROR_INITIATE_SESSION"));
+                    Groovesquid.getMainFrame().showError(I18n.getLocaleString("ERROR_INITIATE_SESSION"));
                     return;
                 }
             }
@@ -256,7 +256,7 @@ public class GroovesharkClient {
             // activate main frame components
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    Main.getMainFrame().initDone();
+                    Groovesquid.getMainFrame().initDone();
                 }
             });
 

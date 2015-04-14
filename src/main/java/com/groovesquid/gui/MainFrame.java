@@ -1,7 +1,7 @@
 package com.groovesquid.gui;
 
 import com.groovesquid.Config.DownloadComplete;
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.gui.style.Style;
 import com.groovesquid.model.*;
 import com.groovesquid.service.DownloadListener;
@@ -48,7 +48,7 @@ public class MainFrame extends JFrame {
      * Creates new form GUI
      */
     public MainFrame() {
-        style = Main.getStyle();
+        style = Groovesquid.getStyle();
 
         loadResources();
         initComponents();
@@ -74,7 +74,7 @@ public class MainFrame extends JFrame {
         });
 
         // tables
-        ((DownloadTableModel)downloadTable.getModel()).setSongDownloads(Main.getConfig().getDownloads());
+        ((DownloadTableModel) downloadTable.getModel()).setSongDownloads(Groovesquid.getConfig().getDownloads());
 
 
         downloadTable.getSelectionModel().addListSelectionListener(downloadListSelectionListener);
@@ -91,7 +91,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-        Main.getPlayService().setListener(playbackListener);
+        Groovesquid.getPlayService().setListener(playbackListener);
     }
 
     protected void loadResources() {
@@ -365,7 +365,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            songs.addAll(Main.getSearchService().searchSongsByArtist((Artist) target));
+                            songs.addAll(Groovesquid.getSearchService().searchSongsByArtist((Artist) target));
                             return songs;
                         }
 
@@ -386,7 +386,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            songs.addAll(Main.getSearchService().searchSongsByAlbum((Album) target));
+                            songs.addAll(Groovesquid.getSearchService().searchSongsByAlbum((Album) target));
                             return songs;
                         }
 
@@ -407,7 +407,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            songs.addAll(Main.getSearchService().searchSongsByPlaylist((Playlist) target));
+                            songs.addAll(Groovesquid.getSearchService().searchSongsByPlaylist((Playlist) target));
                             return songs;
                         }
 
@@ -900,7 +900,7 @@ public class MainFrame extends JFrame {
         public void statusChanged(Track track) {
             if (track.getStatus() == Track.Status.ERROR) {
                 resetPlayInfo();
-                Main.getPlayService().stop();
+                Groovesquid.getPlayService().stop();
             } else if(track.getStatus() == Track.Status.INITIALIZING) {
                 updateCurrentlyPlayingTrack(track);
             } else if(track.getStatus() == Track.Status.DOWNLOADING) {
@@ -926,7 +926,7 @@ public class MainFrame extends JFrame {
             SwingWorker<Image, Void> worker = new SwingWorker<Image, Void>(){
                 @Override
                 protected Image doInBackground() {
-                    return Main.getSearchService().getLastFmCover(track.getSong());
+                    return Groovesquid.getSearchService().getLastFmCover(track.getSong());
                 }
 
                 @Override
@@ -985,7 +985,7 @@ public class MainFrame extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Album album : albums) {
-                        songs.addAll(Main.getSearchService().searchSongsByAlbum(album));
+                        songs.addAll(Groovesquid.getSearchService().searchSongsByAlbum(album));
                     }
                     return songs;
                 }
@@ -1028,7 +1028,7 @@ public class MainFrame extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Playlist playlist : playlists) {
-                        songs.addAll(Main.getSearchService().searchSongsByPlaylist(playlist));
+                        songs.addAll(Groovesquid.getSearchService().searchSongsByPlaylist(playlist));
                     }
                     return songs;
                 }
@@ -1071,7 +1071,7 @@ public class MainFrame extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Artist artist : artists) {
-                        songs.addAll(Main.getSearchService().searchSongsByArtist(artist));
+                        songs.addAll(Groovesquid.getSearchService().searchSongsByArtist(artist));
                     }
                     return songs;
                 }
@@ -1117,14 +1117,14 @@ public class MainFrame extends JFrame {
 
                 // fire download completed action
                 if(track.getStatus() == Track.Status.FINISHED) {
-                    if(Main.getConfig().getDownloadComplete() == DownloadComplete.OPEN_FILE.ordinal()) {
+                    if (Groovesquid.getConfig().getDownloadComplete() == DownloadComplete.OPEN_FILE.ordinal()) {
                         try {
                             // open file
                             Desktop.getDesktop().open(new File(track.getPath()));
                         } catch (IOException ex) {
                             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                    } else if(Main.getConfig().getDownloadComplete() == DownloadComplete.OPEN_DIRECTORY.ordinal()) {
+                    } else if (Groovesquid.getConfig().getDownloadComplete() == DownloadComplete.OPEN_DIRECTORY.ordinal()) {
                         try {
                             // open dir
                             Desktop.getDesktop().open(new File(track.getPath()).getParentFile());
@@ -1148,7 +1148,7 @@ public class MainFrame extends JFrame {
             if (searchTable.getModel() instanceof SongSearchTableModel) {
                 SongSearchTableModel songSearchTableModel = (SongSearchTableModel) searchTable.getModel();
                 Song song = songSearchTableModel.getSongs().get(selectedRow);
-                downloadTableModel.addRow(0, Main.getDownloadService().download(song, getDownloadListener(downloadTableModel)));
+                downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(song, getDownloadListener(downloadTableModel)));
             } else if (searchTable.getModel() instanceof AlbumSearchTableModel) {
                 AlbumSearchTableModel albumSearchTableModel = (AlbumSearchTableModel) searchTable.getModel();
                 final Album album = albumSearchTableModel.getAlbums().get(selectedRow);
@@ -1156,7 +1156,7 @@ public class MainFrame extends JFrame {
 
                     @Override
                     protected List<Song> doInBackground() {
-                        return Main.getSearchService().searchSongsByAlbum(album);
+                        return Groovesquid.getSearchService().searchSongsByAlbum(album);
                     }
 
                     @Override
@@ -1164,7 +1164,7 @@ public class MainFrame extends JFrame {
                         try {
                             Iterator<Song> iterator = get().iterator();
                             while (iterator.hasNext()) {
-                                downloadTableModel.addRow(0, Main.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
+                                downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
                             }
                         } catch (InterruptedException ex) {
                             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -1183,7 +1183,7 @@ public class MainFrame extends JFrame {
 
                     @Override
                     protected List<Song> doInBackground() {
-                        return Main.getSearchService().searchSongsByPlaylist(playlist);
+                        return Groovesquid.getSearchService().searchSongsByPlaylist(playlist);
                     }
 
                     @Override
@@ -1191,7 +1191,7 @@ public class MainFrame extends JFrame {
                         try {
                             Iterator<Song> iterator = get().iterator();
                             while (iterator.hasNext()) {
-                                downloadTableModel.addRow(0, Main.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
+                                downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(iterator.next(), getDownloadListener(downloadTableModel)));
                             }
                         } catch (InterruptedException ex) {
                             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -1245,9 +1245,9 @@ public class MainFrame extends JFrame {
         
         final DownloadTableModel downloadTableModel = (DownloadTableModel) downloadTable.getModel();
         for (Track track : failedDownloads) {
-            Main.getDownloadService().cancelDownload(track, false);
+            Groovesquid.getDownloadService().cancelDownload(track, false);
             downloadTableModel.removeRow(track);
-            downloadTableModel.addRow(0, Main.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
+            downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(track.getSong(), getDownloadListener(downloadTableModel)));
         }
         downloadTable.clearSelection();
         
@@ -1279,7 +1279,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 protected List<Song> doInBackground() {
-                    return Main.getSearchService().searchSongsByQuery(searchTextField.getText());
+                    return Groovesquid.getSearchService().searchSongsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -1305,7 +1305,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 protected List<Song> doInBackground() {
-                    return Main.getSearchService().searchPopular();
+                    return Groovesquid.getSearchService().searchPopular();
                 }
 
                 @Override
@@ -1330,7 +1330,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 protected List<Album> doInBackground() {
-                    return Main.getSearchService().searchAlbumsByQuery(searchTextField.getText());
+                    return Groovesquid.getSearchService().searchAlbumsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -1356,7 +1356,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 protected List<Playlist> doInBackground() {
-                    return Main.getSearchService().searchPlaylistsByQuery(searchTextField.getText());
+                    return Groovesquid.getSearchService().searchPlaylistsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -1383,7 +1383,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 protected List<Artist> doInBackground() {
-                    return Main.getSearchService().searchArtistsByQuery(searchTextField.getText());
+                    return Groovesquid.getSearchService().searchArtistsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -1441,7 +1441,7 @@ public class MainFrame extends JFrame {
     }
 
     public void formWindowClosing(java.awt.event.WindowEvent evt) {
-        if (Main.getDownloadService().areCurrentlyRunningDownloads()) {
+        if (Groovesquid.getDownloadService().areCurrentlyRunningDownloads()) {
             if (JOptionPane.showConfirmDialog(this, I18n.getLocaleString("ALERT_DOWNLOADS_IN_PROGRESS"), I18n.getLocaleString("ALERT"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
                 System.exit(0);
             }
@@ -1451,13 +1451,13 @@ public class MainFrame extends JFrame {
     }
 
     public void searchTextFieldKeyReleased(KeyEvent evt) {
-        if(Main.getConfig().getAutocompleteEnabled()) {
+        if (Groovesquid.getConfig().getAutocompleteEnabled()) {
             if (evt.getKeyCode() >= KeyEvent.VK_A && evt.getKeyCode() <= KeyEvent.VK_Z && (evt.getModifiers() & ActionEvent.CTRL_MASK) != ActionEvent.CTRL_MASK && ! evt.isControlDown()) {
                 SwingWorker<List<String>, Void> worker = new SwingWorker<List<String>, Void>() {
 
                     @Override
                     protected List<String> doInBackground() {
-                        return Main.getSearchService().autocompleteByQuery(searchTextField.getText());
+                        return Groovesquid.getSearchService().autocompleteByQuery(searchTextField.getText());
                     }
 
                     @Override
@@ -1505,7 +1505,7 @@ public class MainFrame extends JFrame {
     }
 
     public void playPauseButtonMousePressed(MouseEvent evt) {
-        if (Main.getPlayService().isPlaying()) {
+        if (Groovesquid.getPlayService().isPlaying()) {
             playPauseButton.setIcon(style.getPauseIconActive());
         } else {
             playPauseButton.setIcon(style.getPlayIconActive());
@@ -1513,13 +1513,13 @@ public class MainFrame extends JFrame {
     }
 
     public void playPauseButtonActionPerformed(ActionEvent evt) {
-        if (Main.getPlayService().isPaused()) {
-            Main.getPlayService().resume();
-        } else if (Main.getPlayService().isPlaying()) {
-            Main.getPlayService().pause();
+        if (Groovesquid.getPlayService().isPaused()) {
+            Groovesquid.getPlayService().resume();
+        } else if (Groovesquid.getPlayService().isPlaying()) {
+            Groovesquid.getPlayService().pause();
         } else {
-            if (Main.getPlayService().getPlaylist().size() > 0) {
-                Main.getPlayService().play();
+            if (Groovesquid.getPlayService().getPlaylist().size() > 0) {
+                Groovesquid.getPlayService().play();
             } else {
                 playPauseButton.setIcon(style.getPlayIcon());
             }
@@ -1532,10 +1532,10 @@ public class MainFrame extends JFrame {
 
     public void nextButtonActionPerformed(ActionEvent evt) {
         nextButton.setIcon(style.getNextIcon());
-        if (Main.getPlayService().getCurrentSongIndex() < Main.getPlayService().getPlaylist().size() - 1) {
-            Main.getPlayService().skipForward();
+        if (Groovesquid.getPlayService().getCurrentSongIndex() < Groovesquid.getPlayService().getPlaylist().size() - 1) {
+            Groovesquid.getPlayService().skipForward();
         } else {
-            Main.getPlayService().clearPlaylist();
+            Groovesquid.getPlayService().clearPlaylist();
             resetPlayInfo();
         }
     }
@@ -1546,17 +1546,17 @@ public class MainFrame extends JFrame {
 
     public void previousButtonActionPerformed(ActionEvent evt) {
         previousButton.setIcon(style.getPreviousIcon());
-        Main.getPlayService().skipBackward();
+        Groovesquid.getPlayService().skipBackward();
     }
 
     public void trackSliderMouseDragged(MouseEvent evt) {
-        if (Main.getPlayService().getCurrentTrack() != null) {
+        if (Groovesquid.getPlayService().getCurrentTrack() != null) {
             //Services.getPlayService().setCurrentPosition(trackSlider.getValue());
         }
     }
 
     public void volumeSliderStateChanged(ChangeEvent evt) {
-        Main.getPlayService().setVolume(volumeSlider.getValue());
+        Groovesquid.getPlayService().setVolume(volumeSlider.getValue());
     }
 
     public void removeFromListMenuItemActionPerformed(ActionEvent evt) {
@@ -1697,9 +1697,9 @@ public class MainFrame extends JFrame {
             int selectedRow = downloadTable.convertRowIndexToModel(selectedRows[i] - i);
             Track track = model.getSongDownloads().get(selectedRow);
             if(andDisk) {
-                Main.getDownloadService().cancelDownload(track, true, true);
+                Groovesquid.getDownloadService().cancelDownload(track, true, true);
             } else {
-                Main.getDownloadService().cancelDownload(track, false);
+                Groovesquid.getDownloadService().cancelDownload(track, false);
             }
             model.removeRow(selectedRow);
         }
@@ -1708,21 +1708,21 @@ public class MainFrame extends JFrame {
 
     public void play(List<Song> songs) {
         final Song song = songs.get(0);
-        Track track = Main.getPlayService().getCurrentTrack();
+        Track track = Groovesquid.getPlayService().getCurrentTrack();
 
-        if (track != null && track.getSong().equals(song) && Main.getPlayService().isPaused()) {
-            Main.getPlayService().resume();
+        if (track != null && track.getSong().equals(song) && Groovesquid.getPlayService().isPaused()) {
+            Groovesquid.getPlayService().resume();
         } else {
-            if (Main.getPlayService().isPlaying()) {
+            if (Groovesquid.getPlayService().isPlaying()) {
                 Object[] options = {I18n.getLocaleString("PLAY_NOW"), I18n.getLocaleString("ADD_TO_QUEUE"), I18n.getLocaleString("CANCEL")};
                 int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_PLAY_NOW_OR_QUEUE"), I18n.getLocaleString("PLAY"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if(selectedValue == 0) {
-                    Main.getPlayService().add(songs, PlayService.AddMode.NOW);
+                    Groovesquid.getPlayService().add(songs, PlayService.AddMode.NOW);
                 } else if(selectedValue == 1) {
-                    Main.getPlayService().add(songs, PlayService.AddMode.NEXT);
+                    Groovesquid.getPlayService().add(songs, PlayService.AddMode.NEXT);
                 }
             } else {
-                Main.getPlayService().add(songs, PlayService.AddMode.NOW);
+                Groovesquid.getPlayService().add(songs, PlayService.AddMode.NOW);
             }
         }
     }
@@ -1788,7 +1788,7 @@ public class MainFrame extends JFrame {
         JMenuItem aboutMenuItem = new JMenuItem(I18n.getLocaleString("ABOUT"));
         aboutMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Main.getAboutFrame().setVisible(true);
+                Groovesquid.getAboutFrame().setVisible(true);
             }
         });
         fileMenu.add(aboutMenuItem);
@@ -1804,7 +1804,7 @@ public class MainFrame extends JFrame {
         JMenuItem settingsMenuItem = new JMenuItem(I18n.getLocaleString("SETTINGS"));
         settingsMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Main.getSettingsFrame().setVisible(true);
+                Groovesquid.getSettingsFrame().setVisible(true);
             }
         });
         editMenu.add(settingsMenuItem);

@@ -1,6 +1,6 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.util.I18n;
 
 import javax.swing.*;
@@ -31,8 +31,8 @@ public class AboutFrame extends JFrame {
         
         // icon
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/gui/icon.png")));
-        
-        versionLabel.setText("Version " + Main.getVersion());
+
+        versionLabel.setText("Version " + Groovesquid.getVersion());
     }
 
     private void initComponents() {

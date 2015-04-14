@@ -1,6 +1,6 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Main;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.model.Song;
 
 import javax.swing.*;
@@ -27,10 +27,10 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                 Action download = new AbstractAction() {
                     public void actionPerformed(ActionEvent e) { 
                         int modelRow = Integer.valueOf( e.getActionCommand() );
-                        DownloadTableModel downloadTableModel = (DownloadTableModel) Main.getMainFrame().getDownloadTable().getModel();
-                        SongSearchTableModel songSearchTableModel = (SongSearchTableModel) Main.getMainFrame().getSearchTable().getModel();
+                        DownloadTableModel downloadTableModel = (DownloadTableModel) Groovesquid.getMainFrame().getDownloadTable().getModel();
+                        SongSearchTableModel songSearchTableModel = (SongSearchTableModel) Groovesquid.getMainFrame().getSearchTable().getModel();
                         Song song = songSearchTableModel.getSongs().get(modelRow);
-                        downloadTableModel.addRow(0, Main.getDownloadService().download(song, Main.getMainFrame().getDownloadListener(downloadTableModel)));
+                        downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(song, Groovesquid.getMainFrame().getDownloadListener(downloadTableModel)));
                     } 
                 };
                 SquidButtonEditor buttonColumn = new SquidButtonEditor(table, download);
