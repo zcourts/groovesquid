@@ -1,90 +1,104 @@
 package com.groovesquid.util;
 
+import com.google.common.io.ByteStreams;
 import com.groovesquid.Main;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipInputStream;
 
 public class I18n {
 
     private final static Logger log = Logger.getLogger(I18n.class.getName());
     private static Map<Locale, Properties> translations;
     private static Locale currentLocale, defaultLocale = new Locale("en", "US");
+    private static File localTranslations = new File(Main.getDataDirectory(), "translations.zip");
 
     public static void load() {
-        // find available locales
+        log.info("Loading language files!");
 
-        String path = "locales";
-        File jarFile = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        List<String> fileNames = new ArrayList<String>();
+        try {
+            InputStream in;
 
-        if (jarFile.isFile()) { // Run with JAR file
-            try {
-                final JarFile jar = new JarFile(jarFile);
-                final Enumeration<JarEntry> entries = jar.entries(); // gives ALL entries in jar
-                while (entries.hasMoreElements()) {
-                    final String name = entries.nextElement().getName();
-                    if (name.startsWith(path + "/") && name.endsWith("/") && name.length() > path.length() + 1) { // filter according to the path
-                        fileNames.add(name);
+            if (localTranslations.exists() && new Date().getTime() - localTranslations.lastModified() < 3 * 24 * 60 * 60 * 1000) {
+                log.info("Loading local translations!");
+                in = new FileInputStream(localTranslations);
+            } else {
+                log.info("Loading translations from crowdin!");
+                URLConnection conn = new URL("http://crowdin.com/download/project/groovesquid.zip").openConnection();
+
+                String redirect = conn.getHeaderField("Location");
+
+                if (redirect != null) {
+                    conn = new URL(redirect).openConnection();
+                }
+
+                in = conn.getInputStream();
+            }
+
+            byte[] buffer = ByteStreams.toByteArray(in);
+            in = new ByteArrayInputStream(buffer);
+            ZipInputStream zip = new ZipInputStream(in);
+
+            Comparator<Locale> comparator = new Comparator<Locale>() {
+                public int compare(Locale l1, Locale l2) {
+                    return WordUtils.capitalize(l1.getDisplayName(l1)).compareTo(WordUtils.capitalize(l2.getDisplayName(l2)));
+                }
+            };
+
+            translations = new TreeMap<Locale, Properties>(comparator);
+
+            ZipUtils.listStreams(zip, "", new ZipUtils.Consumer() {
+                public void consume(String name, InputStream stream) {
+                    if (!name.endsWith("general.properties")) {
+                        return;
+                    }
+
+                    try {
+                        stream = new ByteArrayInputStream(ByteStreams.toByteArray(stream));
+
+                        String localeString = name.substring(0, name.length() - "general.properties".length() - 1);
+                        String parts[] = localeString.split("-", -1);
+                        Locale locale;
+                        if (parts.length == 1) locale = new Locale(parts[0]);
+                        else if (parts.length == 2) locale = new Locale(parts[0], parts[1]);
+                        else if (parts.length == 3) locale = new Locale(parts[0], parts[1], parts[2]);
+                        else locale = defaultLocale;
+
+                        InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+
+                        Properties properties = new Properties();
+                        properties.load(new BufferedReader(reader));
+
+                        translations.put(locale, properties);
+
+                    } catch (IOException e) {
+                        log.severe(e.getMessage());
                     }
                 }
-                jar.close();
-            } catch (IOException ex) {
-                log.log(Level.SEVERE, null, log);
-            }
-        } else { // Run with IDE
-            final URL url = Main.class.getResource("/" + path);
-            if (url != null) {
-                try {
-                    final File files = new File(url.toURI());
-                    for (File file : files.listFiles()) {
-                        fileNames.add(file.getAbsolutePath());
-                    }
-                } catch (URISyntaxException ex) {
-                    // never happens
-                }
-            }
-        }
+            });
 
-        Comparator<Locale> comparator = new Comparator<Locale>() {
-            public int compare(Locale l1, Locale l2) {
-                return WordUtils.capitalize(l1.getDisplayName(l1)).compareTo(WordUtils.capitalize(l2.getDisplayName(l2)));
+            in.reset();
+
+            if (in.available() > 0 && !(in instanceof FileInputStream)) {
+                FileOutputStream out = FileUtils.openOutputStream(localTranslations);
+                IOUtils.copy(in, out);
+                out.close();
             }
-        };
 
+            log.info("Loaded the following languages: " + translations.keySet().toString());
 
-        translations = new TreeMap<Locale, Properties>(comparator);
-        for (String fileName : fileNames) {
-            String localeString = new File(fileName).getName();
-            String parts[] = localeString.split("-", -1);
-            Locale locale;
-            if (parts.length == 1) locale = new Locale(parts[0]);
-            else if (parts.length == 2) locale = new Locale(parts[0], parts[1]);
-            else if (parts.length == 3) locale = new Locale(parts[0], parts[1], parts[2]);
-            else locale = defaultLocale;
-
-            InputStream stream;
-            try {
-                stream = I18n.class.getResourceAsStream("/" + fileName + "general.properties");
-                if (stream == null) {
-                    stream = new FileInputStream(new File(fileName, "general.properties").getAbsolutePath());
-                }
-                Properties properties = new Properties();
-                properties.load(stream);
-                translations.put(locale, properties);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            in.close();
+        } catch (IOException e) {
+            log.warning("Failed to download translations!");
+            return;
         }
 
         Locale configLocale = LocaleUtils.toLocale(Main.getConfig().getLocale());
