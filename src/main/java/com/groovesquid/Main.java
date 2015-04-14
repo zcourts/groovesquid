@@ -30,10 +30,10 @@ public class Main {
     private static SettingsFrame settingsFrame;
     private static AboutFrame aboutFrame;
 
-    private static String version = "0.8.0";
+    private static String version = "0.8.1";
     private static Clients clients = new Clients(new Clients.Client("htmlshark", "20130520", "nuggetsOfBaller"), new Clients.Client("jsqueue", "20130520", "chickenFingers"));
     private static Gson gson = new Gson();
-    private static File configDir;
+    private static File dataDirectory = new File(Utils.dataDirectory() + File.separator + ".groovesquid");
     private static Config config;
     private static DownloadService downloadService;
     private static PlayService playService;
@@ -45,6 +45,9 @@ public class Main {
         log.log(Level.INFO, "Groovesquid v{0} running on {1} {2} ({3}) in {4}", new Object[]{version, System.getProperty("java.vm.name"), System.getProperty("java.runtime.version"), System.getProperty("java.vm.vendor"), System.getProperty("java.home")});
 
         // load config
+        if (!dataDirectory.exists()) {
+            dataDirectory.mkdir();
+        }
         loadConfig();
 
         // load locales
@@ -134,22 +137,7 @@ public class Main {
     }
 
     public static void loadConfig() {
-        configDir = new File(Utils.dataDirectory() + File.separator + ".groovesquid");
-        if(!configDir.exists()) {
-            configDir.mkdir();
-        }
-        
-        File oldConfigFile = new File("config.json");
-        File configFile = new File(configDir + File.separator + "config.json");
-        
-        if(oldConfigFile.exists() && !configFile.exists()) {
-            try {
-                FileUtils.copyFile(oldConfigFile, configFile);
-            } catch (IOException ex) {
-                log.log(Level.SEVERE, null, ex);
-            }
-            oldConfigFile.delete();
-        }
+        File configFile = new File(dataDirectory, "config.json");
 
         if(configFile.exists()) {
             try {
@@ -165,12 +153,16 @@ public class Main {
             config = new Config();
         }
     }
-    
+
+    public static File getDataDirectory() {
+        return dataDirectory;
+    }
+
     public static void saveConfig() {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                File configFile = new File(configDir + File.separator + "config.json");
+                File configFile = new File(dataDirectory + File.separator + "config.json");
                 try {
                     FileUtils.writeStringToFile(configFile, gson.toJson(config));
                 } catch (IOException ex) {
