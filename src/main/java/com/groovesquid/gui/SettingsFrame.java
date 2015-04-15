@@ -165,25 +165,33 @@ public class SettingsFrame extends JFrame {
                 list.applyComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 
                 Locale locale = (Locale) value;
-                URL url = getClass().getResource("/gui/flags/" + locale.toString().replace("_", "-") + ".png");
-                ImageIcon icon = null;
-                if (url == null) {
-                    url = getClass().getResource("/gui/flags/" + locale.getLanguage() + ".png");
-                }
-                if (url != null) {
-                    icon = new ImageIcon(url);
-                    icon = Utils.stretchImage(icon, 18, 18, this);
-                }
 
                 String languageNameForeign = WordUtils.capitalize(locale.getDisplayName(locale));
                 String languageNameOwn = WordUtils.capitalize(locale.getDisplayName(I18n.getCurrentLocale()));
+                String languageCode = locale.toString().replace("_", "-");
 
-                if (locale.toString() == "en_PT") {
+                // fix not existent language names
+                if (locale.toString().equals("en_PT")) {
                     languageNameForeign = "Pirate English";
                     languageNameOwn = languageNameForeign;
                 }
+                if (locale.toString().equals("lol")) {
+                    languageNameForeign = "LOLCAT";
+                    languageNameOwn = languageNameForeign;
+                }
 
-                label.setIcon(icon);
+                // fix ISO3 codes
+                if (locale.toString().equals("iw")) {
+                    languageCode = "he";
+                }
+
+                URL url = getClass().getResource("/gui/flags/" + languageCode + ".png");
+                if (url != null) {
+                    ImageIcon icon = new ImageIcon(url);
+                    icon = Utils.stretchImage(icon, 18, 18, this);
+                    label.setIcon(icon);
+                }
+
                 label.setText("<html>" + "\u202A" + languageNameForeign + (!isSelected ? "<font color=gray>" : "") + " — " + languageNameOwn + (!isSelected ? "</font>" : "") + "</html>");
 
                 return label;
