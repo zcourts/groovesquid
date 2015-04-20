@@ -23,6 +23,9 @@ public class FileStore implements Store {
     private final File downloadDir;
 
     public FileStore(String fileName, File downloadDir) {
+        // remove special characters
+        fileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+
         this.file = new File(downloadDir, fileName);
         this.downloadDir = downloadDir;
 
