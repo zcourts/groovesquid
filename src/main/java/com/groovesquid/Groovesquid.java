@@ -60,59 +60,7 @@ public class Groovesquid {
 
         // GUI
         if (!GraphicsEnvironment.isHeadless()) {
-
-            // platform specific stuff
-            String OS = System.getProperty("os.name").toLowerCase();
-
-            if (OS.indexOf("mac") >= 0) {
-                // mac os x
-
-                System.setProperty("apple.laf.useScreenMenuBar", "true");
-                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Groovesquid");
-
-                Application.getApplication().setAboutHandler(new AboutHandler() {
-                    public void handleAbout(AppEvent.AboutEvent aboutEvent) {
-                        aboutFrame.setVisible(true);
-                    }
-                });
-
-                Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
-                    public void handlePreferences(AppEvent.PreferencesEvent preferencesEvent) {
-                        settingsFrame.setVisible(true);
-                    }
-                });
-
-                Application.getApplication().setQuitHandler(new QuitHandler() {
-                    public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
-                        mainFrame.formWindowClosing(null);
-                    }
-                });
-
-            }
-            // antialising
-            System.setProperty("awt.useSystemAAFontSettings", "lcd");
-            System.setProperty("swing.aatext", "true");
-            // flackering bg fix
-            System.setProperty("sun.awt.noerasebackground", "true");
-            System.setProperty("sun.java2d.noddraw", "true");
-
-            Toolkit.getDefaultToolkit().setDynamicLayout(true);
-
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ex) {
-                log.log(Level.SEVERE, null, ex);
-            }
-
-            style = new DefaultStyle();
-            mainFrame = new MainFrame();
-            settingsFrame = new SettingsFrame();
-            aboutFrame = new AboutFrame();
-
-            if (OS.indexOf("win") >= 0 || OS.indexOf("nux") >= 0) {
-                // windows & linux
-                mainFrame.addMenuBarButtons();
-            }
+            initGui();
         }
 
         // check for updates
@@ -122,17 +70,71 @@ public class Groovesquid {
         groovesharkClient = new GroovesharkClient();
     }
 
+    private static void initGui() {
+        // platform specific stuff
+        String OS = System.getProperty("os.name").toLowerCase();
+
+        // mac os x
+        if (OS.indexOf("mac") >= 0) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Groovesquid");
+
+            Application.getApplication().setAboutHandler(new AboutHandler() {
+                public void handleAbout(AppEvent.AboutEvent aboutEvent) {
+                    aboutFrame.setVisible(true);
+                }
+            });
+
+            Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
+                public void handlePreferences(AppEvent.PreferencesEvent preferencesEvent) {
+                    settingsFrame.setVisible(true);
+                }
+            });
+
+            Application.getApplication().setQuitHandler(new QuitHandler() {
+                public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
+                    mainFrame.formWindowClosing(null);
+                }
+            });
+        }
+
+        // antialising
+        System.setProperty("awt.useSystemAAFontSettings", "lcd");
+        System.setProperty("swing.aatext", "true");
+        // flackering bg fix
+        System.setProperty("sun.awt.noerasebackground", "true");
+        System.setProperty("sun.java2d.noddraw", "true");
+
+        Toolkit.getDefaultToolkit().setDynamicLayout(true);
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
+            log.log(Level.SEVERE, null, ex);
+        }
+
+        style = new DefaultStyle();
+        mainFrame = new MainFrame();
+        settingsFrame = new SettingsFrame();
+        aboutFrame = new AboutFrame();
+
+        // windows & linux
+        if (OS.indexOf("win") >= 0 || OS.indexOf("nux") >= 0) {
+            mainFrame.addMenuBarButtons();
+        }
+    }
+
     public static MainFrame getMainFrame() {
         return mainFrame;
     }
     
     public static void resetGui() {
         mainFrame.dispose();
-        mainFrame = new MainFrame();
-        mainFrame.initDone();
         aboutFrame.dispose();
-        aboutFrame = new AboutFrame();
         settingsFrame.dispose();
+        initGui();
+        mainFrame.initDone();
+        aboutFrame = new AboutFrame();
         settingsFrame = new SettingsFrame();
     }
 
