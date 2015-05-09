@@ -1,14 +1,15 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Config.DownloadComplete;
+import com.apple.eawt.*;
 import com.groovesquid.Groovesquid;
 import com.groovesquid.gui.style.Style;
 import com.groovesquid.model.*;
+import com.groovesquid.model.Config.DownloadComplete;
 import com.groovesquid.service.DownloadListener;
 import com.groovesquid.service.PlayService;
 import com.groovesquid.service.PlaybackListener;
+import com.groovesquid.util.GuiUtils;
 import com.groovesquid.util.I18n;
-import com.groovesquid.util.Utils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXTable;
@@ -29,7 +30,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -365,7 +365,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            songs.addAll(Groovesquid.getSearchService().searchSongsByArtist((Artist) target));
+                            //songs.addAll(Groovesquid.getDiscogsService().searchSongsByArtist((Artist) target));
                             return songs;
                         }
 
@@ -386,7 +386,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            songs.addAll(Groovesquid.getSearchService().searchSongsByAlbum((Album) target));
+                            //songs.addAll(Groovesquid.getDiscogsService().searchSongsByAlbum((Album) target));
                             return songs;
                         }
 
@@ -407,7 +407,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            songs.addAll(Groovesquid.getSearchService().searchSongsByPlaylist((Playlist) target));
+                            //songs.addAll(Groovesquid.getDiscogsService().searchSongsByPlaylist((Playlist) target));
                             return songs;
                         }
 
@@ -463,9 +463,9 @@ public class MainFrame extends JFrame {
         downloadButton = new JButton(I18n.getLocaleString("DOWNLOAD"));
         downloadButton.setFont(new Font(downloadButton.getFont().getName(), Font.PLAIN, 11));
         if (style.usesButtonBackgrounds()) {
-            downloadButton.setIcon(Utils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
-            downloadButton.setRolloverIcon(Utils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
-            downloadButton.setPressedIcon(Utils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
+            downloadButton.setIcon(GuiUtils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
+            downloadButton.setRolloverIcon(GuiUtils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
+            downloadButton.setPressedIcon(GuiUtils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
             downloadButton.setBorder(null);
             downloadButton.setBorderPainted(false);
             downloadButton.setContentAreaFilled(false);
@@ -485,9 +485,9 @@ public class MainFrame extends JFrame {
         playButton = new JButton(I18n.getLocaleString("PLAY"));
         playButton.setFont(new Font(playButton.getFont().getName(), Font.PLAIN, 11));
         if (style.usesButtonBackgrounds()) {
-            playButton.setIcon(Utils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
-            playButton.setRolloverIcon(Utils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
-            playButton.setPressedIcon(Utils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
+            playButton.setIcon(GuiUtils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
+            playButton.setRolloverIcon(GuiUtils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
+            playButton.setPressedIcon(GuiUtils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
             playButton.setBorder(null);
             playButton.setBorderPainted(false);
             playButton.setContentAreaFilled(false);
@@ -510,12 +510,10 @@ public class MainFrame extends JFrame {
         DefaultComboBoxModel searchTypeComboBoxModel = new DefaultComboBoxModel();
         searchTypeComboBox.setModel(searchTypeComboBoxModel);
         searchTypeComboBoxModel.addElement(I18n.getLocaleString("SONGS"));
-        searchTypeComboBoxModel.addElement(I18n.getLocaleString("POPULAR"));
-        searchTypeComboBoxModel.addElement(I18n.getLocaleString("ALBUMS"));
-        searchTypeComboBoxModel.addElement(I18n.getLocaleString("PLAYLISTS"));
-        searchTypeComboBoxModel.addElement(I18n.getLocaleString("ARTISTS"));
+        //searchTypeComboBoxModel.addElement(I18n.getLocaleString("POPULAR"));
+        //searchTypeComboBoxModel.addElement(I18n.getLocaleString("ALBUMS"));
+        //searchTypeComboBoxModel.addElement(I18n.getLocaleString("ARTISTS"));
         searchTypeComboBox.setBorder(style.getSearchTypeComboBoxBorder());
-        searchTypeComboBox.setEnabled(false);
         searchTypeComboBox.setFocusable(false);
         searchTypeComboBox.setPreferredSize(new Dimension(63, 26));
         searchTypeComboBox.setRequestFocusEnabled(false);
@@ -528,9 +526,9 @@ public class MainFrame extends JFrame {
         searchButton = new JButton(I18n.getLocaleString("SEARCH"));
         searchButton.setFont(new Font(searchButton.getFont().getName(), Font.PLAIN, 12));
         if (style.usesButtonBackgrounds()) {
-            searchButton.setIcon(Utils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
-            searchButton.setRolloverIcon(Utils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
-            searchButton.setPressedIcon(Utils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
+            searchButton.setIcon(GuiUtils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
+            searchButton.setRolloverIcon(GuiUtils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
+            searchButton.setPressedIcon(GuiUtils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
             searchButton.setBorder(null);
             searchButton.setBorderPainted(false);
             searchButton.setContentAreaFilled(false);
@@ -547,13 +545,12 @@ public class MainFrame extends JFrame {
             }
         });
 
-        searchTextField = new JTextField(I18n.getLocaleString("LOADING"));
+        searchTextField = new JTextField();
         searchTextField.setFont(new Font(searchTextField.getFont().getName(), Font.PLAIN, 12));
         searchTextField.setUI(style.getSearchTextFieldUI(searchTextField));
         if (style.getSearchTextFieldBorder() != null) {
             searchTextField.setBorder(style.getSearchTextFieldBorder());
         }
-        searchTextField.setEnabled(false);
         searchTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 searchTextFieldActionPerformed(evt);
@@ -614,9 +611,9 @@ public class MainFrame extends JFrame {
         removeFromDiskButton = new JButton(I18n.getLocaleString("REMOVE_FROM_DISK"));
         removeFromDiskButton.setFont(new Font(removeFromDiskButton.getFont().getName(), Font.PLAIN, 11));
         if (style.usesButtonBackgrounds()) {
-            removeFromDiskButton.setIcon(Utils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
-            removeFromDiskButton.setRolloverIcon(Utils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
-            removeFromDiskButton.setPressedIcon(Utils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
+            removeFromDiskButton.setIcon(GuiUtils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
+            removeFromDiskButton.setRolloverIcon(GuiUtils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
+            removeFromDiskButton.setPressedIcon(GuiUtils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
             removeFromDiskButton.setBorder(null);
             removeFromDiskButton.setBorderPainted(false);
             removeFromDiskButton.setContentAreaFilled(false);
@@ -635,9 +632,9 @@ public class MainFrame extends JFrame {
         removeFromListButton = new JButton(I18n.getLocaleString("REMOVE_FROM_LIST"));
         removeFromListButton.setFont(new Font(removeFromDiskButton.getFont().getName(), Font.PLAIN, 11));
         if (style.usesButtonBackgrounds()) {
-            removeFromListButton.setIcon(Utils.stretchImage(style.getDownloadButtonsBackground(), 148, 27, this));
-            removeFromListButton.setRolloverIcon(Utils.stretchImage(style.getDownloadButtonsHoverBackground(), 148, 27, this));
-            removeFromListButton.setPressedIcon(Utils.stretchImage(style.getDownloadButtonsPressedBackground(), 148, 27, this));
+            removeFromListButton.setIcon(GuiUtils.stretchImage(style.getDownloadButtonsBackground(), 148, 27, this));
+            removeFromListButton.setRolloverIcon(GuiUtils.stretchImage(style.getDownloadButtonsHoverBackground(), 148, 27, this));
+            removeFromListButton.setPressedIcon(GuiUtils.stretchImage(style.getDownloadButtonsPressedBackground(), 148, 27, this));
             removeFromListButton.setBorder(null);
             removeFromListButton.setBorderPainted(false);
             removeFromListButton.setContentAreaFilled(false);
@@ -698,9 +695,9 @@ public class MainFrame extends JFrame {
         retryFailedDownloadsButton = new JButton(I18n.getLocaleString("RETRY_FAILED_DOWNLOADS"));
         retryFailedDownloadsButton.setFont(new Font(retryFailedDownloadsButton.getFont().getName(), Font.PLAIN, 11));
         if (style.usesButtonBackgrounds()) {
-            retryFailedDownloadsButton.setIcon(Utils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
-            retryFailedDownloadsButton.setRolloverIcon(Utils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
-            retryFailedDownloadsButton.setPressedIcon(Utils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
+            retryFailedDownloadsButton.setIcon(GuiUtils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
+            retryFailedDownloadsButton.setRolloverIcon(GuiUtils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
+            retryFailedDownloadsButton.setPressedIcon(GuiUtils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
             retryFailedDownloadsButton.setBorder(null);
             retryFailedDownloadsButton.setBorderPainted(false);
             retryFailedDownloadsButton.setContentAreaFilled(false);
@@ -757,6 +754,51 @@ public class MainFrame extends JFrame {
         editMenu = new JMenu(I18n.getLocaleString("EDIT"));
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
+
+        if (GuiUtils.getSystem() == GuiUtils.OperatingSystem.WINDOWS || GuiUtils.getSystem() == GuiUtils.OperatingSystem.LINUX) {
+            JMenuItem aboutMenuItem = new JMenuItem(I18n.getLocaleString("ABOUT"));
+            aboutMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Groovesquid.getAboutFrame().setVisible(true);
+                }
+            });
+            fileMenu.add(aboutMenuItem);
+
+            JMenuItem quitMenuItem = new JMenuItem(I18n.getLocaleString("QUIT"));
+            quitMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    formWindowClosing(null);
+                }
+            });
+            fileMenu.add(quitMenuItem);
+
+            JMenuItem settingsMenuItem = new JMenuItem(I18n.getLocaleString("SETTINGS"));
+            settingsMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Groovesquid.getSettingsFrame().setVisible(true);
+                }
+            });
+            editMenu.add(settingsMenuItem);
+
+        } else if (GuiUtils.getSystem() == GuiUtils.OperatingSystem.MAC) {
+            Application.getApplication().setAboutHandler(new AboutHandler() {
+                public void handleAbout(AppEvent.AboutEvent aboutEvent) {
+                    Groovesquid.getAboutFrame().setVisible(true);
+                }
+            });
+
+            Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
+                public void handlePreferences(AppEvent.PreferencesEvent preferencesEvent) {
+                    Groovesquid.getSettingsFrame().setVisible(true);
+                }
+            });
+
+            Application.getApplication().setQuitHandler(new QuitHandler() {
+                public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
+                    Groovesquid.getMainFrame().formWindowClosing(null);
+                }
+            });
+        }
 
         JMenuItem batchMenuItem = new JMenuItem(I18n.getLocaleString("BATCH"));
         batchMenuItem.addActionListener(new ActionListener() {
@@ -901,14 +943,14 @@ public class MainFrame extends JFrame {
             if (track.getStatus() == Track.Status.ERROR) {
                 resetPlayInfo();
                 Groovesquid.getPlayService().stop();
-            } else if(track.getStatus() == Track.Status.INITIALIZING) {
+            } else if (track.getStatus() == Track.Status.INITIALIZING) {
                 updateCurrentlyPlayingTrack(track);
-            } else if(track.getStatus() == Track.Status.DOWNLOADING) {
-                trackSlider.setMaximum(track.getSong().getDuration().intValue());
+            } else if (track.getStatus() == Track.Status.DOWNLOADING) {
+                trackSlider.setMaximum(Long.valueOf(track.getSong().getDuration()).intValue() / 1000);
                 durationLabel.setText(track.getSong().getReadableDuration());
                 //System.out.println(track.getTotalBytes() * 8 / track.getSong().getDuration() / 1000 + "KBP/S");
-                
-            } else if(track.getStatus() == Track.Status.FINISHED) {
+
+            } else if (track.getStatus() == Track.Status.FINISHED) {
                 //currentlyPlayingLabel.setText(currentlyPlayingLabel.getText() + " (" + ((MemoryStore)track.getStore()) + "kbps)");
             }
         }
@@ -918,15 +960,15 @@ public class MainFrame extends JFrame {
         }
 
         private void updateCurrentlyPlayingTrack(final Track track) {
-            currentlyPlayingLabel.setText(String.format("<html><b>%s</b><br/><em>%s</em></html>", track.getSong().getName(), track.getSong().getArtist().getName()));
+            currentlyPlayingLabel.setText(String.format("<html><b>%s</b><br/><em>%s</em></html>", track.getSong().getName(), track.getSong().getArtistNames()));
             trackSlider.setEnabled(true);
-            trackSlider.setMaximum(track.getSong().getDuration().intValue());
+            trackSlider.setMaximum(Long.valueOf(track.getSong().getDuration()).intValue());
             durationLabel.setText(track.getSong().getReadableDuration());
             
-            SwingWorker<Image, Void> worker = new SwingWorker<Image, Void>(){
+            /*SwingWorker<Image, Void> worker = new SwingWorker<Image, Void>(){
                 @Override
                 protected Image doInBackground() {
-                    return Groovesquid.getSearchService().getLastFmCover(track.getSong());
+                    return Groovesquid.getDiscogsService().getLastFmCover(track.getSong());
                 }
 
                 @Override
@@ -948,7 +990,7 @@ public class MainFrame extends JFrame {
 
                 }
             };
-            worker.execute();
+            worker.execute();*/
         }
     };
 
@@ -985,7 +1027,7 @@ public class MainFrame extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Album album : albums) {
-                        songs.addAll(Groovesquid.getSearchService().searchSongsByAlbum(album));
+                        //songs.addAll(Groovesquid.getDiscogsService().searchSongsByAlbum(album));
                     }
                     return songs;
                 }
@@ -1028,7 +1070,7 @@ public class MainFrame extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Playlist playlist : playlists) {
-                        songs.addAll(Groovesquid.getSearchService().searchSongsByPlaylist(playlist));
+                        //songs.addAll(Groovesquid.getDiscogsService().searchSongsByPlaylist(playlist));
                     }
                     return songs;
                 }
@@ -1071,7 +1113,7 @@ public class MainFrame extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Artist artist : artists) {
-                        songs.addAll(Groovesquid.getSearchService().searchSongsByArtist(artist));
+                        //songs.addAll(Groovesquid.getDiscogsService().searchSongsByArtist(artist));
                     }
                     return songs;
                 }
@@ -1152,11 +1194,11 @@ public class MainFrame extends JFrame {
             } else if (searchTable.getModel() instanceof AlbumSearchTableModel) {
                 AlbumSearchTableModel albumSearchTableModel = (AlbumSearchTableModel) searchTable.getModel();
                 final Album album = albumSearchTableModel.getAlbums().get(selectedRow);
-                SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
+                /*SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
 
                     @Override
                     protected List<Song> doInBackground() {
-                        return Groovesquid.getSearchService().searchSongsByAlbum(album);
+                        return Groovesquid.getDiscogsService().searchSongsByAlbum(album);
                     }
 
                     @Override
@@ -1174,16 +1216,16 @@ public class MainFrame extends JFrame {
 
                     }
                 };
-                worker.execute();
+                worker.execute();*/
 
             } else if (searchTable.getModel() instanceof PlaylistSearchTableModel) {
                 PlaylistSearchTableModel playlistSearchTableModel = (PlaylistSearchTableModel) searchTable.getModel();
                 final Playlist playlist = playlistSearchTableModel.getPlaylists().get(selectedRow);
-                SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
+                /*SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
 
                     @Override
                     protected List<Song> doInBackground() {
-                        return Groovesquid.getSearchService().searchSongsByPlaylist(playlist);
+                        return Groovesquid.getDiscogsService().searchSongsByPlaylist(playlist);
                     }
 
                     @Override
@@ -1201,8 +1243,7 @@ public class MainFrame extends JFrame {
 
                     }
                 };
-                worker.execute();
-
+                worker.execute();*/
             }
         }
         searchTable.getSelectionModel().clearSelection();
@@ -1255,7 +1296,7 @@ public class MainFrame extends JFrame {
 
     public void searchTypeComboBoxActionPerformed(ActionEvent evt) {
         // POPULAR
-        if (searchTypeComboBox.getSelectedIndex() == 1) {
+        /*if (searchTypeComboBox.getSelectedIndex() == 1) {
             searchTextField.setText("");
             // fire actionPerformed event at searchButton
             for (ActionListener a : searchButton.getActionListeners()) {
@@ -1264,7 +1305,7 @@ public class MainFrame extends JFrame {
         } else {
             searchTextField.setEnabled(true);
             searchTextField.requestFocus();
-        }
+        }*/
     }                                                  
 
     public void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
@@ -1301,11 +1342,11 @@ public class MainFrame extends JFrame {
             worker.execute();
         // Popular
         } else if (searchTypeComboBox.getSelectedIndex() == 1) {
-            SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
+            /*SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
 
                 @Override
                 protected List<Song> doInBackground() {
-                    return Groovesquid.getSearchService().searchPopular();
+                    return Groovesquid.getDiscogsService().searchPopular();
                 }
 
                 @Override
@@ -1323,9 +1364,9 @@ public class MainFrame extends JFrame {
                     searchButton.setEnabled(true);
                 }
             };
-            worker.execute();
+            worker.execute();*/
         // Albums
-        } else if (searchTypeComboBox.getSelectedIndex() == 2) {
+        } else if (searchTypeComboBox.getSelectedIndex() == 1) {
             SwingWorker<List<Album>, Void> worker = new SwingWorker<List<Album>, Void>(){
 
                 @Override
@@ -1352,11 +1393,11 @@ public class MainFrame extends JFrame {
             worker.execute();
         // Playlists
         } else if (searchTypeComboBox.getSelectedIndex() == 3) {
-            SwingWorker<List<Playlist>, Void> worker = new SwingWorker<List<Playlist>, Void>(){
+            /*SwingWorker<List<Playlist>, Void> worker = new SwingWorker<List<Playlist>, Void>(){
 
                 @Override
                 protected List<Playlist> doInBackground() {
-                    return Groovesquid.getSearchService().searchPlaylistsByQuery(searchTextField.getText());
+                    return Groovesquid.getDiscogsService().searchPlaylistsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -1375,15 +1416,15 @@ public class MainFrame extends JFrame {
                     searchButton.setEnabled(true);
                 }
             };
-            worker.execute();
+            worker.execute();*/
             
         // Artists
         } else if (searchTypeComboBox.getSelectedIndex() == 4) {
-            SwingWorker<List<Artist>, Void> worker = new SwingWorker<List<Artist>, Void>(){
+            /*SwingWorker<List<Artist>, Void> worker = new SwingWorker<List<Artist>, Void>(){
 
                 @Override
                 protected List<Artist> doInBackground() {
-                    return Groovesquid.getSearchService().searchArtistsByQuery(searchTextField.getText());
+                    return Groovesquid.getDiscogsService().searchArtistsByQuery(searchTextField.getText());
                 }
 
                 @Override
@@ -1402,7 +1443,7 @@ public class MainFrame extends JFrame {
                     searchButton.setEnabled(true);
                 }
             };
-            worker.execute();
+            worker.execute();*/
         }
         
     }
@@ -1453,11 +1494,11 @@ public class MainFrame extends JFrame {
     public void searchTextFieldKeyReleased(KeyEvent evt) {
         if (Groovesquid.getConfig().getAutocompleteEnabled()) {
             if (evt.getKeyCode() >= KeyEvent.VK_A && evt.getKeyCode() <= KeyEvent.VK_Z && (evt.getModifiers() & ActionEvent.CTRL_MASK) != ActionEvent.CTRL_MASK && ! evt.isControlDown()) {
-                SwingWorker<List<String>, Void> worker = new SwingWorker<List<String>, Void>() {
+                /*SwingWorker<List<String>, Void> worker = new SwingWorker<List<String>, Void>() {
 
                     @Override
                     protected List<String> doInBackground() {
-                        return Groovesquid.getSearchService().autocompleteByQuery(searchTextField.getText());
+                        return Groovesquid.getDiscogsService().autocompleteByQuery(searchTextField.getText());
                     }
 
                     @Override
@@ -1478,7 +1519,7 @@ public class MainFrame extends JFrame {
                         }
                     }
                 };
-                worker.execute();
+                worker.execute();*/
             }
         }
     }
@@ -1493,7 +1534,7 @@ public class MainFrame extends JFrame {
         if(evt.getKeyCode() == KeyEvent.VK_DELETE) {
             int[] selectedRows = downloadTable.getSelectedRows();
             Object[] options = {I18n.getLocaleString("REMOVE_FROM_LIST"), I18n.getLocaleString("REMOVE_FROM_LIST_AND_DISK"), I18n.getLocaleString("CANCEL")};
-            int selectedValue = JOptionPane.showOptionDialog(this, String.format(I18n.getLocaleString("ALERT_REMOVE_FROM_LIST_OR_DISK"), Integer.valueOf(selectedRows.length)), I18n.getLocaleString("ALERT"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+            int selectedValue = JOptionPane.showOptionDialog(this, String.format(I18n.getLocaleString("ALERT_REMOVE_FROM_LIST_OR_DISK"), selectedRows.length), I18n.getLocaleString("ALERT"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
             if(selectedValue == 0) {
                 removeFromList(false);
             } else if(selectedValue == 1) {
@@ -1757,14 +1798,6 @@ public class MainFrame extends JFrame {
     public JComboBox getSearchTypeComboBox() {
         return searchTypeComboBox;
     }
-    
-    public void initDone() {
-        searchTypeComboBox.setEnabled(true);
-        searchTextField.setText("");
-        searchTextField.setEnabled(true);
-        searchTextField.requestFocus();
-        searchButton.setEnabled(true);
-    }
 
     public void showError(String message) {
         JOptionPane.showMessageDialog(this, message, I18n.getLocaleString("ERROR"), JOptionPane.ERROR_MESSAGE);
@@ -1784,29 +1817,4 @@ public class MainFrame extends JFrame {
         return style;
     }
 
-    public void addMenuBarButtons() {
-        JMenuItem aboutMenuItem = new JMenuItem(I18n.getLocaleString("ABOUT"));
-        aboutMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Groovesquid.getAboutFrame().setVisible(true);
-            }
-        });
-        fileMenu.add(aboutMenuItem);
-
-        JMenuItem quitMenuItem = new JMenuItem(I18n.getLocaleString("QUIT"));
-        quitMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                formWindowClosing(null);
-            }
-        });
-        fileMenu.add(quitMenuItem);
-
-        JMenuItem settingsMenuItem = new JMenuItem(I18n.getLocaleString("SETTINGS"));
-        settingsMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Groovesquid.getSettingsFrame().setVisible(true);
-            }
-        });
-        editMenu.add(settingsMenuItem);
-    }
 }

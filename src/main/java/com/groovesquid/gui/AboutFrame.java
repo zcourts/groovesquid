@@ -10,16 +10,14 @@ import java.awt.event.ActionEvent;
 @SuppressWarnings({"serial", "rawtypes"})
 public class AboutFrame extends JFrame {
 
+    private JLabel websiteTextLabel;
     private LinkLabel websiteLabel;
+    private JLabel facebookTextLabel;
     private LinkLabel facebookLabel;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
-    private JLabel jLabel5;
-    private JLabel jLabel6;
-    private LinkLabel lekoLabel;
+    private JLabel twitterTextLabel;
     private LinkLabel twitterLabel;
+    private JLabel copyrightLabel;
+    private JLabel iconLabel;
     private JLabel versionLabel;
     private JButton closeButton;
 
@@ -36,43 +34,41 @@ public class AboutFrame extends JFrame {
     }
 
     private void initComponents() {
-        jLabel3 = new JLabel();
+        websiteTextLabel = new JLabel();
         websiteLabel = new LinkLabel();
+        facebookTextLabel = new JLabel();
         facebookLabel = new LinkLabel();
-        jLabel4 = new JLabel();
-        jLabel5 = new JLabel();
+        twitterTextLabel = new JLabel();
         twitterLabel = new LinkLabel();
-        jLabel2 = new JLabel();
+        copyrightLabel = new JLabel();
         closeButton = new JButton();
-        jLabel1 = new JLabel();
-        lekoLabel = new LinkLabel();
-        jLabel6 = new JLabel();
+        iconLabel = new JLabel();
         versionLabel = new JLabel();
 
         setTitle(I18n.getLocaleString("ABOUT"));
         setResizable(false);
 
-        jLabel3.setFont(new Font(jLabel3.getFont().getName(), Font.PLAIN, 11));
-        jLabel3.setText("Website:");
+        websiteTextLabel.setFont(new Font(websiteTextLabel.getFont().getName(), Font.PLAIN, 11));
+        websiteTextLabel.setText("Website:");
 
         websiteLabel.setFont(new Font(websiteLabel.getFont().getName(), Font.PLAIN, 11));
         websiteLabel.setText("http://groovesquid.com");
 
+        facebookTextLabel.setFont(new Font(facebookTextLabel.getFont().getName(), Font.PLAIN, 11));
+        facebookTextLabel.setText("Facebook:");
+
         facebookLabel.setFont(new Font(facebookLabel.getFont().getName(), Font.PLAIN, 11));
         facebookLabel.setText("http://facebook.com/groovesquid");
 
-        jLabel4.setFont(new Font(jLabel4.getFont().getName(), Font.PLAIN, 11));
-        jLabel4.setText("Facebook:");
-
-        jLabel5.setFont(new Font(jLabel5.getFont().getName(), Font.PLAIN, 11));
-        jLabel5.setText("Twitter:");
+        twitterTextLabel.setFont(new Font(twitterTextLabel.getFont().getName(), Font.PLAIN, 11));
+        twitterTextLabel.setText("Twitter:");
 
         twitterLabel.setFont(new Font(twitterLabel.getFont().getName(), Font.PLAIN, 11));
         twitterLabel.setText("http://twitter.com/groovesquid");
 
-        jLabel2.setFont(new Font(jLabel2.getFont().getName(), Font.PLAIN, 10));
-        jLabel2.setForeground(new Color(102, 102, 102));
-        jLabel2.setText("Copyright (c) 2014 by Maino Development. All rights reserved.");
+        copyrightLabel.setFont(new Font(copyrightLabel.getFont().getName(), Font.PLAIN, 10));
+        copyrightLabel.setForeground(new Color(102, 102, 102));
+        copyrightLabel.setText("Copyright (c) 2015 by GBHRDT Development. All rights reserved.");
 
         closeButton.setText(I18n.getLocaleString("CLOSE"));
         closeButton.setFocusable(false);
@@ -83,13 +79,7 @@ public class AboutFrame extends JFrame {
             }
         });
 
-        jLabel1.setFont(new Font(jLabel1.getFont().getName(), Font.PLAIN, 11));
-        jLabel1.setText("Logo & UI:");
-
-        lekoLabel.setFont(new Font(lekoLabel.getFont().getName(), Font.PLAIN, 11));
-        lekoLabel.setText("http://facebook.com/LeKoArtsDE");
-
-        jLabel6.setIcon(new ImageIcon(getClass().getResource("/gui/logo.png")));
+        iconLabel.setIcon(new ImageIcon(getClass().getResource("/gui/logo.png")));
 
         versionLabel.setFont(new Font(versionLabel.getFont().getName(), Font.PLAIN, 11));
         versionLabel.setText("Version");
@@ -100,7 +90,7 @@ public class AboutFrame extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6)
+                .addComponent(iconLabel)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -108,21 +98,17 @@ public class AboutFrame extends JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(lekoLabel))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel4)
-                                            .addComponent(jLabel5)
-                                            .addComponent(jLabel3))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(websiteLabel)
-                                            .addComponent(facebookLabel)
-                                            .addComponent(twitterLabel))))
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(websiteTextLabel)
+                                                    .addComponent(facebookTextLabel)
+                                                    .addComponent(twitterTextLabel))
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(websiteLabel)
+                                                    .addComponent(facebookLabel)
+                                                    .addComponent(twitterLabel))))
                                 .addGap(74, 74, 74))
-                                .addComponent(jLabel2, GroupLayout.Alignment.LEADING))
+                                .addComponent(copyrightLabel, GroupLayout.Alignment.LEADING))
                         .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(versionLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -134,27 +120,23 @@ public class AboutFrame extends JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(websiteLabel))
+                                .addComponent(websiteTextLabel)
+                                .addComponent(websiteLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(facebookLabel))
+                                .addComponent(facebookTextLabel)
+                                .addComponent(facebookLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(twitterLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(lekoLabel))
+                                .addComponent(twitterTextLabel)
+                                .addComponent(twitterLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(versionLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2)
+                        .addComponent(copyrightLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(closeButton))
-                    .addComponent(jLabel6))
+                    .addComponent(iconLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 

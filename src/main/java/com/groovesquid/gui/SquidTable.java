@@ -59,7 +59,7 @@ public class SquidTable extends JXTable {
         // scroll to top
         scrollRectToVisible(getCellRect(0, 0, true));
     }
-    
+
     private final MouseAdapter editingListener = new MouseAdapter() {
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -78,23 +78,21 @@ public class SquidTable extends JXTable {
             possiblySwitchEditors(e);
         }
     };
-    
+
     private void possiblySwitchEditors(MouseEvent e) {
         Point p = e.getPoint();
-        if (p != null) {
-            int row = rowAtPoint(p);
-            int col = columnAtPoint(p);
-            if (row != getEditingRow() || col != getEditingColumn()) {
-                if (isEditing()) {
-                    TableCellEditor editor = getCellEditor();
-                    if (!editor.stopCellEditing()) {
-                        editor.cancelCellEditing();
-                    }
+        int row = rowAtPoint(p);
+        int col = columnAtPoint(p);
+        if (row != getEditingRow() || col != getEditingColumn()) {
+            if (isEditing()) {
+                TableCellEditor editor = getCellEditor();
+                if (!editor.stopCellEditing()) {
+                    editor.cancelCellEditing();
                 }
-                if (!isEditing()) {
-                    if (row != -1 && isCellEditable(row, col)) {
-                        editCellAt(row, col);
-                    }
+            }
+            if (!isEditing()) {
+                if (row != -1 && isCellEditable(row, col)) {
+                    editCellAt(row, col);
                 }
             }
         }

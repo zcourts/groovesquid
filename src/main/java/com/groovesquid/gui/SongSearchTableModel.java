@@ -10,7 +10,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class SongSearchTableModel extends AbstractTableModel {
 
-    private final String[] columnNames = {"", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("DURATION"), I18n.getLocaleString("YEAR"), I18n.getLocaleString("TRACK_NUMBER")};
+    private final String[] columnNames = {"", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("DURATION"), I18n.getLocaleString("YEAR")/*, I18n.getLocaleString("TRACK_NUMBER")*/};
     
     private List<Song> songs = new ArrayList<Song>();
 
@@ -39,16 +39,20 @@ public class SongSearchTableModel extends AbstractTableModel {
         Song song = songs.get(row);
 
         switch (col) {
-            case 0: return song.isDownloaded();
-            case 1: return song.getName();
+            case 0:
+                return song.isDownloaded();
+            case 1:
+                return song.getName();
             case 2:
-                return song.getArtist();
+                return song.getArtistNames();
             case 3:
                 return song.getAlbum();
-            case 4: return song.getReadableDuration();
-            case 5: return song.getYear();
-            case 6:
-                return song.getTrackNum();
+            case 4:
+                return song.getReadableDuration();
+            case 5:
+                return song.getAlbum().getReleaseYear();
+            /*case 6:
+                return song.getTrackNum();*/
         }
         return null;
     }
@@ -57,14 +61,14 @@ public class SongSearchTableModel extends AbstractTableModel {
         return songs;
     }
     
-    @Override
+    /*@Override
     public Class<?> getColumnClass(int column) {
         if(songs.size() > 0 && getRowCount() > 0) {
             return getValueAt(0, column).getClass();
         } else {
             return Object.class;
         }
-    }
+    }*/
     
     public void removeRow(int row) {
         songs.remove(row);

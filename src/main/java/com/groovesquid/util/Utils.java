@@ -1,14 +1,9 @@
 package com.groovesquid.util;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 public class Utils {
@@ -262,41 +257,9 @@ public class Utils {
             }
         }
     }
-    
-    public static <T> List<T> copyListOnlySpecified(List<T> list, int[] indexes) {
-        List<T> newlist = new ArrayList<T>();
-        for(int i = 0; i < list.size(); i++) {
-            if(Arrays.asList(indexes).contains(i)) {
-                newlist.add(list.get(i));
-            }
-        }
-        return newlist;
-    }
-    
+
     public static boolean isNumeric(String s) {  
         return s.matches("[-+]?\\d*\\.?\\d+");  
     }
 
-    public static ImageIcon stretchImage(ImageIcon image, int width, int height, ImageObserver imageObserver) {
-        return stretchImage(image.getImage(), width, height, imageObserver);
-    }
-    
-    public static ImageIcon stretchImage(Image image, int width, int height, ImageObserver imageObserver) {
-        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) newImage.getGraphics();
-        g.drawImage(image, 0, 0, width, height, imageObserver);
-        g.dispose();
-        return new ImageIcon(newImage);
-    }
-    
-    public static Locale localeFromString(String locale) {
-        String parts[] = locale.split("_", -1);
-        if (parts.length == 1) return new Locale(parts[0]);
-        else if (parts.length == 2) return new Locale(parts[0], parts[1]);
-        else return new Locale(parts[0], parts[1], parts[2]);
-    }
-
-    public static Object getByIndex(Map<?, ?> hMap, int index) {
-        return hMap.values().toArray()[index];
-    }
 }

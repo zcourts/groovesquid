@@ -12,7 +12,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class DownloadTableModel extends AbstractTableModel {
 
-    private String[] columnNames = {I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("PATH"), I18n.getLocaleString("DATE"), I18n.getLocaleString("PROGRESS")};
+    private String[] columnNames = {I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("PATH"), I18n.getLocaleString("DATE"), I18n.getLocaleString("PROGRESS"), I18n.getLocaleString("HOSTER")};
 
     private List<Track> songDownloads = new ArrayList<Track>();
 
@@ -43,12 +43,19 @@ public class DownloadTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Track track = songDownloads.get(rowIndex);
         switch (columnIndex) {
-            case 0: return track.getSong().getName();
-            case 1: return track.getSong().getArtist().getName();
-            case 2: return track.getSong().getAlbum().getName();
-            case 3: return track.getPath();
-            case 4: return track.getDate();
+            case 0:
+                return track.getSong() != null && track.getSong().getName() != null ? track.getSong().getName() : "";
+            case 1:
+                return track.getSong() != null && track.getSong().getArtistNames() != null ? track.getSong().getArtistNames() : "";
+            case 2:
+                return track.getSong() != null && track.getSong().getAlbum() != null && track.getSong().getAlbum().getName() != null ? track.getSong().getAlbum().getName() : "";
+            case 3:
+                return track.getPath() != null ? track.getPath() : "";
+            case 4:
+                return track.getDate() != null ? track.getDate() : "";
             case 5: return track.getProgress();
+            case 6:
+                return track.getHoster() != null ? track.getHoster() : "";
         }
         return null;
     }
@@ -60,14 +67,14 @@ public class DownloadTableModel extends AbstractTableModel {
         updateSongDownloads();
     }
     
-    @Override
+    /*@Override
     public Class<?> getColumnClass(int column) {
         if(songDownloads.size() > 0 && getRowCount() > 0) {
             return getValueAt(0, column).getClass();
         } else {
             return Object.class;
         }
-    }
+    }*/
     
     public List<Track> getSongDownloads() {
         return songDownloads;

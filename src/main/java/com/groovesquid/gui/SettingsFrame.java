@@ -1,9 +1,9 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Config;
 import com.groovesquid.Groovesquid;
+import com.groovesquid.model.Config;
+import com.groovesquid.util.GuiUtils;
 import com.groovesquid.util.I18n;
-import com.groovesquid.util.Utils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
@@ -46,7 +46,6 @@ public class SettingsFrame extends JFrame {
     private JSpinner maxParallelDownloadsSpinner;
     private JTextField proxyHostTextField;
     private JTextField proxyPortTextField;
-    private JButton reconnectButton;
     private JButton resetOriginalSettingsButton;
     private JButton saveSettingsButton;
 
@@ -72,15 +71,6 @@ public class SettingsFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt) {
                 formWindowClosing(evt);
-            }
-        });
-
-        reconnectButton = new JButton(I18n.getLocaleString("RECONNECT"));
-        reconnectButton.setFocusable(false);
-        reconnectButton.setRequestFocusEnabled(false);
-        reconnectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                reconnectButtonActionPerformed(evt);
             }
         });
 
@@ -188,7 +178,7 @@ public class SettingsFrame extends JFrame {
                 URL url = getClass().getResource("/gui/flags/" + languageCode + ".png");
                 if (url != null) {
                     ImageIcon icon = new ImageIcon(url);
-                    icon = Utils.stretchImage(icon, 18, 18, this);
+                    icon = GuiUtils.stretchImage(icon, 18, 18, this);
                     label.setIcon(icon);
                 }
 
@@ -229,11 +219,9 @@ public class SettingsFrame extends JFrame {
                 .addContainerGap()
                     .add(layout.createParallelGroup(GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(reconnectButton)
-                            .addPreferredGap(LayoutStyle.RELATED, 75, Short.MAX_VALUE)
                             .add(resetOriginalSettingsButton, GroupLayout.PREFERRED_SIZE, 227, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(LayoutStyle.RELATED)
-                            .add(saveSettingsButton, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE))
+                            .add(saveSettingsButton, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE))
                     .add(layout.createSequentialGroup()
                             .add(layout.createParallelGroup(GroupLayout.TRAILING, false)
                                     .add(languageLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -309,7 +297,6 @@ public class SettingsFrame extends JFrame {
                             .add(proxyPortTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .add(50, 50, 50)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                            .add(reconnectButton)
                             .add(saveSettingsButton)
                             .add(resetOriginalSettingsButton))
                     .addContainerGap())
@@ -337,11 +324,6 @@ public class SettingsFrame extends JFrame {
         if(saveSettings()) {
             dispose();
         }
-    }
-
-    private void reconnectButtonActionPerformed(ActionEvent evt) {
-        // init grooveshark
-        Groovesquid.getGroovesharkClient().init();
     }
 
     private void formWindowClosing(WindowEvent evt) {

@@ -42,7 +42,7 @@ public class AlbumSearchTableModel extends AbstractTableModel {
             case 0:
                 return album;
             case 1:
-                return album.getArtist();
+                return album.getArtistNames();
         }
         return null;
     }
