@@ -1,16 +1,11 @@
 package com.groovesquid.model;
 
-import com.groovesquid.Config;
 import com.groovesquid.Groovesquid;
 import com.groovesquid.util.Utils;
+import com.mpatric.mp3agic.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.farng.mp3.MP3File;
-import org.farng.mp3.TagConstant;
-import org.farng.mp3.TagException;
-import org.farng.mp3.TagOptionSingleton;
-import org.farng.mp3.id3.*;
 
 import java.io.*;
 
@@ -19,19 +14,21 @@ public class FileStore implements Store {
     private static final Log log = LogFactory.getLog(FileStore.class);
     private static final Object directoryDeleteLock = new Object();
 
-    private File file;
+    private File downloadFile;
+    private File outputFile;
     private final File downloadDir;
 
     public FileStore(String fileName, File downloadDir) {
-        this.file = new File(downloadDir, fileName);
+        this.downloadFile = new File(downloadDir, fileName + ".download");
+        this.outputFile = new File(downloadDir, fileName);
         this.downloadDir = downloadDir;
 
-        if (file.exists()) {
+        if (downloadFile.exists()) {
             if (Groovesquid.getConfig().getFileExists() == Config.FileExists.RENAME.ordinal()) {
                 int i = 1;
-                fileName = FilenameUtils.removeExtension(file.getAbsolutePath());
-                while (file.exists()) {
-                    file = new File(downloadDir, fileName + "_" + i + ".mp3");
+                fileName = FilenameUtils.removeExtension(downloadFile.getAbsolutePath());
+                while (downloadFile.exists()) {
+                    downloadFile = new File(downloadDir, fileName + "_" + i + ".mp3");
                     if (i >= 10) {
                         break;
                     }
@@ -42,114 +39,92 @@ public class FileStore implements Store {
     }
 
     public OutputStream getOutputStream() throws IOException {
-        File dir = file.getParentFile();
+        File dir = downloadFile.getParentFile();
         if (!dir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
             if (!dir.exists()) {
                 throw new IOException("could not create directory " + dir);
             }
         }
-        return new FileOutputStream(file);
+        return new FileOutputStream(downloadFile);
     }
 
     public InputStream getInputStream() throws IOException {
-        return new BufferedInputStream(new FileInputStream(file));
+        return new BufferedInputStream(new FileInputStream(downloadFile));
     }
 
     public void writeTrackInfo(Track track) throws IOException {
         log.info("writing ID3 tags to " + track);
-
         try {
-            ID3v1 id3v1 = new ID3v1_1();
-            ID3v2_3 id3v2 = new ID3v2_3();
+            Mp3File mp3file = new Mp3File(downloadFile);
 
-            String artistName = track.getSong().getArtist().getName();
-            if (artistName != null) {
-                id3v1.setArtist(artistName);
-                ID3v2_3Frame frame;
-                AbstractID3v2FrameBody frameBody;
-                frameBody = new FrameBodyTPE1((byte) 0, artistName);
-                frame = new ID3v2_3Frame(frameBody);
-                id3v2.setFrame(frame);
+            ID3v1 id3v1Tag;
+            if (mp3file.hasId3v1Tag()) {
+                id3v1Tag = mp3file.getId3v1Tag();
+            } else {
+                id3v1Tag = new ID3v1Tag();
+                mp3file.setId3v1Tag(id3v1Tag);
             }
 
-            String albumName = track.getSong().getAlbum().getName();
-            if (albumName != null) {
-                id3v1.setAlbum(albumName);
-                ID3v2_3Frame frame;
-                AbstractID3v2FrameBody frameBody;
-                frameBody = new FrameBodyTALB((byte) 0, albumName);
-                frame = new ID3v2_3Frame(frameBody);
-                id3v2.setFrame(frame);
+            ID3v2 id3v2Tag;
+            if (mp3file.hasId3v2Tag()) {
+                id3v2Tag = mp3file.getId3v2Tag();
+            } else {
+                id3v2Tag = new ID3v24Tag();
+                mp3file.setId3v2Tag(id3v2Tag);
             }
 
-            String songName = track.getSong().getName();
-            if (songName != null) {
-                id3v1.setTitle(songName);
-                ID3v2_3Frame frame;
-                AbstractID3v2FrameBody frameBody;
-                frameBody = new FrameBodyTIT2((byte) 0, songName);
-                frame = new ID3v2_3Frame(frameBody);
-                id3v2.setFrame(frame);
+            if (track.getSong().getName() != null) {
+                id3v1Tag.setTitle(track.getSong().getName());
+                id3v2Tag.setTitle(track.getSong().getName());
             }
 
-            String year = track.getSong().getYear();
-            if (year != null) {
-                id3v1.setYear(year);
-                try {
-                    ID3v2_3Frame frame;
-                    AbstractID3v2FrameBody frameBody;
-                    frameBody = new FrameBodyTDRC((byte) 0, year);
-                    frame = new ID3v2_3Frame(frameBody);
-                    id3v2.setFrame(frame);
-                } catch (NumberFormatException ignore) {
-                    // ignored
-                }
+            if (track.getSong().getArtistNames() != null) {
+                id3v1Tag.setArtist(track.getSong().getArtistNames());
+                id3v2Tag.setArtist(track.getSong().getArtistNames());
+            }
+
+            if (track.getSong().getAlbum().getName() != null) {
+                id3v1Tag.setAlbum(track.getSong().getAlbum().getName());
+                id3v2Tag.setAlbum(track.getSong().getAlbum().getName());
+            }
+
+            if (track.getSong().getYear() != null) {
+                id3v1Tag.setYear(track.getSong().getAlbum().getName());
+                id3v2Tag.setYear(track.getSong().getAlbum().getName());
             }
 
             Long trackNum = track.getSong().getTrackNum();
             if (trackNum != null) {
-                ID3v2_3Frame frame;
-                AbstractID3v2FrameBody frameBody;
-                frameBody = new FrameBodyTRCK((byte) 0, trackNum.toString());
-                frame = new ID3v2_3Frame(frameBody);
-                id3v2.setFrame(frame);
+                id3v1Tag.setTrack(track.getSong().getAlbum().getName());
+                id3v2Tag.setTrack(track.getSong().getAlbum().getName());
             }
-                        
-            // let's advertise ourself a bit
-            String comment = "Downloaded with Groovesquid (groovesquid.com)";
-            id3v1.setComment(comment);
-            ID3v2_3Frame frame;
-            AbstractID3v2FrameBody frameBody;
-            frameBody = new FrameBodyCOMM((byte) 0, "eng", comment, comment);
-            frame = new ID3v2_3Frame(frameBody);
-            id3v2.setFrame(frame);
 
-            MP3File mp3File = new MP3File(file);
-            TagOptionSingleton.getInstance().setDefaultSaveMode(TagConstant.MP3_FILE_SAVE_OVERWRITE);
-            mp3File.setID3v1Tag(id3v1);
-            mp3File.setID3v2Tag(id3v2);
-            mp3File.save();
-            // very dirty, TODO: prevent Jid3lib to generate the ".original" files
-            File originalFile = new File(FilenameUtils.removeExtension(file.toString()) + ".original.mp3");
-            if(originalFile.exists())
-                originalFile.delete();
-        } catch (TagException ex) {
-            throw new IOException("cannot write ID3 tags to file " + file + "; track: " + track + "; reason: " + ex, ex);
+            id3v1Tag.setGenre(12);
+            id3v2Tag.setGenre(12);
+
+            String comment = "Downloaded with Groovesquid (groovesquid.com)";
+            id3v1Tag.setComment(comment);
+            id3v2Tag.setComment(comment);
+
+            mp3file.save(outputFile.getAbsolutePath());
+            downloadFile.delete();
+
+        } catch (Exception e) {
+            downloadFile.renameTo(outputFile);
         }
     }
 
      public void deleteStore() {
-        if (file.exists()) {
-            if (file.delete())
-                log.debug("deleted: " + file);
+         if (outputFile.exists()) {
+             if (outputFile.delete())
+                 log.debug("deleted: " + outputFile);
             else
-                log.debug("could not delete: " + file);
+                 log.debug("could not delete: " + outputFile);
         }
 
         // delete empty directories, recursively up to (but not including) the top download dir
-        File dir = file.getParentFile();
+         File dir = outputFile.getParentFile();
         synchronized (directoryDeleteLock) {
             while (dir != null && !dir.equals(downloadDir)) {
                 File parent = dir.getParentFile();
@@ -165,10 +140,10 @@ public class FileStore implements Store {
     }
 
     public String getDescription() {
-        return file.getAbsolutePath();
+        return outputFile.getAbsolutePath();
     }
 
     public boolean isSameLocation(Store other) {
-        return other instanceof FileStore && file.equals(((FileStore)other).file);
+        return other instanceof FileStore && outputFile.equals(((FileStore) other).outputFile);
     }
 }
