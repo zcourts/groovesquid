@@ -1,16 +1,16 @@
 package com.groovesquid;
 
-import com.apple.eawt.*;
 import com.google.gson.Gson;
 import com.groovesquid.gui.AboutFrame;
 import com.groovesquid.gui.MainFrame;
 import com.groovesquid.gui.SettingsFrame;
 import com.groovesquid.gui.style.DefaultStyle;
 import com.groovesquid.gui.style.Style;
-import com.groovesquid.model.Clients;
+import com.groovesquid.model.Config;
 import com.groovesquid.service.DownloadService;
 import com.groovesquid.service.PlayService;
 import com.groovesquid.service.SearchService;
+import com.groovesquid.util.GuiUtils;
 import com.groovesquid.util.I18n;
 import com.groovesquid.util.Utils;
 import org.apache.commons.io.FileUtils;
@@ -30,15 +30,12 @@ public class Groovesquid {
     private static SettingsFrame settingsFrame;
     private static AboutFrame aboutFrame;
 
-    private static String version = "0.8.2";
-    private static Clients clients = new Clients(new Clients.Client("htmlshark", "20130520", "nuggetsOfBaller"), new Clients.Client("jsqueue", "20130520", "chickenFingers"));
-    private static Gson gson = new Gson();
+    private static String version = "0.9.0";
     private static File dataDirectory = new File(Utils.dataDirectory() + File.separator + ".groovesquid");
     private static Config config;
     private static DownloadService downloadService;
     private static PlayService playService;
     private static SearchService searchService;
-    private static GroovesharkClient groovesharkClient;
     private static Style style;
 
     public static void main(String[] args) {
@@ -65,45 +62,20 @@ public class Groovesquid {
 
         // check for updates
         new UpdateCheckThread().start();
-
-        // init grooveshark client
-        groovesharkClient = new GroovesharkClient();
     }
 
     private static void initGui() {
-        // platform specific stuff
-        String OS = System.getProperty("os.name").toLowerCase();
-
-        // mac os x
-        if (OS.indexOf("mac") >= 0) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Groovesquid");
-
-            Application.getApplication().setAboutHandler(new AboutHandler() {
-                public void handleAbout(AppEvent.AboutEvent aboutEvent) {
-                    aboutFrame.setVisible(true);
-                }
-            });
-
-            Application.getApplication().setPreferencesHandler(new PreferencesHandler() {
-                public void handlePreferences(AppEvent.PreferencesEvent preferencesEvent) {
-                    settingsFrame.setVisible(true);
-                }
-            });
-
-            Application.getApplication().setQuitHandler(new QuitHandler() {
-                public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
-                    mainFrame.formWindowClosing(null);
-                }
-            });
-        }
-
         // antialising
         System.setProperty("awt.useSystemAAFontSettings", "lcd");
         System.setProperty("swing.aatext", "true");
         // flackering bg fix
         System.setProperty("sun.awt.noerasebackground", "true");
         System.setProperty("sun.java2d.noddraw", "true");
+
+        if (GuiUtils.getSystem() == GuiUtils.OperatingSystem.MAC) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Groovesquid");
+        }
 
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
@@ -117,11 +89,6 @@ public class Groovesquid {
         mainFrame = new MainFrame();
         settingsFrame = new SettingsFrame();
         aboutFrame = new AboutFrame();
-
-        // windows & linux
-        if (OS.indexOf("win") >= 0 || OS.indexOf("nux") >= 0) {
-            mainFrame.addMenuBarButtons();
-        }
     }
 
     public static MainFrame getMainFrame() {
@@ -130,10 +97,11 @@ public class Groovesquid {
     
     public static void resetGui() {
         mainFrame.dispose();
+        mainFrame = new MainFrame();
         aboutFrame.dispose();
+        aboutFrame = new AboutFrame();
         settingsFrame.dispose();
-        initGui();
-        mainFrame.initDone();
+        settingsFrame = new SettingsFrame();
         aboutFrame = new AboutFrame();
         settingsFrame = new SettingsFrame();
     }
@@ -141,10 +109,11 @@ public class Groovesquid {
     public static void loadConfig() {
         File configFile = new File(dataDirectory, "config.json");
 
-        if(configFile.exists()) {
+        if (configFile.exists()) {
             try {
+                Gson gson = new Gson();
                 Config tempConfig = gson.fromJson(FileUtils.readFileToString(configFile), Config.class);
-                if(tempConfig != null) {
+                if (tempConfig != null) {
                     config = tempConfig;
                 }
             } catch (Exception ex) {
@@ -166,6 +135,7 @@ public class Groovesquid {
             protected Void doInBackground() throws Exception {
                 File configFile = new File(dataDirectory + File.separator + "config.json");
                 try {
+                    Gson gson = new Gson();
                     FileUtils.writeStringToFile(configFile, gson.toJson(config));
                 } catch (IOException ex) {
                     log.log(Level.SEVERE, null, ex);
@@ -182,10 +152,6 @@ public class Groovesquid {
 
     public static String getVersion() {
         return version;
-    }
-    
-    public static Clients getClients() {
-        return clients;
     }
 
     public static SettingsFrame getSettingsFrame() {
@@ -206,10 +172,6 @@ public class Groovesquid {
 
     public static SearchService getSearchService() {
         return searchService;
-    }
-
-    public static GroovesharkClient getGroovesharkClient() {
-        return groovesharkClient;
     }
 
     public static Style getStyle() {

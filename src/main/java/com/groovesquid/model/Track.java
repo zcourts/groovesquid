@@ -18,9 +18,10 @@ public class Track {
     private Long startDownloadTime;
     private Long stopDownloadTime;
     private Double downloadRate;
-    private String downloadUrl, streamKey, streamServerID;
+    private String downloadUrl;
+    private Hoster hoster;
 
-    public static enum Status {
+    public enum Status {
         QUEUED, INITIALIZING, DOWNLOADING, FINISHED, CANCELLED, ERROR;
 
         public boolean isSuccessful() {
@@ -149,14 +150,6 @@ public class Track {
         return downloadRate;
     }
 
-    public String getStreamKey() {
-        return streamKey;
-    }
-
-    public void setStreamKey(String streamKey) {
-        this.streamKey = streamKey;
-    }
-
     public String getDownloadUrl() {
         return downloadUrl;
     }
@@ -165,12 +158,12 @@ public class Track {
         this.downloadUrl = downloadUrl;
     }
 
-    public String getStreamServerID() {
-        return streamServerID;
+    public Hoster getHoster() {
+        return hoster;
     }
 
-    public void setStreamServerID(String streamServerID) {
-        this.streamServerID = streamServerID;
+    public void setHoster(Hoster hoster) {
+        this.hoster = hoster;
     }
 
 }

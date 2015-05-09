@@ -1,17 +1,15 @@
 package com.groovesquid.service;
 
-import com.google.gson.Gson;
 import com.groovesquid.Groovesquid;
 import com.groovesquid.model.*;
 import com.groovesquid.util.FilenameSchemeParser;
 import com.groovesquid.util.Utils;
-import org.apache.http.*;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.protocol.HTTP;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 
 import java.io.File;
@@ -29,7 +27,7 @@ import java.util.logging.Logger;
 import static java.lang.String.format;
 
 @SuppressWarnings({"unchecked", "rawtypes", "serial"})
-public class DownloadService {
+public class DownloadService extends HttpService {
 
     private final static Logger log = Logger.getLogger(Groovesquid.class.getName());
 
@@ -37,13 +35,15 @@ public class DownloadService {
     private final ExecutorService executorServiceForPlay;
     private final List<DownloadTask> currentlyRunningDownloads = new ArrayList<DownloadTask>();
     private final FilenameSchemeParser filenameSchemeParser;
+    private ExtractorService extractorService;
 
     private long nextSongMustSleepUntil;
 
     public DownloadService() {
-        this.executorService = Executors.newFixedThreadPool(Groovesquid.getConfig().getMaxParallelDownloads());
-        this.executorServiceForPlay = Executors.newFixedThreadPool(1);
-        this.filenameSchemeParser = new FilenameSchemeParser();
+        executorService = Executors.newFixedThreadPool(Groovesquid.getConfig().getMaxParallelDownloads());
+        executorServiceForPlay = Executors.newFixedThreadPool(1);
+        filenameSchemeParser = new FilenameSchemeParser();
+        extractorService = new ExtractorService();
     }
 
     public FilenameSchemeParser getFilenameSchemeParser() {
@@ -150,7 +150,7 @@ public class DownloadService {
         private final Track track;
         private final int initialDelay;
         private final DownloadListener downloadListener;
-        private volatile HttpPost httpPost;
+        private volatile HttpGet httpGet;
         private volatile boolean aborted;
 
         public DownloadTask(Track track, int initialDelay, DownloadListener downloadListener) {
@@ -192,33 +192,11 @@ public class DownloadService {
                 
                 track.setStatus(Track.Status.INITIALIZING);
                 fireDownloadStatusChanged();
-                
-                Gson gson = new Gson();
 
-                Response response = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getStreamKeyFromSongIDEx", new HashMap() {{
-                    put("country", Groovesquid.getGroovesharkClient().getCountry());
-                    put("mobile", "false");
-                    put("prefetch", "false");
-                    put("songID", track.getSong().getId());
-                    put("type", "0");
-                }}), Response.class);
-
-                if(response.getFault() != null && response.getFault().get("code") == "256") {
-                    log.info("INVALID TOKEN, BITCH");
-                }
-
-                HashMap<String, Object> result = response.getResult();
-
-                track.setDownloadUrl("http://" + result.get("ip").toString() + "/stream.php");
-                track.setStreamKey(result.get("streamKey").toString());
-                track.setStreamServerID(result.get("streamServerID").toString());
-                long uSecs = Long.valueOf(result.get("uSecs").toString());
+                track.setDownloadUrl(extractorService.getDownloadUrl(track));
 
                 track.setStatus(Track.Status.DOWNLOADING);
                 track.setStartDownloadTime(System.currentTimeMillis());
-                if ((track.getSong().getDuration() == null || track.getSong().getDuration() <= 0.0) && uSecs > 0) {
-                    track.getSong().setDuration(uSecs / 1000000.0);
-                }
                 fireDownloadStatusChanged();
 
                 download(track);
@@ -226,14 +204,14 @@ public class DownloadService {
                 fireDownloadStatusChanged();
                 log.info("finished download track " + track);
 
-                HashMap<String, Object> result2 = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("markSongDownloadedEx", new HashMap() {{
+                /*HashMap<String, Object> result2 = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("markSongDownloadedEx", new HashMap() {{
                     put("songID", track.getSong().getId());
                     put("streamKey", track.getStreamKey());
                     put("streamServerID", track.getStreamServerID());
                 }}), Response.class).getResult();
                 if(!result2.get("Return").toString().equalsIgnoreCase("true")) {
                     log.severe("markSongDownloadedEx did not return true");
-                }
+                }*/
 
             } catch (Exception ex) {
                 if (aborted || ex instanceof InterruptedException) {
@@ -252,32 +230,25 @@ public class DownloadService {
                     currentlyRunningDownloads.remove(this);
                 }
                 synchronized (this) {
-                    httpPost = null;
+                    httpGet = null;
                 }
                 fireDownloadStatusChanged();
             }
         }
 
         public synchronized boolean abort() {
-            if (httpPost != null) {
+            if (httpGet != null) {
                 aborted = true;
-                httpPost.abort();
+                httpGet.abort();
                 return true;
             }
             return false;
         }
 
         private void download(Track track) throws IOException {
-            httpPost = new HttpPost(track.getDownloadUrl());
-            httpPost.setHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded");
-            httpPost.setHeader(HTTP.CONN_KEEP_ALIVE, "300");
-            httpPost.setEntity(new StringEntity("streamKey=" + track.getStreamKey()));
-            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-            if (Groovesquid.getConfig().getProxyHost() != null && Groovesquid.getConfig().getProxyPort() != null) {
-                httpClientBuilder.setProxy(new HttpHost(Groovesquid.getConfig().getProxyHost(), Groovesquid.getConfig().getProxyPort()));
-            }
-            HttpClient httpClient = httpClientBuilder.build();
-            HttpResponse httpResponse = httpClient.execute(httpPost);
+            HttpGet httpGet = new HttpGet(track.getDownloadUrl());
+            httpGet.setHeaders(browserHeaders);
+            HttpResponse httpResponse = httpClient.execute(httpGet);
             HttpEntity httpEntity = httpResponse.getEntity();
             OutputStream outputStream = null;
             try {
@@ -324,11 +295,6 @@ public class DownloadService {
             } catch (IOException ignore) {
                 // ignored
             }
-            /*try {
-                ((BasicManagedEntity) httpEntity).abortConnection();
-            } catch (IOException ignore) {
-                // ignored
-            }*/
         }
 
 

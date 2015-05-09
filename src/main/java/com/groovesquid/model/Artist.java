@@ -4,11 +4,15 @@ public class Artist {
     private String id;
     private String name;
 
-    public Artist(Object id, Object name) {
-        this.id = id.toString();
+    public Artist(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Artist(String name) {
         this.name = name.toString().trim();
     }
-    
+
     public String getId() {
         return id;
     }

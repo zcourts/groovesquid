@@ -1,680 +1,88 @@
 package com.groovesquid.service;
 
-import com.google.gson.Gson;
-import com.groovesquid.Groovesquid;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 import com.groovesquid.model.Album;
 import com.groovesquid.model.Artist;
-import com.groovesquid.model.Playlist;
 import com.groovesquid.model.Song;
-import com.groovesquid.util.Utils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-@SuppressWarnings({"unchecked", "rawtypes", "serial"})
-public class SearchService {
+public class SearchService extends HttpService {
 
-    private final static Logger log = Logger.getLogger(SearchService.class.getName());
-    
-    Gson gson = new Gson();
-
-    public SearchService() {
-        
-    }
-    
-    public List<Song> searchSongs(final Album album) {
-        List<Song> songs = new ArrayList<Song>();
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("albumGetAllSongs", new HashMap() {{
-            put("albumID", album.getId());
-        }}), AlbumResponse.class).getResult();
-
-        for (HashMap<String, Object> hm : result) {
-            songs.add(new Song(
-                hm.get("SongID"),
-                hm.get("Name"),
-                hm.get("ArtistID"),
-                hm.get("ArtistName"),
-                hm.get("AlbumID"),
-                hm.get("AlbumName"),
-                hm.get("EstimateDuration"),
-                hm.get("Year"),
-                hm.get("TrackNum")
-            ));
-        }
-        
-        songs = filterDuplicateSongs(songs);
-        
-        return songs;
-    }
-    
-    public List<Song> searchSongsByQuery(final String searchQuery) {
-        List<Song> songs = new ArrayList<Song>();
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getResultsFromSearch", new HashMap() {{
-            put("query", searchQuery);
-            put("type", new String[]{"Songs", "Artists", "Albums", "Playlists"});
-            put("guts", "0");
-            put("ppOverride", "false");
-        }}), SearchResponse.class).getResult().getResult().getSongs();
-
-        if(result.length < 1) {
-            JOptionPane.showMessageDialog(Groovesquid.getMainFrame(), "No search results for \"" + searchQuery + "\".");
-        }
-
-        for (HashMap<String, Object> hm : result) {
-            songs.add(new Song(
-                hm.get("SongID"),
-                hm.get("SongName"),
-                hm.get("ArtistID"),
-                hm.get("ArtistName"),
-                hm.get("AlbumID"),
-                hm.get("AlbumName"),
-                hm.get("EstimateDuration"),
-                hm.get("Year"),
-                hm.get("TrackNum")
-            ));
-        }
-
-        return songs;
-    }
-    
-    public List<Song> searchPopular() {
-        final List<Song> songs = new ArrayList<Song>();
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("popularGetSongs", new HashMap<String, Object>() {{
-            put("type", "daily");
-        }}), PopularResponse.class).getResult().getSongs();
-
-        if(result.length < 1) {
-            JOptionPane.showMessageDialog(Groovesquid.getMainFrame(), "No search results.");
-        }
-
-        for (HashMap<String, Object> hm : result) {
-            songs.add(new Song(
-                hm.get("SongID"), 
-                hm.get("Name"),
-                hm.get("ArtistID"),
-                hm.get("ArtistName"),
-                hm.get("AlbumID"),
-                hm.get("AlbumName"),
-                hm.get("EstimateDuration"),
-                hm.get("Year"),
-                hm.get("TrackNum")
-            ));
-        }
-        
-        return songs;
-    }
-    
-    public List<Song> searchSongsByAlbum(final Album album) {
-        List<Song> songs = new ArrayList<Song>();
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("albumGetAllSongs", new HashMap<String, Object>() {{
-            put("albumID", album.getId());
-        }}), AlbumResponse.class).getResult();
-
-        for (HashMap<String, Object> hm : result) {
-            songs.add(new Song(
-                hm.get("SongID"),
-                hm.get("Name"),
-                hm.get("ArtistID"),
-                hm.get("ArtistName"),
-                hm.get("AlbumID"),
-                hm.get("AlbumName"),
-                hm.get("EstimateDuration"),
-                hm.get("Year"),
-                hm.get("TrackNum")
-            ));
-        }
-
-        songs = filterDuplicateSongs(songs);
-        
-        return songs;
-    }
-    
-    public List<Song> searchSongsByPlaylist(final Playlist playlist) {
-        List<Song> songs = new ArrayList<Song>();
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("playlistGetSongs", new HashMap<String, Object>() {{
-            put("playlistID", playlist.getId());
-        }}), PopularResponse.class).getResult().getSongs();
-        
-        int orderNum=1;
-        
-        for (HashMap<String, Object> hm : result) {
-            songs.add(new Song(
-                hm.get("SongID"),
-                hm.get("Name"),
-                hm.get("ArtistID"),
-                hm.get("ArtistName"),
-                hm.get("AlbumID"),
-                hm.get("AlbumName"),
-                hm.get("EstimateDuration"),
-                hm.get("Year"),
-                hm.get("TrackNum"),
-                orderNum++
-            ));
-        }
-        
-        return songs;
-    }
-    
-    
-    public List<Song> searchSongsByArtist(final Artist artist) {
-        List<Song> songs = new ArrayList<Song>();
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("artistGetArtistSongs", new HashMap<String, Object>() {{
-            put("artistID", artist.getId());
-        }}), AlbumResponse.class).getResult();
-
-        for (HashMap<String, Object> hm : result) {
-            songs.add(new Song(
-                hm.get("SongID"),
-                hm.get("Name"),
-                hm.get("ArtistID"),
-                hm.get("ArtistName"),
-                hm.get("AlbumID"),
-                hm.get("AlbumName"),
-                hm.get("EstimateDuration"),
-                hm.get("Year"),
-                hm.get("TrackNum")
-            ));
-        }
-        
-        return songs;
-    }
-
-    public List<Album> searchAlbumsByQuery(final String searchQuery) {
-        List<Album> albums = new ArrayList<Album>();
-
-        if(searchQuery.contains("http://grooveshark.com/")) {
-            Pattern p = Pattern.compile(".*/\\s*(.*)");
-            Matcher m = p.matcher(searchQuery);
-            if(m.find()) {
-                final String albumID = m.group(1);
-                Album album = searchAlbumByID(albumID);
-                if(album != null) {
-                    albums.add(album);
-                    return albums;
-                }
-            }
-        }
-        
-        if(Utils.isNumeric(searchQuery)) {
-            Album album = searchAlbumByID(searchQuery);
-            if(album != null) {
-                albums.add(album);
-                return albums;
-            }
-        }
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getResultsFromSearch", new HashMap<String, Object>() {{
-            put("query", searchQuery);
-            put("type", new String[]{"Albums"});
-            put("guts", "0");
-            put("ppOverride", "false");
-        }}), SearchResponse.class).getResult().getResult().getAlbums();
-
-        if(result.length < 1) {
-            JOptionPane.showMessageDialog(Groovesquid.getMainFrame(), "No search results for \"" + searchQuery + "\".");
-        }
-
-        for (HashMap<String, Object> hm : result) {
-            albums.add(new Album(
-                hm.get("AlbumID"),
-                hm.get("Name"),
-                hm.get("ArtistID"),
-                hm.get("ArtistName")
-            ));
-        }
-        
-        return albums;
-    }
-    
-    public List<Playlist> searchPlaylistsByQuery(final String searchQuery) {
-        List<Playlist> playlists = new ArrayList<Playlist>();
-        
-        if(searchQuery.contains("http://grooveshark.com/")) {
-            Pattern p = Pattern.compile(".*/\\s*(.*)");
-            Matcher m = p.matcher(searchQuery);
-            if(m.find()) {
-                final String playlistID = m.group(1);
-                Playlist playlist = searchPlaylistByID(playlistID);
-                if(playlist != null) {
-                    playlists.add(playlist);
-                    return playlists;
-                }
-            }
-        }
-        
-        if(Utils.isNumeric(searchQuery)) {
-            Playlist playlist = searchPlaylistByID(searchQuery);
-            if(playlist != null) {
-                playlists.add(playlist);
-                return playlists;
-            }
-        }
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getResultsFromSearch", new HashMap<String, Object>() {{
-            put("query", searchQuery);
-            put("type", new String[]{"Playlists"});
-            put("guts", "0");
-            put("ppOverride", "false");
-        }}), SearchResponse.class).getResult().getResult().getPlaylists();
-
-        if(result.length < 1) {
-            JOptionPane.showMessageDialog(Groovesquid.getMainFrame(), "No search results for \"" + searchQuery + "\".");
-        }
-
-        for (HashMap<String, Object> hm : result) {
-            playlists.add(new Playlist(
-                hm.get("PlaylistID"),
-                hm.get("Name"),
-                hm.get("FName"),
-                hm.get("NumSongs")
-            ));
-        }
-        
-        return playlists;
-    }
-    
-    public List<Artist> searchArtistsByQuery(final String searchQuery) {
-        List<Artist> artists = new ArrayList<Artist>();
-        
-        if(searchQuery.contains("http://grooveshark.com/")) {
-            Pattern p = Pattern.compile(".*/\\s*(.*)");
-            Matcher m = p.matcher(searchQuery);
-            if(m.find()) {
-                final String artistID = m.group(1);
-                Artist artist = searchArtistByID(artistID);
-                if(artist != null) {
-                    artists.add(artist);
-                    return artists;
-                }
-            }
-        }
-        
-        if(Utils.isNumeric(searchQuery)) {
-            Artist artist = searchArtistByID(searchQuery);
-            if(artist != null) {
-                artists.add(artist);
-                return artists;
-            }
-        }
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getResultsFromSearch", new HashMap<String, Object>() {{
-            put("query", searchQuery);
-            put("type", new String[]{"Artists"});
-            put("guts", "0");
-            put("ppOverride", "false");
-        }}), SearchResponse.class).getResult().getResult().getArtists();
-
-        if(result.length < 1) {
-            JOptionPane.showMessageDialog(Groovesquid.getMainFrame(), "No search results for \"" + searchQuery + "\".");
-        }
-
-        for (HashMap<String, Object> hm : result) {
-            artists.add(new Artist(
-                hm.get("ArtistID"),
-                hm.get("Name")
-            ));
-        }
-        
-        return artists;
-    }
-    
-    public Playlist searchPlaylistByID(final String playlistID) {
-        HashMap<String, Object> result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getPlaylistByID", new HashMap<String, Object>() {{
-            put("playlistID", playlistID);
-        }}), PlaylistResponse.class).getResult();
-
-        if(result.isEmpty() || result.get("PlaylistID").toString().startsWith("0")) {
-            return null;
-        }
-        System.out.println("+++ " + result.get("PlaylistID"));
-        Playlist playlist = new Playlist(
-            playlistID,
-            result.get("Name"),
-            result.get("FName"),
-            result.get("NumSongs") != null ? result.get("NumSongs") : result.get("SongCount") != null ? result.get("SongCount") : "0"
-        );
-
-        return playlist;
-    }
-    
-    public Artist searchArtistByID(final String artistID) {
-        HashMap<String, Object> result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getArtistByID", new HashMap<String, Object>() {{
-            put("artistID", artistID);
-        }}), PlaylistResponse.class).getResult();
-
-        if(result.isEmpty() || result.get("ArtistID").toString().startsWith("0")) {
-            return null;
-        }
-        System.out.println("+++ " + result.get("ArtistID"));
-        Artist artist = new Artist(
-            artistID,
-            result.get("Name")
-        );
-
-        return artist;
-    }
-    
-    public Album searchAlbumByID(final String albumID) {
-        HashMap<String, Object> result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getAlbumByID", new HashMap<String, Object>() {{
-            put("albumID", albumID);
-        }}), PlaylistResponse.class).getResult();
-
-        if(result.isEmpty() || result.get("AlbumID").toString().startsWith("0")) {
-            return null;
-        }
-
-        Album album = new Album(
-            result.get("AlbumID"),
-            result.get("Name"),
-            result.get("ArtistID"),
-            result.get("ArtistName")
-        );
-
-        return album;
-    }
-    
-    public Song searchSongByID(final String songID) {
-        HashMap<String, Object> result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getSongByID", new HashMap<String, Object>() {{
-            put("songID", songID);
-        }}), PlaylistResponse.class).getResult();
-
-        if(result.isEmpty() || result.get("SongID").toString().startsWith("0")) {
-            return null;
-        }
-
-        Song song = new Song(
-            result.get("SongID"),
-            result.get("Name"),
-            result.get("ArtistID"),
-            result.get("ArtistName"),
-            result.get("AlbumID"),
-            result.get("AlbumName"),
-            result.get("EstimateDuration"),
-            result.get("Year"),
-            result.get("TrackNum")
-        );
-
-        return song;
-    }
-    
-    public List<String> autocompleteByQuery(final String searchQuery) {
-        List<String> suggestions = new ArrayList<String>();
-
-        HashMap<String, Object>[] result = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("getAutocomplete", new HashMap<String, Object>() {{
-            put("query", searchQuery);
-            put("type", "artist");
-        }}), AutocompleteResponse.class).getResult();
-        
-        for (HashMap<String, Object> hm : result) {
-            suggestions.add(hm.get("Name").toString().toLowerCase());
-        }
-        //suggestions.add(result[0].get("Name").toString().toLowerCase());
-        
-        return suggestions;
-    }
-    
-    private List<Song> filterDuplicateSongs(List<Song> songs) {
-        HashSet<Long> allTrackNums = new HashSet<Long>();
-        ArrayList<Song> resultList = new ArrayList<Song>(songs.size());
-        for (Song song : songs) {
-            Long trackNum = song.getTrackNum();
-            if (!allTrackNums.contains(trackNum)) {
-                resultList.add(song);
-                allTrackNums.add(trackNum);
-            } else if (trackNum == null) {
-                allTrackNums.add(trackNum);
-            }
-        }
-        return resultList;
-    }
-
-    public String getHttp(String url) {
-        String responseContent = null;
-        HttpEntity httpEntity = null;
+    public List<Song> searchSongsByQuery(String query) {
+        String response = null;
         try {
-            HttpGet httpGet = new HttpGet(url);
-            HttpClient httpClient = HttpClientBuilder.create().build();
-            HttpResponse httpResponse = httpClient.execute(httpGet);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            httpEntity = httpResponse.getEntity();
+            response = get("http://search.musicbrainz.org/ws/2/recording/?query=" + URLEncoder.encode("\"" + query + "\"", "UTF-8") + "&fmt=json&dismax=true&limit=100");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
-            StatusLine statusLine = httpResponse.getStatusLine();
-            int statusCode = statusLine.getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
-                httpEntity.writeTo(baos);
+        JsonArray recordings = JsonObject.readFrom(response).get("recording-list").asObject().get("recording").asArray();
+
+        List<Song> songs = new ArrayList<Song>();
+
+        recordingsLoop:
+        for (JsonValue recording : recordings) {
+            List<Artist> artists = new ArrayList<Artist>();
+            for (JsonValue artistsJson : recording.asObject().get("artist-credit").asObject().get("name-credit").asArray()) {
+                artists.add(new Artist(artistsJson.asObject().get("artist").asObject().get("id").asString(), artistsJson.asObject().get("artist").asObject().get("name").asString()));
+            }
+
+            Album album;
+            Calendar date = null;
+
+            if (recording.asObject().get("release-list") != null) {
+                JsonObject release = recording.asObject().get("release-list").asObject().get("release").asArray().get(0).asObject();
+                date = Calendar.getInstance();
+                if (release.get("date") != null) {
+                    try {
+                        if (release.get("date").asString().length() == 4) {
+                            date.setTime(new SimpleDateFormat("Y").parse(release.get("date").asString()));
+                        } else if (release.get("date").asString().length() == 7) {
+                            date.setTime(new SimpleDateFormat("Y-m").parse(release.get("date").asString()));
+                        } else if (release.get("date").asString().length() == 10) {
+                            date.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(release.get("date").asString()));
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                album = new Album(release.get("id").asString(), release.get("title").asString(), artists, date);
             } else {
-                throw new RuntimeException(url);
+                album = new Album("", "", artists, null);
             }
 
-            responseContent = baos.toString("UTF-8");
-
-        } catch (Exception ex) {
-            log.log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                EntityUtils.consume(httpEntity);
-            } catch (IOException ex) {
-                log.log(Level.SEVERE, null, ex);
-            }
-        }
-
-        return responseContent;
-    }
-
-    public Image getLastFmCover(Song song) {
-        BufferedImage img = null;
-        String url = "";
-        try {
-            url = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=47259cb6297abb73eb1ec3f6ae62db3e&format=json&artist=" + URLEncoder.encode(song.getArtist().getName(), "UTF-8") + "&album=" + URLEncoder.encode(song.getAlbum().getName(), "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(SearchService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String responseContent = getHttp(url);
-        String imageUrl;
-
-        if (!responseContent.contains("\"error\":6")) {
-            LastFmAlbumResponse response = gson.fromJson(responseContent, LastFmAlbumResponse.class);
-            imageUrl = response.getAlbum().getImage()[2].get("#text");
-        } else {
-            try {
-                url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=47259cb6297abb73eb1ec3f6ae62db3e&format=json&artist=" + URLEncoder.encode(song.getArtist().getName(), "UTF-8") + "&album=" + URLEncoder.encode(song.getAlbum().getName(), "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(SearchService.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            responseContent = getHttp(url);
-            LastFmArtistResponse response = gson.fromJson(responseContent, LastFmArtistResponse.class);
-            imageUrl = response.getArtist().getImage()[2].get("#text");
-        }
-
-        if(imageUrl.isEmpty()) {
-            return null;
-        }
-        
-        try {
-            img = ImageIO.read(new URL(imageUrl));
-        } catch (IOException ex) {
-            Logger.getLogger(SearchService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return img;
-    }
-    
-    class SearchResponse {
-        private HashMap<String, Object> header;
-        private Result result;
-
-        public SearchResponse(HashMap<String, Object> header, Result result) {
-            this.header = header;
-            this.result = result;
-        }
-
-        public Result getResult() {
-            return this.result;
-        }
-
-        class Result {
-            private Result2 result;
-            
-            public Result2 getResult() {
-                return this.result;
-            }
-            
-            class Result2 {
-                private HashMap<String, Object>[] Songs;
-                private HashMap<String, Object>[] Artists;
-                private HashMap<String, Object>[] Albums;
-                private HashMap<String, Object>[] Playlists;
-
-                public HashMap<String, Object>[] getSongs() {
-                    return this.Songs;
-                }
-                
-                public HashMap<String, Object>[] getArtists() {
-                    return this.Artists;
-                }
-                
-                public HashMap<String, Object>[] getAlbums() {
-                    return this.Albums;
-                }
-                
-                public HashMap<String, Object>[] getPlaylists() {
-                    return this.Playlists;
+            Iterator<Song> i = songs.iterator();
+            while (i.hasNext()) {
+                Song song = i.next();
+                if (song.getName().equalsIgnoreCase(recording.asObject().get("title").asString()) && song.getArtists().get(0).getId().equals(artists.get(0).getId())) {
+                    if (date != null && date.getTime().before(song.getAlbum().getReleaseDate().getTime())) {
+                        i.remove();
+                    } else {
+                        continue recordingsLoop;
+                    }
                 }
             }
-        }
-    }
-    
-    class PopularResponse {
-        private HashMap<String, Object> header;
-        private Result result;
 
-        public PopularResponse(HashMap<String, Object> header, Result result) {
-            this.header = header;
-            this.result = result;
+            Song song = new Song(recording.asObject().get("id").asString(), recording.asObject().get("title").asString(), artists, album, recording.asObject().get("length") != null ? recording.asObject().get("length").asLong() : 0);
+            songs.add(song);
         }
 
-        public Result getResult() {
-            return this.result;
-        }
-
-        class Result {
-            private HashMap<String, Object>[] Songs;
-
-            public HashMap<String, Object>[] getSongs() {
-                return this.Songs;
-            }
-        }
-    }
-    
-    class AlbumResponse {
-        private HashMap<String, Object> header;
-        private HashMap<String, Object>[] result;
-
-        public AlbumResponse(HashMap<String, Object> header, HashMap<String, Object>[] result) {
-            this.header = header;
-            this.result = result;
-        }
-        
-        public HashMap<String, Object>[] getResult() {
-            return result;
-        }
-    }
-    
-    class AutocompleteResponse {
-        private HashMap<String, Object> header;
-        private HashMap<String, Object>[] result;
-
-        public AutocompleteResponse(HashMap<String, Object> header, HashMap<String, Object>[] result) {
-            this.header = header;
-            this.result = result;
-        }
-
-        public HashMap<String, Object>[] getResult() {
-            return this.result;
-        }
-    }
-    
-    
-    class PlaylistResponse {
-        private HashMap<String, Object> header;
-        private HashMap<String, Object> result;
-
-        public PlaylistResponse(HashMap<String, Object> header, HashMap<String, Object> result) {
-            this.header = header;
-            this.result = result;
-        }
-        
-        public HashMap<String, Object> getResult() {
-            return result;
-        }
-    }
-    
-    class LastFmAlbumResponse {
-        private LastFmAlbumResponse.Album album;
-        
-        public LastFmAlbumResponse(LastFmAlbumResponse.Album album) {
-            this.album = album;
-        }
-        
-        public LastFmAlbumResponse.Album getAlbum() {
-            return album;
-        }
-        
-        class Album {
-            private HashMap<String, String>[] image;
-            
-            public HashMap<String, String>[] getImage() {
-                return image;
-            }
-        }
+        return songs;
     }
 
-    class LastFmArtistResponse {
-        private LastFmArtistResponse.Artist artist;
 
-        public LastFmArtistResponse(LastFmArtistResponse.Artist artist) {
-            this.artist = artist;
-        }
-
-        public LastFmArtistResponse.Artist getArtist() {
-            return artist;
-        }
-
-        class Artist {
-            private HashMap<String, String>[] image;
-
-            public HashMap<String, String>[] getImage() {
-                return image;
-            }
-        }
+    public List<Album> searchAlbumsByQuery(String query) {
+        return null;
     }
 }

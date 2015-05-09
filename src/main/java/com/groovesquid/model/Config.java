@@ -1,7 +1,6 @@
-package com.groovesquid;
+package com.groovesquid.model;
 
-import com.groovesquid.model.Clients;
-import com.groovesquid.model.Track;
+import com.groovesquid.Groovesquid;
 import com.groovesquid.util.FilenameSchemeParser;
 
 import java.util.ArrayList;
@@ -9,8 +8,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class Config {
-    
-    public static enum DownloadComplete {
+
+    public enum DownloadComplete {
         DO_NOTHING, OPEN_FILE, OPEN_DIRECTORY;
         public static String[] names() {
             DownloadComplete[] states = values();
@@ -23,8 +22,8 @@ public class Config {
             return names;
         }
     }
-    
-    public static enum FileExists {
+
+    public enum FileExists {
         DO_NOTHING, OVERWRITE, RENAME;
         public static String[] names() {
             FileExists[] states = values();
@@ -41,7 +40,6 @@ public class Config {
     private String version, originalVersion;
     private List<Track> downloads, originalDownloads;
     private String downloadDirectory, originalDownloadDirectory;
-    private Clients clients, originalClients;
     private int maxParallelDownloads, originalMaxParallelDownloads;
     private String fileNameScheme, originalFileNameScheme;
     private boolean autocompleteEnabled, originalAutocompleteEnabled;
@@ -53,7 +51,6 @@ public class Config {
 
     public Config() {
         originalVersion = Groovesquid.getVersion();
-        originalClients = Groovesquid.getClients();
         originalDownloads = new ArrayList<Track>();
         originalDownloadDirectory = System.getProperty("user.home");
         originalMaxParallelDownloads = 10;
@@ -69,7 +66,6 @@ public class Config {
     
     public final void resetSettings() {
         version = originalVersion;
-        clients = originalClients;
         downloads = originalDownloads;
         downloadDirectory = originalDownloadDirectory;
         maxParallelDownloads = originalMaxParallelDownloads;
@@ -99,15 +95,6 @@ public class Config {
         Groovesquid.saveConfig();
     }
 
-    public synchronized Clients getClients() {
-        return clients;
-    }
-    
-    public synchronized void setClients(Clients clients) {
-        this.clients = clients;
-        Groovesquid.saveConfig();
-    }
-    
     public synchronized int getMaxParallelDownloads() {
         return maxParallelDownloads;
     }

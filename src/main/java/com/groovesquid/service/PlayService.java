@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PlayService {
 
-    public static enum AddMode {
+    public enum AddMode {
         NOW, NEXT, LAST, REPLACE
     }
 

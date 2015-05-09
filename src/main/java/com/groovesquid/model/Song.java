@@ -1,56 +1,39 @@
 package com.groovesquid.model;
 
-import com.groovesquid.Groovesquid;
-
-import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Song {
     private String id;
     private String name;
-    private Artist artist;
+    private List<Artist> artists = new ArrayList<Artist>();
     private Album album;
-    private Double duration;
-    private int bitrate;
+    private long duration;
     private String year;
-    private Long trackNum;
-    private Long orderNum = null;
+    private long trackNum, orderNum;
     private boolean downloaded;
-    
-    public Song(Object id, Object name, Object artistId, Object artistName, Object albumId, Object albumName, Object duration, Object year, Object trackNum, Object orderNum) {
-    	this(id, name, artistId, artistName, albumId, albumName, duration, year, trackNum);
-    	
-        if(orderNum != null)
-            this.orderNum = Long.valueOf(orderNum.toString());
-    }	
-    	
-    public Song(Object id, Object name, Object artistId, Object artistName, Object albumId, Object albumName, Object duration, Object year, Object trackNum) {
-        this.id = id.toString();
+
+    public Song(String id, String name, List<Artist> artists) {
+        this(id, name, artists, null, 0);
+    }
+
+    public Song(String id, Object name, List<Artist> artists, Album album, long duration) {
+        this.id = id;
         this.name = name.toString().trim();
-        this.artist = new Artist(artistId, artistName);
-        this.album = new Album(albumId.toString(), albumName.toString(), artist);
+        this.artists = artists;
+        this.album = album;
 
-        // the API gives us 4096 if it doesn't know the duration
-        if (duration != null && !duration.toString().equals("4096")) {
-            this.duration = Double.valueOf(duration.toString());
-        } else {
-            this.duration = 0.0D;
-        }
+        this.duration = duration;
 
-        this.bitrate = 0;
-
-        // the API gives us 1901 if it doesn't know the year
-        if (year != null && !year.toString().equals("1901")) {
-            this.year = year.toString();
+        if (year != null) {
+            this.year = year;
         } else {
             this.year = "";
         }
 
-        if(trackNum != null) {
-            this.trackNum = Long.valueOf(trackNum.toString());
-        } else {
-            this.trackNum = null;
-        }
+        this.trackNum = trackNum;
+        this.orderNum = trackNum;
     }
     
     public String getId() {
@@ -60,9 +43,9 @@ public class Song {
     public String getName() {
         return name;
     }
-    
-    public Artist getArtist() {
-        return artist;
+
+    public List<Artist> getArtists() {
+        return artists;
     }
     
     public Album getAlbum() {
@@ -70,59 +53,39 @@ public class Song {
     }
     
     public String getReadableDuration() {
-        int durationIndexOf = duration.toString().indexOf(".");
-        int tempDuration = 0;
-        if(durationIndexOf > 0) {
-            tempDuration = Integer.valueOf(duration.toString().substring(0, durationIndexOf));
-        }
-        if (tempDuration > 0) {
-            //hours = totalSecs / 3600;
-            int minutes = (tempDuration % 3600) / 60;
-            int seconds = tempDuration % 60;
-            return String.format("%02d:%02d", minutes, seconds);
+        if (duration > 0) {
+            return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(duration), TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+            );
         } else {
             return "";
         }
     }
-    
-    public Double getDuration() {
+
+    public String getArtistNames() {
+        StringBuilder builder = new StringBuilder();
+        for (Artist artist : artists) {
+            builder.append(artist.getName());
+            builder.append(", ");
+        }
+        String artistNames = builder.toString();
+        artistNames = artistNames.substring(0, artistNames.length() - 2);
+        return artistNames;
+    }
+
+    public long getDuration() {
         return duration;
     }
-    
-    public void setDuration(double duration) {
+
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
-    public String getBitrate() {
-        return bitrate + " kBit/s";
-    }
-    
-    public void setBitrate(int bitrate) {
-        this.bitrate = bitrate;
-    }
-    
     public String getYear() {
         if(!year.isEmpty()) {
             return year;
         } else {
             return "";
         }
-    }
-    
-    public String getFileName() {
-        String badFileName = artist.getName() + " - " + name + ".mp3";
-        
-        final int[] illegalChars = {34, 60, 62, 124, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 58, 42, 63, 92, 47};
-        Arrays.sort(illegalChars);
-
-        StringBuilder cleanName = new StringBuilder();
-        for (int i = 0; i < badFileName.length(); i++) {
-            int c = (int)badFileName.charAt(i);
-            if (Arrays.binarySearch(illegalChars, c) < 0) {
-                cleanName.append((char)c);
-            }
-        }
-        return Groovesquid.getConfig().getDownloadDirectory() + File.separator + cleanName.toString();
     }
     
     public Long getTrackNum() {
@@ -135,12 +98,7 @@ public class Song {
     
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("Song");
-        sb.append("{songID=").append(id);
-        sb.append(", songName='").append(name).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "Song" + "{songID=" + id + ", songName='" + name + '\'' + '}';
     }
 
     public boolean isDownloaded() {

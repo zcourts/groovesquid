@@ -1,7 +1,6 @@
 package com.groovesquid;
 
 import com.google.gson.Gson;
-import com.groovesquid.model.Clients;
 import com.groovesquid.util.Utils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,7 +23,7 @@ public class UpdateCheckThread extends Thread {
     private final static Logger log = Logger.getLogger(Groovesquid.class.getName());
     private static Gson gson = new Gson();
     private static String updateFile = "http://groovesquid.com/updatecheck.php";
-    
+
     public UpdateCheckThread() {
         
     }
@@ -32,9 +31,6 @@ public class UpdateCheckThread extends Thread {
     @Override
     public void run() {
         UpdateCheck updateCheck = gson.fromJson(getFile(updateFile), UpdateCheck.class);
-        if (updateCheck.getClients() != null) {
-            Groovesquid.getConfig().setClients(updateCheck.getClients());
-        }
 
         if (Utils.compareVersions(updateCheck.getVersion(), Groovesquid.getVersion()) > 0) {
             if(JOptionPane.showConfirmDialog(null, "New version (v" + updateCheck.getVersion() + ") is available! Do you want to download the new version (recommended)?", "New version", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
@@ -83,14 +79,9 @@ public class UpdateCheckThread extends Thread {
     
     public class UpdateCheck {
         private String version;
-        private Clients clients;
 
         public String getVersion() {
             return version;
-        }
-        
-        public Clients getClients() {
-            return clients;
         }
     }
 }

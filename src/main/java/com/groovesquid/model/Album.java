@@ -1,21 +1,31 @@
 package com.groovesquid.model;
 
+import java.util.Calendar;
+import java.util.List;
+
 public class Album {
     private String id;
     private String name;
-    private Artist artist;
+    private List<Artist> artists;
     private String imageUrl;
-    
-    public Album(Object id, Object name, Object artistId, Object artistName) {
-        this.id = id.toString();
-        this.name = name.toString().trim();
-        this.artist = new Artist(artistId, artistName);
+    private Calendar releaseDate;
+
+    public Album(String id, String name, List<Artist> artists, Calendar releaseDate) {
+        this.id = id;
+        this.name = name;
+        this.artists = artists;
+        this.releaseDate = releaseDate;
     }
-    
-    public Album(Object id, Object name, Artist artist) {
-        this.id = id.toString();
-        this.name = name.toString().trim();
-        this.artist = artist;
+
+    public String getArtistNames() {
+        StringBuilder builder = new StringBuilder();
+        for(Artist artist : artists) {
+            builder.append(artist.getName());
+            builder.append(", ");
+        }
+        String artistNames = builder.toString();
+        artistNames = artistNames.substring(0, artistNames.length() - 2);
+        return artistNames;
     }
     
     public String getId() {
@@ -26,8 +36,8 @@ public class Album {
         return name;
     }
     
-    public Artist getArtist() {
-        return artist;
+    public List<Artist> getArtists() {
+        return artists;
     }
     
     public void setImageUrl(String imageUrl) {
@@ -40,5 +50,13 @@ public class Album {
 
     public String toString() {
         return getName();
+    }
+
+    public Calendar getReleaseDate() {
+        return releaseDate;
+    }
+
+    public String getReleaseYear() {
+        return releaseDate != null ? String.valueOf(releaseDate.get(Calendar.YEAR)) : "";
     }
 }
