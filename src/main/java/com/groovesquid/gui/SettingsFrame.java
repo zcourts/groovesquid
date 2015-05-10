@@ -131,7 +131,6 @@ public class SettingsFrame extends JFrame {
         languageComboBox = new JComboBox();
         DefaultComboBoxModel languageComboBoxModel = new DefaultComboBoxModel();
         languageComboBox.setModel(languageComboBoxModel);
-        languageComboBox.setRenderer(new ComboBoxLocaleRenderer());
         for (Locale locale : I18n.getLocales()) {
             languageComboBoxModel.addElement(locale);
             if (locale.equals(I18n.getCurrentLocale())) {
