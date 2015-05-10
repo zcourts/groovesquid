@@ -535,7 +535,6 @@ public class MainFrame extends JFrame {
             searchButton.setForeground(style.getSearchButtonsForeground());
         }
         searchButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        searchButton.setEnabled(false);
         searchButton.setFocusable(false);
         searchButton.setHorizontalTextPosition(SwingConstants.CENTER);
         searchButton.setPreferredSize(new Dimension(90, 27));
