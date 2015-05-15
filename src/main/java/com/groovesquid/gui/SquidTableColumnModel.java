@@ -20,7 +20,7 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
 
     @Override
     public void addColumn(TableColumn tc) {
-        if(table.getModel() instanceof SongSearchTableModel) {
+        if (table.getModel() instanceof SongSearchTableModel || table.getModel() instanceof TopSongTableModel) {
             if(tc.getModelIndex() == 0) {
                 tc.setMaxWidth(22);
                 
@@ -28,8 +28,13 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                     public void actionPerformed(ActionEvent e) { 
                         int modelRow = Integer.valueOf( e.getActionCommand() );
                         DownloadTableModel downloadTableModel = (DownloadTableModel) Groovesquid.getMainFrame().getDownloadTable().getModel();
-                        SongSearchTableModel songSearchTableModel = (SongSearchTableModel) Groovesquid.getMainFrame().getSearchTable().getModel();
-                        Song song = songSearchTableModel.getSongs().get(modelRow);
+
+                        Song song = null;
+                        if (table.getModel() instanceof SongSearchTableModel) {
+                            song = ((SongSearchTableModel) table.getModel()).getSongs().get(modelRow);
+                        } else if (table.getModel() instanceof TopSongTableModel) {
+                            song = ((TopSongTableModel) table.getModel()).getSongs().get(modelRow);
+                        }
                         downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(song, Groovesquid.getMainFrame().getDownloadListener(downloadTableModel)));
                     } 
                 };

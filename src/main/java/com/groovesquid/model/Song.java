@@ -62,6 +62,9 @@ public class Song {
     }
 
     public String getArtistNames() {
+        if (artists == null) {
+            return "";
+        }
         StringBuilder builder = new StringBuilder();
         for (Artist artist : artists) {
             builder.append(artist.getName());

@@ -90,7 +90,7 @@ public class BatchFrame extends JFrame {
         List<Song> songs = new ArrayList<Song>();
         
         for (String term : terms) {
-            List<Song> results = Groovesquid.getSearchService().searchSongsByQuery(term);
+            List<Song> results = Groovesquid.getSearchService().getSongsByQuery(term);
             if(results.size() > 0) {
                 songs.add(results.get(0));
             }

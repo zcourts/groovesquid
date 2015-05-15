@@ -46,7 +46,7 @@ public class DownloadTableModel extends AbstractTableModel {
             case 0:
                 return track.getSong() != null && track.getSong().getName() != null ? track.getSong().getName() : "";
             case 1:
-                return track.getSong() != null && track.getSong().getArtistNames() != null ? track.getSong().getArtistNames() : "";
+                return track.getSong() != null && track.getSong().getArtists() != null ? track.getSong().getArtistNames() : "";
             case 2:
                 return track.getSong() != null && track.getSong().getAlbum() != null && track.getSong().getAlbum().getName() != null ? track.getSong().getAlbum().getName() : "";
             case 3:

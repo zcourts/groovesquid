@@ -112,9 +112,9 @@ public class FilenameSchemeParser {
         		result = "";
         }	        	
         if (result == null)
-            result = matchTag(TAG_ARTIST, tag, song.getArtists().get(0).getName(), conditionalText, song);
+            result = matchTag(TAG_ARTIST, tag, song.getArtists() != null ? song.getArtistNames() : "", conditionalText, song);
         if (result == null)
-            result = matchTag(TAG_ALBUM, tag, song.getAlbum().getName(), conditionalText, song);
+            result = matchTag(TAG_ALBUM, tag, song.getAlbum() != null ? song.getAlbum().getName() : "", conditionalText, song);
         if (result == null)
             result = matchTag(TAG_TITLE, tag, song.getName(), conditionalText, song);
         if (result == null)

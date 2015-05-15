@@ -2,6 +2,8 @@ package com.groovesquid.gui;
 
 import com.groovesquid.Groovesquid;
 import com.groovesquid.model.Track;
+import com.groovesquid.util.I18n;
+import com.groovesquid.util.Utils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -47,40 +49,40 @@ public class ProgressCellRenderer extends DefaultTableCellRenderer {
             if(track.getStatus() != null) {
                 switch (track.getStatus()) {
                     case INITIALIZING:
-                        text = "initializing...";
+                        text = I18n.getLocaleString("INITIALIZING") + "...";
                         break;
                     case QUEUED:
-                        text = "waiting...";
+                        text = I18n.getLocaleString("WAITING") + "...";
                         break;
                     case DOWNLOADING:
                         if (downloadRate != null) {
-                            text = String.format("%1.0f%%, %d of %d kB, %1.0f kB/s",
+                            text = String.format("%1.0f%%, %s " + I18n.getLocaleString("OF") + " %s, %s/s",
                                     track.getProgress() * 1.0,
-                                    track.getDownloadedBytes() / 1024,
-                                    track.getTotalBytes() / 1024,
-                                    downloadRate / 1024);
+                                    Utils.humanReadableByteCount(track.getDownloadedBytes(), true),
+                                    Utils.humanReadableByteCount(track.getTotalBytes(), true),
+                                    Utils.humanReadableByteCount(Math.round(downloadRate), true));
                         } else {
-                            text = String.format("%1.0f%%, %d kB",
+                            text = String.format("%1.0f%%, %s",
                                     track.getProgress() * 1.0,
-                                    track.getTotalBytes() / 1024);
+                                    Utils.humanReadableByteCount(track.getTotalBytes(), true));
                         }
                         break;
                     case FINISHED:
                         downloadRate = track.getDownloadRate();
                         if (downloadRate != null) {
-                            text = String.format("%d kB, %1.0f kB/s",
-                                    track.getDownloadedBytes() / 1024,
-                                    downloadRate / 1024);
+                            text = String.format("%s, %s/s",
+                                    Utils.humanReadableByteCount(track.getDownloadedBytes(), true),
+                                    Utils.humanReadableByteCount(Math.round(downloadRate), true));
                         } else {
-                            text = String.format("%d kB",
-                                    track.getDownloadedBytes() / 1024);
+                            text = String.format("%s",
+                                    Utils.humanReadableByteCount(track.getDownloadedBytes(), true));
                         }
                         break;
                     case CANCELLED:
-                        text = "cancelled";
+                        text = I18n.getLocaleString("CANCELLED");
                         break;
                     case ERROR:
-                        text = "Error";
+                        text = I18n.getLocaleString("ERROR");
                         value = 100;
                         break;
                 }

@@ -36,6 +36,22 @@ public class Config {
             return names;
         }
     }
+
+
+    public enum Hoster {
+        NETEASE, DEEZER, SOUNDCLOUD;
+
+        public static String[] names() {
+            Hoster[] states = values();
+            String[] names = new String[states.length];
+
+            for (int i = 0; i < states.length; i++) {
+                names[i] = states[i].name();
+            }
+
+            return names;
+        }
+    }
     
     private String version, originalVersion;
     private List<Track> downloads, originalDownloads;
@@ -48,6 +64,7 @@ public class Config {
     private String locale, originalLocale;
     private String proxyHost, originalProxyHost;
     private Integer proxyPort, originalProxyPort;
+    private String preferredHoster, originalPreferredHoster;
 
     public Config() {
         originalVersion = Groovesquid.getVersion();

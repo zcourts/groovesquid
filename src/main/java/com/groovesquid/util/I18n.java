@@ -18,11 +18,14 @@ public class I18n {
 
     private final static Logger log = Logger.getLogger(I18n.class.getName());
     private static Map<Locale, Properties> translations;
+    private static Properties fallback = new Properties();
     private static Locale currentLocale, defaultLocale = new Locale("en", "US");
     private static File localTranslations = new File(Groovesquid.getDataDirectory(), "translations.zip");
+    private static String propertiesFilename = "general.properties";
 
     public static void load() {
         log.info("Loading language files!");
+
 
         try {
             InputStream in;
@@ -57,14 +60,14 @@ public class I18n {
 
             ZipUtils.listStreams(zip, "", new ZipUtils.Consumer() {
                 public void consume(String name, InputStream stream) {
-                    if (!name.endsWith("general.properties")) {
+                    if (!name.endsWith(propertiesFilename)) {
                         return;
                     }
 
                     try {
                         stream = new ByteArrayInputStream(ByteStreams.toByteArray(stream));
 
-                        String localeString = name.substring(0, name.length() - "general.properties".length() - 1);
+                        String localeString = name.substring(0, name.length() - propertiesFilename.length() - 1);
                         String parts[] = localeString.split("-", -1);
                         Locale locale;
                         if (parts.length == 1) locale = new Locale(parts[0]);
@@ -87,17 +90,19 @@ public class I18n {
 
             in.reset();
 
-            if (in.available() > 0 && !(in instanceof FileInputStream)) {
+            if (in.available() > 0) {
                 FileOutputStream out = FileUtils.openOutputStream(localTranslations);
                 IOUtils.copy(in, out);
                 out.close();
             }
 
+            fallback.load(I18n.class.getResourceAsStream("/i18n/" + propertiesFilename));
+
             log.info("Loaded the following languages: " + translations.keySet().toString());
 
             in.close();
-        } catch (IOException e) {
-            log.warning("Failed to download translations!");
+        } catch (Exception e) {
+            log.warning("Failed to load translations!");
             return;
         }
 
@@ -133,15 +138,25 @@ public class I18n {
 
     public static String getLocaleString(String string) {
         Properties properties = translations.get(currentLocale);
+        String translation;
         if (properties == null) {
             properties = translations.get(defaultLocale);
         }
         if (properties != null) {
-            String translation = properties.getProperty(string);
+            translation = properties.getProperty(string);
             if (translation != null && !translation.isEmpty()) {
                 return translation;
             } else {
-                return translations.get(defaultLocale).getProperty(string);
+                translation = translations.get(defaultLocale).getProperty(string);
+                if (translation != null) {
+                    return translation;
+                }
+            }
+        }
+        if (fallback != null) {
+            translation = fallback.getProperty(string);
+            if (translation != null) {
+                return translation;
             }
         }
         return string;

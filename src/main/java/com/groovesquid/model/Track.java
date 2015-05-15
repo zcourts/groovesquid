@@ -19,7 +19,7 @@ public class Track {
     private Long stopDownloadTime;
     private Double downloadRate;
     private String downloadUrl;
-    private Hoster hoster;
+    private String hoster;
 
     public enum Status {
         QUEUED, INITIALIZING, DOWNLOADING, FINISHED, CANCELLED, ERROR;
@@ -158,11 +158,11 @@ public class Track {
         this.downloadUrl = downloadUrl;
     }
 
-    public Hoster getHoster() {
+    public String getHoster() {
         return hoster;
     }
 
-    public void setHoster(Hoster hoster) {
+    public void setHoster(String hoster) {
         this.hoster = hoster;
     }
 
