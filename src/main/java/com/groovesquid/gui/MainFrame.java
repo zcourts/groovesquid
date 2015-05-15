@@ -10,7 +10,6 @@ import com.groovesquid.service.PlayService;
 import com.groovesquid.service.PlaybackListener;
 import com.groovesquid.util.GuiUtils;
 import com.groovesquid.util.I18n;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
@@ -1754,8 +1753,8 @@ public class MainFrame extends JFrame {
     public void downloadTableMousePressed(MouseEvent evt) {
         int r = downloadTable.rowAtPoint(evt.getPoint());
 
-        if (r > -1) {
-            if (SwingUtilities.isRightMouseButton(evt) && r >= 0 && r < downloadTable.getRowCount() && !ArrayUtils.contains(downloadTable.getSelectedRows(), r) && !evt.isControlDown()) {
+        if (r >= 0) {
+            if (SwingUtilities.isRightMouseButton(evt) && r < downloadTable.getRowCount() && !evt.isControlDown()) {
                 downloadTable.setRowSelectionInterval(r, r);
             }
 
@@ -1774,7 +1773,7 @@ public class MainFrame extends JFrame {
         JTable table = (JTable) evt.getSource();
         int r = table.rowAtPoint(evt.getPoint());
 
-        if (r > -1) {
+        if (r >= 0) {
             if (evt.getClickCount() == 2) {
                 Object[] options = {I18n.getLocaleString("PLAY"), I18n.getLocaleString("DOWNLOAD"), I18n.getLocaleString("CANCEL")};
                 int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_DOWNLOAD_OR_PLAY"), I18n.getLocaleString("SONG"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
@@ -1785,7 +1784,7 @@ public class MainFrame extends JFrame {
                 }
             }
 
-            if (SwingUtilities.isRightMouseButton(evt) && r >= 0 && r < table.getRowCount() && !ArrayUtils.contains(table.getSelectedRows(), r) && !evt.isControlDown()) {
+            if (SwingUtilities.isRightMouseButton(evt) && r < table.getRowCount() && !evt.isControlDown()) {
                 table.setRowSelectionInterval(r, r);
             }
 
