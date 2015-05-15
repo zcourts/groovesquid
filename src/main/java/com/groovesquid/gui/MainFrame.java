@@ -1776,8 +1776,8 @@ public class MainFrame extends JFrame {
 
         if (r > -1) {
             if (evt.getClickCount() == 2) {
-                Object[] options = {I18n.getLocaleString("SONG"), I18n.getLocaleString("DOWNLOAD"), I18n.getLocaleString("CANCEL")};
-                int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_DOWNLOAD_OR_PLAY"), I18n.getLocaleString("QUESTION"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                Object[] options = {I18n.getLocaleString("PLAY"), I18n.getLocaleString("DOWNLOAD"), I18n.getLocaleString("CANCEL")};
+                int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_DOWNLOAD_OR_PLAY"), I18n.getLocaleString("SONG"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 if (selectedValue == 0) {
                     playButtonActionPerformed(new ActionEvent(table, 0, null));
                 } else if (selectedValue == 1) {
