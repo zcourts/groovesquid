@@ -1,6 +1,6 @@
 # Groovesquid [![Build Status](https://api.travis-ci.org/groovesquid/groovesquid.svg)](https://travis-ci.org/groovesquid/groovesquid/) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/groovesquid/localized.png)](https://crowdin.com/project/groovesquid)
 
-Instantly search, find and download over 15 million MP3s anonymously from Grooveshark with Groovesquid!
+Instantly search, find and download any song with Groovesquid!
 
 Downloads are at [http://groovesquid.com](http://groovesquid.com)
 
@@ -21,17 +21,7 @@ If you want to help with translation, please join our project at Crowdin here: h
 Donations
 ---------
 
-Donations are very appreciated! See http://groovesquid.com/#donate.
-
-Todo
----------
-
-* Migrate from Swing to JavaFX
-* Fix encoding issues in FileStore.java while writing ID3 tags (äöüß etc. --> ????)
-* Fix "invalid client" error on startup (not a problem yet, but may be a problem in the future)
-* duration & kBit/s preloading
-
-Also see https://groovesquid.uservoice.com/forums/205365-general
+You can donate, if you want. See http://groovesquid.com/#donate.
 
 License
 ---------
