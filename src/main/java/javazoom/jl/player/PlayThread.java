@@ -1,8 +1,9 @@
 package javazoom.jl.player;
 
+import javazoom.jl.decoder.JavaLayerException;
+
 import java.io.IOException;
 import java.io.InputStream;
-import javazoom.jl.decoder.JavaLayerException;
 
 /**
  * Usage:
@@ -137,12 +138,12 @@ public class PlayThread extends Thread {
     private class LocalPlaybackListener implements PlaybackListener {
         private PlaybackListener otherListener;
 
-        @Override public void playbackStarted(MP3Player player, int audioPosition) {
+        public void playbackStarted(MP3Player player, int audioPosition) {
             if (otherListener != null)
                 otherListener.playbackStarted(player, audioPosition);
         }
 
-        @Override public void playbackFinished(MP3Player player, int audioPosition) {
+        public void playbackFinished(MP3Player player, int audioPosition) {
             synchronized (PlayThread.this) {
                 PlayThread.this.player = null;
             }
@@ -150,12 +151,12 @@ public class PlayThread extends Thread {
                 otherListener.playbackFinished(player, audioPosition);
         }
 
-        @Override public void positionChanged(MP3Player player, int audioPosition) {
+        public void positionChanged(MP3Player player, int audioPosition) {
             if (otherListener != null)
                 otherListener.positionChanged(player, audioPosition);
         }
 
-        @Override public void exception(MP3Player player, Exception ex) {
+        public void exception(MP3Player player, Exception ex) {
             if (otherListener != null)
                 otherListener.exception(player, ex);
         }
