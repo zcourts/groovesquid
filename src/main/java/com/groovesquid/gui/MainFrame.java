@@ -1751,18 +1751,13 @@ public class MainFrame extends JFrame {
     }
 
     public void downloadTableMousePressed(MouseEvent evt) {
-        int r = downloadTable.rowAtPoint(evt.getPoint());
+        JTable table = (JTable) evt.getSource();
+        int r = table.rowAtPoint(evt.getPoint());
 
         if (r >= 0) {
-            if (SwingUtilities.isRightMouseButton(evt) && r < downloadTable.getRowCount() && !evt.isControlDown()) {
-                downloadTable.setRowSelectionInterval(r, r);
-            }
-
-            int rowindex = downloadTable.getSelectedRow();
-            if (rowindex < 0)
-                return;
-            if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable) {
-                downloadTablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            if (SwingUtilities.isRightMouseButton(evt) && r < table.getRowCount() && !evt.isControlDown()) {
+                table.setRowSelectionInterval(r, r);
+                searchTablePopupMenu.show(table, evt.getX(), evt.getY());
             }
         } else {
             downloadTable.clearSelection();
@@ -1786,11 +1781,9 @@ public class MainFrame extends JFrame {
 
             if (SwingUtilities.isRightMouseButton(evt) && r < table.getRowCount() && !evt.isControlDown()) {
                 table.setRowSelectionInterval(r, r);
+                searchTablePopupMenu.show(table, evt.getX(), evt.getY());
             }
 
-            if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable) {
-                searchTablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-            }
         } else {
             table.clearSelection();
         }
