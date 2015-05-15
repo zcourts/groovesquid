@@ -2,29 +2,23 @@ package com.groovesquid.service;
 
 import com.groovesquid.Groovesquid;
 import com.groovesquid.model.*;
+import com.groovesquid.service.hoster.Deezer;
+import com.groovesquid.service.hoster.Hoster;
+import com.groovesquid.service.hoster.Netease;
+import com.groovesquid.service.hoster.Soundcloud;
 import com.groovesquid.util.FilenameSchemeParser;
-import com.groovesquid.util.Utils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static java.lang.String.format;
 
 @SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class DownloadService extends HttpService {
@@ -35,7 +29,7 @@ public class DownloadService extends HttpService {
     private final ExecutorService executorServiceForPlay;
     private final List<DownloadTask> currentlyRunningDownloads = new ArrayList<DownloadTask>();
     private final FilenameSchemeParser filenameSchemeParser;
-    private ExtractorService extractorService;
+    private List<Hoster> hosters = new ArrayList<Hoster>();
 
     private long nextSongMustSleepUntil;
 
@@ -43,7 +37,10 @@ public class DownloadService extends HttpService {
         executorService = Executors.newFixedThreadPool(Groovesquid.getConfig().getMaxParallelDownloads());
         executorServiceForPlay = Executors.newFixedThreadPool(1);
         filenameSchemeParser = new FilenameSchemeParser();
-        extractorService = new ExtractorService();
+
+        hosters.add(new Deezer());
+        hosters.add(new Netease());
+        hosters.add(new Soundcloud());
     }
 
     public FilenameSchemeParser getFilenameSchemeParser() {
@@ -58,6 +55,7 @@ public class DownloadService extends HttpService {
         File downloadDir = new File(Groovesquid.getConfig().getDownloadDirectory());
         String fileName = filenameSchemeParser.parse(song, Groovesquid.getConfig().getFileNameScheme());
         Store store = new FileStore(fileName, downloadDir);
+        song.setDownloaded(true);
         return download(song, store, downloadListener, false);
     }
 
@@ -71,7 +69,6 @@ public class DownloadService extends HttpService {
     }
 
     private Track download(Song song, Store store, DownloadListener downloadListener, boolean forPlay) {
-        song.setDownloaded(true);
         Track track = new Track(song, store);
         int additionalAbortDelay = 0;
         boolean downloadWasInterrupted = cancelDownload(track, true);
@@ -146,7 +143,7 @@ public class DownloadService extends HttpService {
     }
 
 
-    private class DownloadTask implements Runnable {
+    public class DownloadTask implements Runnable {
         private final Track track;
         private final int initialDelay;
         private final DownloadListener downloadListener;
@@ -158,29 +155,6 @@ public class DownloadService extends HttpService {
             this.initialDelay = initialDelay;
             this.downloadListener = downloadListener;
         }
-        
-        class Response {
-            private HashMap<String, Object> header;
-            private HashMap<String, Object> result;
-            private HashMap<String, Object> fault;
-
-            public Response(HashMap<String, Object> header, HashMap<String, Object> result) {
-                this.header = header;
-                this.result = result;
-            }
-
-            public HashMap getHeader() {
-                return this.header;
-            }
-
-            public HashMap<String, Object> getResult() {
-                return this.result;
-            }
-
-            public HashMap<String, Object> getFault() {
-                return this.fault;
-            }
-        }
 
         public void run() {
             try {
@@ -189,29 +163,34 @@ public class DownloadService extends HttpService {
                 Thread.sleep(initialDelay);
                 if (track.getStatus() == Track.Status.CANCELLED)
                     return;
-                
-                track.setStatus(Track.Status.INITIALIZING);
-                fireDownloadStatusChanged();
 
-                track.setDownloadUrl(extractorService.getDownloadUrl(track));
+                for (Hoster hoster : hosters) {
+                    track.setStatus(Track.Status.INITIALIZING);
+                    fireDownloadStatusChanged();
 
-                track.setStatus(Track.Status.DOWNLOADING);
-                track.setStartDownloadTime(System.currentTimeMillis());
-                fireDownloadStatusChanged();
+                    String downloadUrl = hoster.getDownloadUrl(track);
+                    if (downloadUrl != null) {
+                        try {
+                            track.setHoster(hoster.getName());
+                            track.setDownloadUrl(downloadUrl);
 
-                download(track);
-                track.setStatus(Track.Status.FINISHED);
-                fireDownloadStatusChanged();
-                log.info("finished download track " + track);
+                            track.setStatus(Track.Status.DOWNLOADING);
+                            track.setStartDownloadTime(System.currentTimeMillis());
+                            fireDownloadStatusChanged();
 
-                /*HashMap<String, Object> result2 = gson.fromJson(Groovesquid.getGroovesharkClient().sendRequest("markSongDownloadedEx", new HashMap() {{
-                    put("songID", track.getSong().getId());
-                    put("streamKey", track.getStreamKey());
-                    put("streamServerID", track.getStreamServerID());
-                }}), Response.class).getResult();
-                if(!result2.get("Return").toString().equalsIgnoreCase("true")) {
-                    log.severe("markSongDownloadedEx did not return true");
-                }*/
+                            hoster.download(track, this);
+
+                            track.setStatus(Track.Status.FINISHED);
+                            fireDownloadStatusChanged();
+                            log.info("download completed: " + track.toString());
+                            //Notify.getInstance().notify(MessageType.INFO, "Groovesquid", "Download complete");
+
+                            break;
+                        } catch (Exception ex) {
+                            log.log(Level.SEVERE, ex.getMessage(), ex);
+                        }
+                    }
+                }
 
             } catch (Exception ex) {
                 if (aborted || ex instanceof InterruptedException) {
@@ -245,40 +224,6 @@ public class DownloadService extends HttpService {
             return false;
         }
 
-        private void download(Track track) throws IOException {
-            HttpGet httpGet = new HttpGet(track.getDownloadUrl());
-            httpGet.setHeaders(browserHeaders);
-            HttpResponse httpResponse = httpClient.execute(httpGet);
-            HttpEntity httpEntity = httpResponse.getEntity();
-            OutputStream outputStream = null;
-            try {
-                StatusLine statusLine = httpResponse.getStatusLine();
-                int statusCode = statusLine.getStatusCode();
-                if (statusCode == HttpStatus.SC_OK) {
-                    track.setTotalBytes(httpEntity.getContentLength());
-                    Store store = track.getStore();
-                    OutputStream storeOutputStream = store.getOutputStream();
-                    outputStream = new MonitoredOutputStream(storeOutputStream);
-                    InputStream instream = httpEntity.getContent();
-                    byte[] buf = new byte[10240];
-                    int l;
-                    while ((l = instream.read(buf)) != -1) {
-                        outputStream.write(buf, 0, l);
-                    }
-                    // need to close immediately otherwise we cannot write ID tags
-                    outputStream.close();
-                    outputStream = null;
-                    // write ID tags
-                    store.writeTrackInfo(track);
-                } else {
-                    throw new HttpResponseException(statusCode, format("%s: %d %s", track.getDownloadUrl(), statusCode, statusLine.getReasonPhrase()));
-                }
-            } finally {
-                close(httpEntity);
-                Utils.closeQuietly(outputStream, track.getStore().getDescription());
-            }
-        }
-
         private void fireDownloadStatusChanged() {
             if (downloadListener != null)
                 downloadListener.statusChanged(track);
@@ -289,16 +234,15 @@ public class DownloadService extends HttpService {
                 downloadListener.downloadedBytesChanged(track);
         }
 
-        private void close(HttpEntity httpEntity) {
-            try {
-                EntityUtils.consume(httpEntity);
-            } catch (IOException ignore) {
-                // ignored
-            }
+        public OutputStream makeMonitoredOutputStream(OutputStream out) {
+            return new MonitoredOutputStream(out);
         }
 
+        public ByteArrayOutputStream makeMonitoredByteArrayOutputStream(ByteArrayOutputStream out) {
+            return new MonitoredByteArrayOutputStream(out);
+        }
 
-        private class MonitoredOutputStream extends OutputStream {
+        public class MonitoredOutputStream extends OutputStream {
             private final OutputStream outputStream;
 
             public MonitoredOutputStream(OutputStream outputStream) {
@@ -334,6 +278,49 @@ public class DownloadService extends HttpService {
                 outputStream.write(b);
                 track.incDownloadedBytes(1);
                 fireDownloadBytesChanged();
+            }
+        }
+
+        public class MonitoredByteArrayOutputStream extends ByteArrayOutputStream {
+            private final ByteArrayOutputStream outputStream;
+
+            public MonitoredByteArrayOutputStream(ByteArrayOutputStream outputStream) {
+                this.outputStream = outputStream;
+            }
+
+            @Override
+            public void close() throws IOException {
+                outputStream.close();
+            }
+
+            @Override
+            public void flush() throws IOException {
+                outputStream.flush();
+            }
+
+            @Override
+            public void write(byte[] b) throws IOException {
+                outputStream.write(b);
+                track.incDownloadedBytes(b.length);
+                fireDownloadBytesChanged();
+            }
+
+            @Override
+            public void write(byte[] b, int off, int len) {
+                outputStream.write(b, off, len);
+                track.incDownloadedBytes(len);
+                fireDownloadBytesChanged();
+            }
+
+            @Override
+            public void write(int b) {
+                outputStream.write(b);
+                track.incDownloadedBytes(1);
+                fireDownloadBytesChanged();
+            }
+
+            public synchronized byte toByteArray()[] {
+                return outputStream.toByteArray();
             }
         }
     }

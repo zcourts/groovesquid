@@ -23,7 +23,7 @@ public class PlayService {
     /**
      * how many bytes to pre-download before actually begin playing
      */
-    private static final long PLAY_BUFFER_SIZE = 100000L;
+    private static final long PLAY_BUFFER_SIZE = 2000L;
 
     private final DownloadService downloadService;
     private final List<Song> playlist = new ArrayList<Song>();
@@ -162,6 +162,7 @@ public class PlayService {
     }
     
     public void setCurrentPosition(int currentPosition) {
+
         playThread.setCurrentPosition(currentPosition);
     }
 

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 public class HttpService {
 
-    private final static Logger log = Logger.getLogger(HttpService.class.getName());
+    protected final static Logger log = Logger.getLogger(HttpService.class.getName());
 
     protected String userAgent = "Groovesquid/" + Groovesquid.getVersion() + " +http://groovesquid.com";
     protected String browserUserAgent;
@@ -71,6 +71,43 @@ public class HttpService {
             }
 
             responseContent = baos.toString("UTF-8");
+
+        } catch (Exception ex) {
+            log.log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                EntityUtils.consume(httpEntity);
+            } catch (IOException ex) {
+                log.log(Level.SEVERE, null, ex);
+            }
+        }
+        return responseContent;
+    }
+
+    public byte[] getRaw(String url, List<Header> headers) {
+        byte[] responseContent = null;
+        HttpEntity httpEntity = null;
+        try {
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.setHeader(HTTP.USER_AGENT, userAgent);
+            if (headers != null) {
+                Header[] headersArr = new Header[headers.size()];
+                httpGet.setHeaders(headers.toArray(headersArr));
+            }
+
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            httpEntity = httpResponse.getEntity();
+
+            StatusLine statusLine = httpResponse.getStatusLine();
+            int statusCode = statusLine.getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                httpEntity.writeTo(baos);
+            } else {
+                throw new RuntimeException("status code: " + statusLine.getStatusCode());
+            }
+
+            responseContent = baos.toByteArray();
 
         } catch (Exception ex) {
             log.log(Level.SEVERE, null, ex);

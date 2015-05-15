@@ -1,10 +1,8 @@
-package com.groovesquid.service.extractor;
+package com.groovesquid.service.hoster;
 
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
-import com.groovesquid.model.Hoster;
 import com.groovesquid.model.Track;
-import com.groovesquid.service.HttpService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -17,11 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class NeteaseExtractor extends HttpService implements Extractor {
+public class Netease extends Hoster {
+
+    public Netease() {
+        setName("Netease");
+    }
 
     public String getDownloadUrl(Track track) {
-        track.setHoster(Hoster.NETEASE);
-
         List<NameValuePair> data = new ArrayList<NameValuePair>();
         data.add(new BasicNameValuePair("s", track.getSong().getArtistNames().replaceAll(",", "") + " " + track.getSong().getName()));
         data.add(new BasicNameValuePair("type", "1"));
@@ -51,14 +51,17 @@ public class NeteaseExtractor extends HttpService implements Extractor {
             }
 
             response = get("http://music.163.com/api/song/detail/?id=" + songId + "&ids=[" + songId + "]");
-            JsonObject song = JsonObject.readFrom(response).get("songs").asArray().get(0).asObject();
 
-            if (song.get("hMusic") != null) {
-                return makeNeteaseUrl(song.get("hMusic").asObject().get("dfsId").asLong());
-            } else if (song.get("mp3Url") != null) {
-                return song.get("mp3Url").asString();
-            } else if (song.get("bMusic") != null) {
-                return makeNeteaseUrl(song.get("bMusic").asObject().get("dfsId").asLong());
+            if (JsonObject.readFrom(response).get("songs") != null && !JsonObject.readFrom(response).get("songs").asArray().isEmpty()) {
+                JsonObject song = JsonObject.readFrom(response).get("songs").asArray().get(0).asObject();
+
+                if (song.get("hMusic") != null) {
+                    return makeNeteaseUrl(song.get("hMusic").asObject().get("dfsId").asLong());
+                } else if (song.get("mp3Url") != null) {
+                    return song.get("mp3Url").asString();
+                } else if (song.get("bMusic") != null) {
+                    return makeNeteaseUrl(song.get("bMusic").asObject().get("dfsId").asLong());
+                }
             }
         }
 
