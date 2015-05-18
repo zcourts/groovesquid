@@ -1,6 +1,5 @@
 package com.groovesquid.util;
 
-import com.google.common.io.ByteStreams;
 import com.groovesquid.Groovesquid;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +45,7 @@ public class I18n {
                 in = conn.getInputStream();
             }
 
-            byte[] buffer = ByteStreams.toByteArray(in);
+            byte[] buffer = IOUtils.toByteArray(in);
             in = new ByteArrayInputStream(buffer);
             ZipInputStream zip = new ZipInputStream(in);
 
@@ -65,7 +64,7 @@ public class I18n {
                     }
 
                     try {
-                        stream = new ByteArrayInputStream(ByteStreams.toByteArray(stream));
+                        stream = new ByteArrayInputStream(IOUtils.toByteArray(stream));
 
                         String localeString = name.substring(0, name.length() - propertiesFilename.length() - 1);
                         String parts[] = localeString.split("-", -1);
