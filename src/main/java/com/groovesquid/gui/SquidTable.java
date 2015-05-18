@@ -2,7 +2,6 @@ package com.groovesquid.gui;
 
 import com.groovesquid.model.Album;
 import com.groovesquid.model.Artist;
-import com.groovesquid.model.Playlist;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.AbstractRenderer;
 import org.jdesktop.swingx.renderer.ComponentProvider;
@@ -101,7 +100,7 @@ public class SquidTable extends JXTable {
     static public boolean isRolloverText(JXTable tbl, int row, int col) {
         int mCol = tbl.convertColumnIndexToModel(col);
         int mRow = tbl.convertRowIndexToModel(row);
-        if (tbl.getColumnClass(col) != Album.class && tbl.getColumnClass(col) != Artist.class && tbl.getColumnClass(col) != Playlist.class) {
+        if (tbl.getColumnClass(col) != Album.class && tbl.getColumnClass(col) != Artist.class) {
             return false;
         }
         Point pos = tbl.getMousePosition();
@@ -133,13 +132,11 @@ public class SquidTable extends JXTable {
     }
 
     @Override
-    protected TableRolloverController<JXTable>
-    createLinkController() {
+    protected TableRolloverController<JXTable> createLinkController() {
         return new TableRolloverController<JXTable>() {
             @Override
-            protected RolloverRenderer getRolloverRenderer(
-                    Point loc, boolean prep) {
-                if ((getColumnClass(loc.x) == Album.class || getColumnClass(loc.x) == Artist.class || getColumnClass(loc.x) == Playlist.class) && !isRolloverText(component, loc.y, loc.x)) {
+            protected RolloverRenderer getRolloverRenderer(Point loc, boolean prep) {
+                if ((getColumnClass(loc.x) == Album.class || getColumnClass(loc.x) == Artist.class) && !isRolloverText(component, loc.y, loc.x)) {
                     return null;
                 }
                 return super.getRolloverRenderer(loc, prep);

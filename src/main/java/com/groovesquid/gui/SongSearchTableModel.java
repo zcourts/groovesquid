@@ -61,15 +61,6 @@ public class SongSearchTableModel extends AbstractTableModel {
         return songs;
     }
     
-    /*@Override
-    public Class<?> getColumnClass(int column) {
-        if(songs.size() > 0 && getRowCount() > 0) {
-            return getValueAt(0, column).getClass();
-        } else {
-            return Object.class;
-        }
-    }*/
-    
     public void removeRow(int row) {
         songs.remove(row);
         fireTableRowsDeleted(row, row);
@@ -107,5 +98,13 @@ public class SongSearchTableModel extends AbstractTableModel {
             return super.isCellEditable(rowIndex, columnIndex);
         }
     }
-    
+
+    @Override
+    public Class<?> getColumnClass(int column) {
+        if (songs.size() > 0 && getRowCount() > 0) {
+            return getValueAt(0, column).getClass();
+        } else {
+            return Object.class;
+        }
+    }
 }

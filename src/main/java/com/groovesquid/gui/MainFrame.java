@@ -20,10 +20,7 @@ import org.jdesktop.swingx.renderer.JXRendererHyperlink;
 import org.jdesktop.swingx.rollover.RolloverProducer;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -81,7 +78,6 @@ public class MainFrame extends JFrame {
     protected JLabel volumeOnLabel;
     protected JSlider volumeSlider;
     protected JEditorPane adPane;
-    protected JScrollPane adScrollPane;
     protected JTabbedPane tabbedPane;
     protected JPanel homePanel;
     protected JTable homeFirstTopTable;
@@ -90,7 +86,19 @@ public class MainFrame extends JFrame {
     protected JScrollPane homeSecondTopScrollPane;
     protected JComboBox homeFirstTopComboBox;
     protected JComboBox homeSecondTopComboBox;
-    protected SwingWorker<List<Song>, Void> firstTopWorker, secondTopWorker;
+    protected List<String> homeTopSources = new ArrayList<String>() {{
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "Billboard"));
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "Beatport"));
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "Hypem"));
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (US)");
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (UK)");
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (DE)");
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (FR)");
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (IT)");
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (ES)");
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (AU)");
+        add(String.format(I18n.getLocaleString("TOP_SONGS"), "iTunes") + " (BR)");
+    }};
     
     /**
      * Creates new form GUI
@@ -188,8 +196,6 @@ public class MainFrame extends JFrame {
         downloadTablePopupMenu.add(openDirectoryMenuItem);
 
         retryFailedDownloadsButton = new JButton();
-        adScrollPane = new JScrollPane();
-        adPane = new JEditorPane();
 
         playerPanel = new JPanel();
         playerPanel.setBackground(style.getPlayerPanelBackground());
@@ -352,26 +358,22 @@ public class MainFrame extends JFrame {
                         .addComponent(albumCoverLabel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        /*splitPane = new JSplitPane();
-        splitPane.setUI(style.getSplitPaneUI(splitPane));
-        splitPane.setBorder(null);
-        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setResizeWeight(0.5);
-        splitPane.setFocusable(false);
-        splitPane.setOpaque(false);
-        splitPane.setRequestFocusEnabled(false);*/
-
         homePanel = new JPanel();
         homePanel.setOpaque(false);
+
+        DefaultComboBoxModel homeFirstTopComboBoxModel = new DefaultComboBoxModel(homeTopSources.toArray());
+        DefaultComboBoxModel homeSecondTopComboBoxModel = new DefaultComboBoxModel(homeTopSources.toArray());
+
+        homeFirstTopComboBoxModel.setSelectedItem(homeTopSources.get(3));
+        homeSecondTopComboBoxModel.setSelectedItem(homeTopSources.get(0));
 
         homeFirstTopComboBox = new JComboBox();
         homeFirstTopComboBox.setFont(new Font(homeFirstTopComboBox.getFont().getName(), Font.PLAIN, 12));
         homeFirstTopComboBox.setUI(style.getSearchTypeComboBoxUI(homeFirstTopComboBox));
-        DefaultComboBoxModel homeFirstTopComboBoxModel = new DefaultComboBoxModel();
         homeFirstTopComboBox.setModel(homeFirstTopComboBoxModel);
-        homeFirstTopComboBoxModel.addElement(I18n.getLocaleString("TOP_ITUNES_SONGS") + " (US)");
         homeFirstTopComboBox.setBorder(style.getSearchTypeComboBoxBorder());
         homeFirstTopComboBox.setFocusable(false);
+        homeFirstTopComboBox.setEnabled(false);
         homeFirstTopComboBox.setRequestFocusEnabled(false);
         homeFirstTopComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -382,11 +384,10 @@ public class MainFrame extends JFrame {
         homeSecondTopComboBox = new JComboBox();
         homeSecondTopComboBox.setFont(new Font(homeSecondTopComboBox.getFont().getName(), Font.PLAIN, 12));
         homeSecondTopComboBox.setUI(style.getSearchTypeComboBoxUI(homeSecondTopComboBox));
-        DefaultComboBoxModel homeSecondTopComboBoxModel = new DefaultComboBoxModel();
         homeSecondTopComboBox.setModel(homeSecondTopComboBoxModel);
-        homeSecondTopComboBoxModel.addElement(I18n.getLocaleString("TOP_BEATPORT_SONGS"));
         homeSecondTopComboBox.setBorder(style.getSearchTypeComboBoxBorder());
         homeSecondTopComboBox.setFocusable(false);
+        homeSecondTopComboBox.setEnabled(false);
         homeSecondTopComboBox.setRequestFocusEnabled(false);
         homeSecondTopComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -403,7 +404,7 @@ public class MainFrame extends JFrame {
         homeFirstTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeFirstTopTable.setShowHorizontalLines(false);
         homeFirstTopTable.setShowVerticalLines(false);
-        homeFirstTopTable.getTableHeader().setReorderingAllowed(false);
+        homeFirstTopTable.setTableHeader(null);
         homeFirstTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeFirstTopTable.setSelectionForeground(style.getSearchTableSelectionForeground());
         homeFirstTopTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
@@ -413,26 +414,7 @@ public class MainFrame extends JFrame {
                 searchTableMousePressed(evt);
             }
         });
-        firstTopWorker = new SwingWorker<List<Song>, Void>() {
-            @Override
-            protected List<Song> doInBackground() {
-                homeFirstTopComboBox.setEnabled(false);
-                return Groovesquid.getSearchService().getTopItunesSongs();
-            }
-
-            @Override
-            protected void done() {
-                try {
-                    homeFirstTopComboBox.setEnabled(true);
-                    homeFirstTopTable.setModel(new TopSongTableModel(get()));
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ExecutionException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        };
-        firstTopWorker.execute();
+        homeTopComboBoxActionPerformed(new ActionEvent(homeFirstTopComboBox, 0, null));
 
         homeFirstTopScrollPane = new JScrollPane();
         homeFirstTopScrollPane.getVerticalScrollBar().setUI(style.getSearchScrollBarUI(homeFirstTopScrollPane.getVerticalScrollBar()));
@@ -449,7 +431,7 @@ public class MainFrame extends JFrame {
         homeSecondTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeSecondTopTable.setShowHorizontalLines(false);
         homeSecondTopTable.setShowVerticalLines(false);
-        homeSecondTopTable.getTableHeader().setReorderingAllowed(false);
+        homeSecondTopTable.setTableHeader(null);
         homeSecondTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeSecondTopTable.setSelectionForeground(style.getSearchTableSelectionForeground());
         homeSecondTopTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
@@ -459,26 +441,7 @@ public class MainFrame extends JFrame {
                 searchTableMousePressed(evt);
             }
         });
-        secondTopWorker = new SwingWorker<List<Song>, Void>() {
-            @Override
-            protected List<Song> doInBackground() {
-                homeSecondTopComboBox.setEnabled(false);
-                return Groovesquid.getSearchService().getTopBeatportSongs();
-            }
-
-            @Override
-            protected void done() {
-                try {
-                    homeSecondTopComboBox.setEnabled(true);
-                    homeSecondTopTable.setModel(new TopSongTableModel(get()));
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ExecutionException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        };
-        secondTopWorker.execute();
+        homeTopComboBoxActionPerformed(new ActionEvent(homeSecondTopComboBox, 0, null));
 
         homeSecondTopScrollPane = new JScrollPane();
         homeSecondTopScrollPane.getVerticalScrollBar().setUI(style.getSearchScrollBarUI(homeSecondTopScrollPane.getVerticalScrollBar()));
@@ -486,29 +449,53 @@ public class MainFrame extends JFrame {
         homeSecondTopScrollPane.setOpaque(false);
         homeSecondTopScrollPane.setViewportView(homeSecondTopTable);
 
+        adPane = new JEditorPane();
+        adPane.setOpaque(false);
+        adPane.setEditorKit(JEditorPane.createEditorKitForContentType("text/html"));
+        adPane.setEditable(false);
+        adPane.addHyperlinkListener(new HyperlinkListener() {
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(e.getURL().toURI());
+                        } catch (Exception ex) {
+                            Logger.getLogger(MainFrame.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                        }
+                    }
+                }
+            }
+        });
+
         GroupLayout homePanelLayout = new GroupLayout(homePanel);
         homePanel.setLayout(homePanelLayout);
+
+        homePanelLayout.setAutoCreateGaps(true);
+        homePanelLayout.setAutoCreateContainerGaps(true);
+
         homePanelLayout.setHorizontalGroup(homePanelLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(homeFirstTopComboBox)
-                                .addComponent(homeFirstTopScrollPane))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(homeSecondTopComboBox)
-                                .addComponent(homeSecondTopScrollPane))
-                        .addContainerGap()
+                                .addComponent(adPane)
+                                .addGroup(homePanelLayout.createSequentialGroup()
+                                        .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                .addComponent(homeFirstTopComboBox)
+                                                .addComponent(homeFirstTopScrollPane))
+                                        .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                .addComponent(homeSecondTopComboBox)
+                                                .addComponent(homeSecondTopScrollPane))))
         );
+
         homePanelLayout.setVerticalGroup(homePanelLayout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addGroup(homePanelLayout.createSequentialGroup()
+                                        .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(homeFirstTopComboBox)
+                                                .addComponent(homeSecondTopComboBox))
+                                        .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(homeFirstTopScrollPane)
+                                                .addComponent(homeSecondTopScrollPane))))
                         .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(homeFirstTopComboBox)
-                                .addComponent(homeSecondTopComboBox))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(homeFirstTopScrollPane)
-                                .addComponent(homeSecondTopScrollPane))
-                        .addContainerGap()
+                                .addComponent(adPane, 90, 90, 90))
         );
 
         searchPanel = new JPanel();
@@ -544,7 +531,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            //songs.addAll(Groovesquid.getDiscogsService().searchSongsByArtist((Artist) target));
+                            songs.addAll(Groovesquid.getSearchService().getSongsByArtist((Artist) target));
                             return songs;
                         }
 
@@ -565,28 +552,7 @@ public class MainFrame extends JFrame {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
-                            //songs.addAll(Groovesquid.getDiscogsService().searchSongsByAlbum((Album) target));
-                            return songs;
-                        }
-
-                        @Override
-                        protected void done() {
-                            try {
-                                searchTable.setModel(new SongSearchTableModel(get()));
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (ExecutionException ex) {
-                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    };
-                    worker.execute();
-                } else if (target instanceof Playlist) {
-                    SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
-                        @Override
-                        protected List<Song> doInBackground() {
-                            List<Song> songs = new ArrayList<Song>();
-                            //songs.addAll(Groovesquid.getDiscogsService().searchSongsByPlaylist((Playlist) target));
+                            songs.addAll(Groovesquid.getSearchService().getSongsByAlbum((Album) target));
                             return songs;
                         }
 
@@ -631,7 +597,6 @@ public class MainFrame extends JFrame {
         };
         searchTable.setDefaultRenderer(Album.class, new DefaultTableRenderer(hp));
         searchTable.setDefaultRenderer(Artist.class, new DefaultTableRenderer(hp));
-        searchTable.setDefaultRenderer(Playlist.class, new DefaultTableRenderer(hp));
 
         searchScrollPane = new JScrollPane();
         searchScrollPane.getVerticalScrollBar().setUI(style.getSearchScrollBarUI(searchScrollPane.getVerticalScrollBar()));
@@ -955,6 +920,14 @@ public class MainFrame extends JFrame {
             });
             fileMenu.add(aboutMenuItem);
 
+            JMenuItem batchMenuItem = new JMenuItem(I18n.getLocaleString("BATCH"));
+            batchMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    new BatchFrame().setVisible(true);
+                }
+            });
+            fileMenu.add(batchMenuItem);
+
             JMenuItem quitMenuItem = new JMenuItem(I18n.getLocaleString("QUIT"));
             quitMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -972,6 +945,14 @@ public class MainFrame extends JFrame {
             editMenu.add(settingsMenuItem);
 
         } else if (GuiUtils.getSystem() == GuiUtils.OperatingSystem.MAC) {
+            JMenuItem batchMenuItem = new JMenuItem(I18n.getLocaleString("BATCH"));
+            batchMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    new BatchFrame().setVisible(true);
+                }
+            });
+            fileMenu.add(batchMenuItem);
+
             Application.getApplication().setAboutHandler(new AboutHandler() {
                 public void handleAbout(AppEvent.AboutEvent aboutEvent) {
                     Groovesquid.getAboutFrame().setVisible(true);
@@ -991,57 +972,14 @@ public class MainFrame extends JFrame {
             });
         }
 
-        JMenuItem batchMenuItem = new JMenuItem(I18n.getLocaleString("BATCH"));
-        batchMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new BatchFrame().setVisible(true);
-            }
-        });
-        fileMenu.add(batchMenuItem);
-
-        adScrollPane.setBackground(new Color(204, 204, 204));
-        adScrollPane.setBorder(null);
-        adScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        adScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        adScrollPane.setOpaque(false);
-        adScrollPane.setRequestFocusEnabled(false);
-
-        /*adPane.setEditable(false);
-        adPane.setBackground(new Color(204, 204, 204));
-        adPane.setBorder(null);
-        adPane.setContentType("text/html");
-        adPane.setAlignmentY(JComponent.CENTER_ALIGNMENT);
-        adPane.setMaximumSize(new Dimension(160, 600));
-        adPane.setMinimumSize(new Dimension(160, 600));
-        adPane.setOpaque(false);
-        adPane.setPreferredSize(new Dimension(160, 600));
-        adPane.setSize(new Dimension(160, 600));
-        adScrollPane.setViewportView(adPane);
-        new GetAdsThread(adPane).start();
-
-        adPane.addHyperlinkListener(new HyperlinkListener() {
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    try {
-                        Desktop.getDesktop().browse(e.getURL().toURI());
-                    } catch (Exception ex) {
-                        Logger.getLogger(UpdateCheckThread.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });*/
-
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(playerPanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
-                                //.addComponent(menuBar, GroupLayout.DEFAULT_SIZE, 1059, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(tabbedPane)
-                                /*.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)*/
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1050,27 +988,66 @@ public class MainFrame extends JFrame {
                                 .addContainerGap()
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                .addComponent(tabbedPane)
-                                        /*.addComponent(adScrollPane, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)*/)
+                                        .addComponent(tabbedPane))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(playerPanel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
         );
 
-        adScrollPane.getViewport().setOpaque(false);
         setMinimumSize(new Dimension(600, 300));
 
         pack();
     }
 
     private void homeTopComboBoxActionPerformed(ActionEvent evt) {
-        JComboBox comboBox = (JComboBox) evt.getSource();
-        if (comboBox == homeFirstTopComboBox) {
-            firstTopWorker.execute();
-        } else if (comboBox == homeSecondTopComboBox) {
-            secondTopWorker.execute();
-        }
-    }
+        final JComboBox comboBox = (JComboBox) evt.getSource();
 
+        new SwingWorker<List<Song>, Void>() {
+            @Override
+            protected List<Song> doInBackground() {
+                comboBox.setEnabled(false);
+                if (comboBox.getSelectedItem().equals(homeTopSources.get(0))) {
+                    return Groovesquid.getSearchService().getTopBillboardSongs();
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(1))) {
+                    return Groovesquid.getSearchService().getTopBeatportSongs();
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(2))) {
+                    return Groovesquid.getSearchService().getTopHypemSongs();
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(3))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("US");
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(4))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("UK");
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(5))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("DE");
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(6))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("FR");
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(7))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("IT");
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(8))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("ES");
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(9))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("AU");
+                } else if (comboBox.getSelectedItem().equals(homeTopSources.get(10))) {
+                    return Groovesquid.getSearchService().getTopItunesSongs("BR");
+                }
+                return new ArrayList<Song>();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    comboBox.setEnabled(true);
+                    if (comboBox.equals(homeFirstTopComboBox)) {
+                        homeFirstTopTable.setModel(new TopSongTableModel(get()));
+                    } else if (comboBox.equals(homeSecondTopComboBox)) {
+                        homeSecondTopTable.setModel(new TopSongTableModel(get()));
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ExecutionException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }.execute();
+    }
 
     private ListSelectionListener downloadListSelectionListener = new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent event) {
@@ -1681,8 +1658,6 @@ public class MainFrame extends JFrame {
                 removeFromList(false);
             } else if(selectedValue == 1) {
                 removeFromList(true);
-            } else {
-                System.out.println(selectedValue);
             }
         }
     }
@@ -1757,7 +1732,7 @@ public class MainFrame extends JFrame {
         if (r >= 0) {
             if (SwingUtilities.isRightMouseButton(evt) && r < table.getRowCount() && !evt.isControlDown()) {
                 table.setRowSelectionInterval(r, r);
-                searchTablePopupMenu.show(table, evt.getX(), evt.getY());
+                downloadTablePopupMenu.show(table, evt.getX(), evt.getY());
             }
         } else {
             downloadTable.clearSelection();
@@ -1927,4 +1902,7 @@ public class MainFrame extends JFrame {
         return style;
     }
 
+    public JEditorPane getAdPane() {
+        return adPane;
+    }
 }

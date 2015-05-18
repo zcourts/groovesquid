@@ -1,7 +1,6 @@
 package com.groovesquid.gui;
 
 import com.groovesquid.model.Song;
-import com.groovesquid.util.I18n;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -9,8 +8,6 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class TopSongTableModel extends AbstractTableModel {
-
-    private final String[] columnNames = {"", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST")};
 
     private List<Song> songs = new ArrayList<Song>();
 
@@ -23,16 +20,11 @@ public class TopSongTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return columnNames.length;
+        return 3;
     }
 
     public int getRowCount() {
         return songs.size();
-    }
-
-    @Override
-    public String getColumnName(int col) {
-        return columnNames[col];
     }
 
     public Object getValueAt(int row, int col) {
@@ -91,4 +83,12 @@ public class TopSongTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
+    public Class<?> getColumnClass(int column) {
+        if (songs.size() > 0 && getRowCount() > 0) {
+            return getValueAt(0, column).getClass();
+        } else {
+            return Object.class;
+        }
+    }
 }
