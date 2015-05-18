@@ -1,10 +1,12 @@
 package com.groovesquid.service;
 
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.groovesquid.model.Album;
 import com.groovesquid.model.Artist;
 import com.groovesquid.model.Song;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -14,6 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SearchService extends HttpService {
+
+    public Song getSongDetails(Song song) {
+        return song;
+    }
 
     public List<Song> getSongsByQuery(String query) {
         String response = null;
@@ -85,7 +91,6 @@ public class SearchService extends HttpService {
     public List<Song> getSongsByAlbum(Album album) {
         String response = null;
         try {
-            System.out.println(album.getId());
             response = get("http://search.musicbrainz.org/ws/2/recording/?query=" + URLEncoder.encode("reid:" + album.getId(), "UTF-8") + "&fmt=json&limit=100");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -166,9 +171,9 @@ public class SearchService extends HttpService {
         return artists;
     }
 
-    public List<Song> getTopItunesSongs() {
+    public List<Song> getTopItunesSongs(String country) {
         List<Song> songs = new ArrayList<Song>();
-        String response = get("https://itunes.apple.com/us/rss/topsongs/limit=100/explicit=true/json", Arrays.asList(browserHeaders));
+        String response = get("https://itunes.apple.com/" + country.toLowerCase() + "/rss/topsongs/limit=100/explicit=true/json", Arrays.asList(browserHeaders));
         JsonValue entries = JsonObject.readFrom(response).get("feed").asObject().get("entry");
         if (entries != null && entries.isArray()) {
             for (JsonValue entry : entries.asArray()) {
@@ -177,6 +182,22 @@ public class SearchService extends HttpService {
                 Album album = new Album(null, entry.asObject().get("im:collection").asObject().get("im:name").asObject().get("label").asString(), artists, null);
                 songs.add(new Song(null, entry.asObject().get("im:name").asObject().get("label").asString(), artists, album, 0));
             }
+        }
+        return songs;
+    }
+
+    public List<Song> getTopBillboardSongs() {
+        List<Song> songs = new ArrayList<Song>();
+        String response = get("http://www.billboard.com/charts/hot-100", Arrays.asList(browserHeaders));
+        String[] rows = StringUtils.substringsBetween(response, "<div class=\"row-primary\">", "</article>");
+        for (String row : rows) {
+            String title = StringEscapeUtils.unescapeHtml4(StringUtils.substringBetween(row, "<h2>", "</h2>").trim());
+            String[] artistsSplit = StringEscapeUtils.unescapeHtml4(StringUtils.substringBetween(row, "<h3>", "</h3>").replaceAll("\\<[^>]*>", "").trim()).split("Featuring");
+            List<Artist> artists = new ArrayList<Artist>();
+            for (String artist : artistsSplit) {
+                artists.add(new Artist(null, artist.trim()));
+            }
+            songs.add(new Song(null, title, artists));
         }
         return songs;
     }
@@ -197,5 +218,23 @@ public class SearchService extends HttpService {
             }
         }
         return songs;
+    }
+
+    public List<Song> getTopHypemSongs() {
+        List<Song> songs = new ArrayList<Song>();
+        String response = get("https://api.hypem.com/v2/popular?mode=now&count=50");
+        JsonArray items = JsonArray.readFrom(response);
+        if (items != null && items.isArray()) {
+            for (JsonValue item : items.asArray()) {
+                List<Artist> artists = new ArrayList<Artist>();
+                artists.add(new Artist(null, item.asObject().get("artist").asString()));
+                songs.add(new Song(null, item.asObject().get("title").asString(), artists));
+            }
+        }
+        return songs;
+    }
+
+    public List<Song> getSongsByArtist(Artist target) {
+        return null;
     }
 }
