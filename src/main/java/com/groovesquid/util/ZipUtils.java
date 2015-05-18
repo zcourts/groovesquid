@@ -1,6 +1,5 @@
 package com.groovesquid.util;
 
-import gnu.trove.map.hash.THashMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -11,6 +10,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -89,7 +89,7 @@ public class ZipUtils {
     }
 
     public static Map<String, InputStream> listStreams(ZipInputStream jar, String folder, Consumer filter) throws IOException {
-        THashMap<String, InputStream> output = new THashMap<String, InputStream>();
+        Map<String, InputStream> output = new HashMap<String, InputStream>();
 
         int offset = folder.length() + 1;
 
