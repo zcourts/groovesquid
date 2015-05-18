@@ -10,6 +10,7 @@ import com.groovesquid.model.Config;
 import com.groovesquid.service.DownloadService;
 import com.groovesquid.service.PlayService;
 import com.groovesquid.service.SearchService;
+import com.groovesquid.task.UpdateCheckTask;
 import com.groovesquid.util.GuiUtils;
 import com.groovesquid.util.I18n;
 import com.groovesquid.util.Utils;
@@ -30,7 +31,7 @@ public class Groovesquid {
     private static SettingsFrame settingsFrame;
     private static AboutFrame aboutFrame;
 
-    private static String version = "0.9.0";
+    private static String version = "0.9.2";
     private static File dataDirectory = new File(Utils.dataDirectory() + File.separator + ".groovesquid");
     private static Config config;
     private static DownloadService downloadService;
@@ -61,7 +62,7 @@ public class Groovesquid {
         }
 
         // check for updates
-        new UpdateCheckThread().start();
+        new Thread(new UpdateCheckTask()).start();
     }
 
     private static void initGui() {
