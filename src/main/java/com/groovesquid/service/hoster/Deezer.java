@@ -50,9 +50,17 @@ public class Deezer extends Hoster {
     byte[] blowfishKey = new byte[16];
 
     public String getDownloadUrl(Track track) {
+        String query = "";
+        if (track.getSong().getArtists().size() <= 2) {
+            query += track.getSong().getArtistNames().replaceAll(",", "");
+        } else {
+            query += track.getSong().getArtists().get(0);
+        }
+        query += " " + track.getSong().getName();
+
         String searchResponse = null;
         try {
-            searchResponse = get("http://api.deezer.com/search?q=" + URLEncoder.encode(track.getSong().getArtistNames().replaceAll(",", "") + " " + track.getSong().getName(), "UTF-8"));
+            searchResponse = get("http://api.deezer.com/search?q=" + URLEncoder.encode(query, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
