@@ -42,6 +42,7 @@ public class ProgressCellRenderer extends DefaultTableCellRenderer {
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         String text = "";
+        row = table.convertRowIndexToModel(row);
         Track track = ((DownloadTableModel)table.getModel()).getSongDownloads().get(row);
         
         if(track != null) {
