@@ -65,6 +65,7 @@ targetCompatibility = '1.6'
 // Compile encoding
 compileJava {
     options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked"
 }
 
 // Simple build script information
@@ -155,5 +156,3 @@ launch4j {
 shadowJar {
     classifier = ''
 }
-
-

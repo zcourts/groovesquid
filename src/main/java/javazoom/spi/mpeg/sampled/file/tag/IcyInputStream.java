@@ -63,6 +63,7 @@ import java.util.StringTokenizer;
  *
  * @author Chris Adamson, invalidname@mac.com
  */
+@SuppressWarnings("unchecked")
 public class IcyInputStream
         extends BufferedInputStream
         implements MP3MetadataParser {

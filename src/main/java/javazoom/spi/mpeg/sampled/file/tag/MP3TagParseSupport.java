@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 /**
  */
+@SuppressWarnings("unchecked")
 public class MP3TagParseSupport extends Object {
     ArrayList tagParseListeners;
 

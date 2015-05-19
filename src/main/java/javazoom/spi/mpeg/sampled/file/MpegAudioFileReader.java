@@ -59,6 +59,7 @@ import java.util.HashMap;
 /**
  * This class implements AudioFileReader for MP3 SPI.
  */
+@SuppressWarnings("unchecked")
 public class MpegAudioFileReader extends TAudioFileReader {
     public static final String VERSION = "MP3SPI 1.9.5";
     private final int SYNC = 0xFFE00000;

@@ -30,6 +30,7 @@ import java.util.Map;
 /**
  * @author JavaZOOM
  */
+@SuppressWarnings("unchecked")
 public class MpegAudioFileFormat extends TAudioFileFormat {
     /**
      * Contructor.

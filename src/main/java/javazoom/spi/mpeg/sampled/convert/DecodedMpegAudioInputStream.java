@@ -41,6 +41,7 @@ import java.util.Map;
 /**
  * Main decoder.
  */
+@SuppressWarnings("unchecked")
 public class DecodedMpegAudioInputStream extends TAsynchronousFilteredAudioInputStream implements PropertiesContainer, TagParseListener {
     private InputStream m_encodedStream;
     private Bitstream m_bitstream;
