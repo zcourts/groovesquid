@@ -102,8 +102,6 @@ public class PlayThread extends Thread {
                 playbackListener.exception(player, ex);
             else
                 throw new RuntimeException(ex);
-        } finally {
-            System.out.println("thread ends");
         }
     }
 
