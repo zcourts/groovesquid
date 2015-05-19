@@ -1,10 +1,15 @@
 package com.groovesquid.model;
 
 import com.groovesquid.util.Utils;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 public class Track {
 
@@ -166,4 +171,19 @@ public class Track {
         this.hoster = hoster;
     }
 
+    public void updateDuration() {
+        Map<String, Object> properties = null;
+        try {
+            properties = new MpegAudioFileReader().getAudioFileFormat(new BufferedInputStream(store.getInputStream())).properties();
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (properties != null && properties.containsKey("duration")) {
+            Long microseconds = (Long) properties.get("duration");
+            long mili = (microseconds / 1000);
+            song.setDuration(mili);
+        }
+    }
 }

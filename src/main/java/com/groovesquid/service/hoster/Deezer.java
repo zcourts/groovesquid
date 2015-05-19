@@ -3,7 +3,6 @@ package com.groovesquid.service.hoster;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.groovesquid.model.Track;
-import com.groovesquid.service.DownloadService;
 import com.groovesquid.util.Utils;
 import org.apache.http.*;
 import org.apache.http.client.HttpResponseException;
@@ -106,12 +105,11 @@ public class Deezer extends Hoster {
         return null;
     }
 
-    public void download(Track track, DownloadService.DownloadTask task) throws IOException {
+    public void download(Track track, OutputStream outputStream) throws IOException {
         HttpGet httpGet = new HttpGet(track.getDownloadUrl());
         httpGet.setHeaders(browserHeaders);
         HttpResponse httpResponse = httpClient.execute(httpGet);
         HttpEntity httpEntity = httpResponse.getEntity();
-        OutputStream outputStream = task.makeMonitoredOutputStream(track.getStore().getOutputStream());
         try {
             StatusLine statusLine = httpResponse.getStatusLine();
             int statusCode = statusLine.getStatusCode();

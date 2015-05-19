@@ -50,7 +50,7 @@ public class FileStore implements Store {
     }
 
     public InputStream getInputStream() throws IOException {
-        return new BufferedInputStream(new FileInputStream(downloadFile));
+        return new BufferedInputStream(new FileInputStream(outputFile));
     }
 
     public void writeTrackInfo(Track track) throws IOException {

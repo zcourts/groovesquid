@@ -221,7 +221,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-        currentDurationLabel = new JLabel("00:00");
+        currentDurationLabel = new JLabel("0:00");
         currentDurationLabel.setFont(new Font(currentDurationLabel.getFont().getName(), Font.PLAIN, 10));
         currentDurationLabel.setOpaque(false);
         currentDurationLabel.setForeground(style.getPlayerPanelForeground());
@@ -1108,7 +1108,7 @@ public class MainFrame extends JFrame {
 
         public void positionChanged(Track track, int audioPosition) {
             trackSlider.setValue(audioPosition);
-            String currentPos = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(audioPosition), TimeUnit.MILLISECONDS.toSeconds(audioPosition) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(audioPosition)));
+            String currentPos = String.format("%d:%02d", TimeUnit.MILLISECONDS.toMinutes(audioPosition), TimeUnit.MILLISECONDS.toSeconds(audioPosition) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(audioPosition)));
             currentDurationLabel.setText(currentPos);
         }
 
@@ -1122,13 +1122,9 @@ public class MainFrame extends JFrame {
                 Groovesquid.getPlayService().stop();
             } else if (track.getStatus() == Track.Status.INITIALIZING) {
                 updateCurrentlyPlayingTrack(track);
-            } else if (track.getStatus() == Track.Status.DOWNLOADING) {
+            } else if (track.getStatus() == Track.Status.DOWNLOADING || track.getStatus() == Track.Status.FINISHED) {
                 trackSlider.setMaximum(Long.valueOf(track.getSong().getDuration()).intValue());
                 durationLabel.setText(track.getSong().getReadableDuration());
-                //System.out.println(track.getTotalBytes() * 8 / track.getSong().getDuration() / 1000 + "KBP/S");
-
-            } else if (track.getStatus() == Track.Status.FINISHED) {
-                //currentlyPlayingLabel.setText(currentlyPlayingLabel.getText() + " (" + ((MemoryStore)track.getStore()) + "kbps)");
             }
         }
 
@@ -1260,7 +1256,7 @@ public class MainFrame extends JFrame {
                 protected List<Song> doInBackground() {
                     List<Song> songs = new ArrayList<Song>();
                     for(Playlist playlist : playlists) {
-                        //songs.addAll(Groovesquid.getDiscogsService().searchSongsByPlaylist(playlist));
+                        //songs.addAll(Groovesquid.getSearchService().searchSongsByPlaylist(playlist));
                     }
                     return songs;
                 }
@@ -1329,7 +1325,7 @@ public class MainFrame extends JFrame {
         
         searchTable.getSelectionModel().clearSelection();
     }
-    
+
     public DownloadListener getDownloadListener(final DownloadTableModel downloadTableModel) {
         final DownloadListener downloadListener = new DownloadListener() {
             public void downloadedBytesChanged(Track track) {
@@ -1343,8 +1339,6 @@ public class MainFrame extends JFrame {
                 int row = downloadTableModel.getSongDownloads().indexOf(track);
                 if(row >= 0) {
                     downloadTableModel.fireTableRowsUpdated(row, row);
-                    //downloadTableModel.fireTableCellUpdated(row, 5);
-
                 }
                 downloadTableModel.updateSongDownloads();
 
@@ -1859,8 +1853,8 @@ public class MainFrame extends JFrame {
         trackSlider.setValue(0);
         trackSlider.setEnabled(false);
         currentlyPlayingLabel.setText("");
-        currentDurationLabel.setText("00:00");
-        durationLabel.setText("00:00");
+        currentDurationLabel.setText("0:00");
+        durationLabel.setText("0:00");
         albumCoverLabel.setIcon(null);
     }
     

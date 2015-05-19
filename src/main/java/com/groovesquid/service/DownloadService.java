@@ -9,7 +9,6 @@ import com.groovesquid.service.hoster.Soundcloud;
 import com.groovesquid.util.FilenameSchemeParser;
 import org.apache.http.client.methods.HttpGet;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -165,6 +164,9 @@ public class DownloadService extends HttpService {
                     return;
 
                 for (Hoster hoster : hosters) {
+                    if (track.getStatus() == Track.Status.FINISHED) {
+                        break;
+                    }
                     track.setStatus(Track.Status.INITIALIZING);
                     fireDownloadStatusChanged();
 
@@ -178,12 +180,13 @@ public class DownloadService extends HttpService {
                             track.setStartDownloadTime(System.currentTimeMillis());
                             fireDownloadStatusChanged();
 
-                            hoster.download(track, this);
+                            hoster.download(track, new MonitoredOutputStream(track.getStore().getOutputStream()));
+
+                            track.updateDuration();
 
                             track.setStatus(Track.Status.FINISHED);
                             fireDownloadStatusChanged();
-                            log.info("download completed: " + track.toString());
-                            //Notify.getInstance().notify(MessageType.INFO, "Groovesquid", "Download complete");
+                            log.info("download completed: " + track.toString() + " (" + hoster.getName() + ")");
 
                             break;
                         } catch (Exception ex) {
@@ -234,14 +237,6 @@ public class DownloadService extends HttpService {
                 downloadListener.downloadedBytesChanged(track);
         }
 
-        public OutputStream makeMonitoredOutputStream(OutputStream out) {
-            return new MonitoredOutputStream(out);
-        }
-
-        public ByteArrayOutputStream makeMonitoredByteArrayOutputStream(ByteArrayOutputStream out) {
-            return new MonitoredByteArrayOutputStream(out);
-        }
-
         public class MonitoredOutputStream extends OutputStream {
             private final OutputStream outputStream;
 
@@ -278,49 +273,6 @@ public class DownloadService extends HttpService {
                 outputStream.write(b);
                 track.incDownloadedBytes(1);
                 fireDownloadBytesChanged();
-            }
-        }
-
-        public class MonitoredByteArrayOutputStream extends ByteArrayOutputStream {
-            private final ByteArrayOutputStream outputStream;
-
-            public MonitoredByteArrayOutputStream(ByteArrayOutputStream outputStream) {
-                this.outputStream = outputStream;
-            }
-
-            @Override
-            public void close() throws IOException {
-                outputStream.close();
-            }
-
-            @Override
-            public void flush() throws IOException {
-                outputStream.flush();
-            }
-
-            @Override
-            public void write(byte[] b) throws IOException {
-                outputStream.write(b);
-                track.incDownloadedBytes(b.length);
-                fireDownloadBytesChanged();
-            }
-
-            @Override
-            public void write(byte[] b, int off, int len) {
-                outputStream.write(b, off, len);
-                track.incDownloadedBytes(len);
-                fireDownloadBytesChanged();
-            }
-
-            @Override
-            public void write(int b) {
-                outputStream.write(b);
-                track.incDownloadedBytes(1);
-                fireDownloadBytesChanged();
-            }
-
-            public synchronized byte toByteArray()[] {
-                return outputStream.toByteArray();
             }
         }
     }
