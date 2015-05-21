@@ -179,8 +179,27 @@ public class SearchService extends HttpService {
             for (JsonValue entry : entries.asArray()) {
                 List<Artist> artists = new ArrayList<Artist>();
                 artists.add(new Artist(null, entry.asObject().get("im:artist").asObject().get("label").asString()));
+                String title = entry.asObject().get("im:name").asObject().get("label").asString();
+                if (title.contains("feat.")) {
+                    String[] beforeSplit = title.split("\\(feat.");
+                    if (beforeSplit.length > 1) {
+                        String[] afterSplit = beforeSplit[1].split("\\)", 2);
+                        if (afterSplit[0].contains(",")) {
+                            String[] artistSplit = afterSplit[0].split(",");
+                            for (String split : artistSplit) {
+                                artists.add(new Artist(null, split.trim()));
+                            }
+                        } else {
+                            artists.add(new Artist(null, afterSplit[0].trim()));
+                        }
+                        title = beforeSplit[0].trim();
+                        if (!afterSplit[1].trim().isEmpty()) {
+                            title += afterSplit[1];
+                        }
+                    }
+                }
                 Album album = new Album(null, entry.asObject().get("im:collection").asObject().get("im:name").asObject().get("label").asString(), artists, null);
-                songs.add(new Song(null, entry.asObject().get("im:name").asObject().get("label").asString(), artists, album, 0));
+                songs.add(new Song(null, title, artists, album, 0));
             }
         }
         return songs;
