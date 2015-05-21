@@ -364,8 +364,8 @@ public class MainFrame extends JFrame {
         DefaultComboBoxModel homeFirstTopComboBoxModel = new DefaultComboBoxModel(homeTopSources.toArray());
         DefaultComboBoxModel homeSecondTopComboBoxModel = new DefaultComboBoxModel(homeTopSources.toArray());
 
-        homeFirstTopComboBoxModel.setSelectedItem(homeTopSources.get(3));
-        homeSecondTopComboBoxModel.setSelectedItem(homeTopSources.get(0));
+        homeFirstTopComboBoxModel.setSelectedItem(homeTopSources.get(Groovesquid.getConfig().getFirstTopTableType()));
+        homeSecondTopComboBoxModel.setSelectedItem(homeTopSources.get(Groovesquid.getConfig().getSecondTopTableType()));
 
         homeFirstTopComboBox = new JComboBox();
         homeFirstTopComboBox.setFont(new Font(homeFirstTopComboBox.getFont().getName(), Font.PLAIN, 12));
@@ -411,7 +411,7 @@ public class MainFrame extends JFrame {
         homeFirstTopTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
-                searchTableMousePressed(evt);
+                tableMousePressed(evt);
             }
         });
         homeTopComboBoxActionPerformed(new ActionEvent(homeFirstTopComboBox, 0, null));
@@ -438,7 +438,7 @@ public class MainFrame extends JFrame {
         homeSecondTopTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
-                searchTableMousePressed(evt);
+                tableMousePressed(evt);
             }
         });
         homeTopComboBoxActionPerformed(new ActionEvent(homeSecondTopComboBox, 0, null));
@@ -521,7 +521,7 @@ public class MainFrame extends JFrame {
         searchTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
-                searchTableMousePressed(evt);
+                tableMousePressed(evt);
             }
         });
         AbstractHyperlinkAction<Object> act = new AbstractHyperlinkAction<Object>() {
@@ -750,6 +750,9 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab(I18n.getLocaleString("HOME"), null, homePanel, null);
         tabbedPane.addTab(I18n.getLocaleString("SEARCH"), null, searchPanel, null);
         tabbedPane.addTab(I18n.getLocaleString("DOWNLOADS"), null, downloadPanel, null);
+        if (Groovesquid.getConfig().getStartTab() == Config.StartTab.SEARCH.ordinal()) {
+            tabbedPane.setSelectedIndex(1);
+        }
 
         removeFromDiskButton = new JButton(I18n.getLocaleString("REMOVE_FROM_DISK"));
         removeFromDiskButton.setFont(new Font(removeFromDiskButton.getFont().getName(), Font.PLAIN, 11));
@@ -818,7 +821,7 @@ public class MainFrame extends JFrame {
         downloadTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
-                downloadTableMousePressed(evt);
+                tableMousePressed(evt);
             }
         });
         downloadTable.addKeyListener(new KeyAdapter() {
@@ -1037,8 +1040,10 @@ public class MainFrame extends JFrame {
                     comboBox.setEnabled(true);
                     if (comboBox.equals(homeFirstTopComboBox)) {
                         homeFirstTopTable.setModel(new TopSongTableModel(get()));
+                        Groovesquid.getConfig().setFirstTopTableType(comboBox.getSelectedIndex());
                     } else if (comboBox.equals(homeSecondTopComboBox)) {
                         homeSecondTopTable.setModel(new TopSongTableModel(get()));
+                        Groovesquid.getConfig().setSecondTopTableType(comboBox.getSelectedIndex());
                     }
                 } catch (InterruptedException ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -1719,26 +1724,14 @@ public class MainFrame extends JFrame {
         removeFromDiskButtonActionPerformed(evt);
     }
 
-    public void downloadTableMousePressed(MouseEvent evt) {
+    public void tableMousePressed(MouseEvent evt) {
         JTable table = (JTable) evt.getSource();
         int r = table.rowAtPoint(evt.getPoint());
+        boolean isSearchTable = false;
+        isSearchTable = !table.equals(downloadTable);
 
         if (r >= 0) {
-            if (SwingUtilities.isRightMouseButton(evt) && r < table.getRowCount() && !evt.isControlDown()) {
-                table.setRowSelectionInterval(r, r);
-                downloadTablePopupMenu.show(table, evt.getX(), evt.getY());
-            }
-        } else {
-            downloadTable.clearSelection();
-        }
-    }
-
-    public void searchTableMousePressed(MouseEvent evt) {
-        JTable table = (JTable) evt.getSource();
-        int r = table.rowAtPoint(evt.getPoint());
-
-        if (r >= 0) {
-            if (evt.getClickCount() == 2) {
+            if (isSearchTable && evt.getClickCount() == 2 && (evt.getModifiers() & InputEvent.BUTTON1_MASK) == InputEvent.BUTTON1_MASK) {
                 Object[] options = {I18n.getLocaleString("PLAY"), I18n.getLocaleString("DOWNLOAD"), I18n.getLocaleString("CANCEL")};
                 int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_DOWNLOAD_OR_PLAY"), I18n.getLocaleString("SONG"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 if (selectedValue == 0) {
@@ -1748,11 +1741,33 @@ public class MainFrame extends JFrame {
                 }
             }
 
-            if (SwingUtilities.isRightMouseButton(evt) && r < table.getRowCount() && !evt.isControlDown()) {
-                table.setRowSelectionInterval(r, r);
-                searchTablePopupMenu.show(table, evt.getX(), evt.getY());
-            }
+            if (r < table.getRowCount()) {
+                if (GuiUtils.getSystem() == GuiUtils.OperatingSystem.MAC && ((evt.getModifiers() & KeyEvent.META_MASK) == 0 || SwingUtilities.isRightMouseButton(evt)) || GuiUtils.getSystem() != GuiUtils.OperatingSystem.MAC && !evt.isControlDown()) {
+                    if (evt.isPopupTrigger()) {
+                        if (!table.isRowSelected(r)) {
+                            table.setRowSelectionInterval(r, r);
+                        } else {
+                            table.addRowSelectionInterval(r, r);
+                        }
+                        if (isSearchTable) {
+                            searchTablePopupMenu.show(table, evt.getX(), evt.getY());
+                        } else {
+                            downloadTablePopupMenu.show(table, evt.getX(), evt.getY());
+                        }
+                    } else {
+                        table.setRowSelectionInterval(r, r);
+                    }
+                } else {
+                    if (!table.isRowSelected(r)) {
+                        table.removeRowSelectionInterval(r, r);
+                    } else if (table.getSelectedRowCount() > 0) {
+                        table.addRowSelectionInterval(r, r);
+                    } else {
+                        table.setRowSelectionInterval(r, r);
+                    }
+                }
 
+            }
         } else {
             table.clearSelection();
         }

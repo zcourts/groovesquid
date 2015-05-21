@@ -37,12 +37,26 @@ public class Config {
         }
     }
 
-
     public enum Hoster {
-        NETEASE, DEEZER, SOUNDCLOUD;
+        DEEZER, NETEASE, SOUNDCLOUD;
 
         public static String[] names() {
             Hoster[] states = values();
+            String[] names = new String[states.length];
+
+            for (int i = 0; i < states.length; i++) {
+                names[i] = states[i].name();
+            }
+
+            return names;
+        }
+    }
+
+    public enum StartTab {
+        HOME, SEARCH;
+
+        public static String[] names() {
+            StartTab[] states = values();
             String[] names = new String[states.length];
 
             for (int i = 0; i < states.length; i++) {
@@ -60,7 +74,9 @@ public class Config {
     private String fileNameScheme, originalFileNameScheme;
     private boolean autocompleteEnabled, originalAutocompleteEnabled;
     private int downloadComplete, originalDownloadComplete;
+    private int startTab, originalStartTab;
     private int fileExists, originalFileExists;
+    private int firstTopTableType = 3, secondTopTableType = 0;
     private String locale, originalLocale;
     private String proxyHost, originalProxyHost;
     private Integer proxyPort, originalProxyPort;
@@ -74,6 +90,7 @@ public class Config {
         originalFileNameScheme = FilenameSchemeParser.DEFAULT_FILENAME_SCHEME;
         originalAutocompleteEnabled = false;
         originalDownloadComplete = DownloadComplete.DO_NOTHING.ordinal();
+        originalStartTab = StartTab.HOME.ordinal();
         originalFileExists = FileExists.RENAME.ordinal();
         originalLocale = Locale.getDefault().toString();
         originalProxyHost = null;
@@ -89,6 +106,8 @@ public class Config {
         fileNameScheme = originalFileNameScheme;
         autocompleteEnabled = originalAutocompleteEnabled;
         downloadComplete = originalDownloadComplete;
+        startTab = originalStartTab;
+        fileExists = originalFileExists;
         locale = originalLocale;
         proxyHost = originalProxyHost;
         proxyPort = originalProxyPort;
@@ -173,5 +192,31 @@ public class Config {
     
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public void setStartTab(int startTab) {
+        this.startTab = startTab;
+    }
+
+    public int getStartTab() {
+        return startTab;
+    }
+
+    public int getFirstTopTableType() {
+        return firstTopTableType;
+    }
+
+    public void setFirstTopTableType(int firstTopTableType) {
+        this.firstTopTableType = firstTopTableType;
+        Groovesquid.saveConfig();
+    }
+
+    public int getSecondTopTableType() {
+        return secondTopTableType;
+    }
+
+    public void setSecondTopTableType(int secondTopTableType) {
+        this.secondTopTableType = secondTopTableType;
+        Groovesquid.saveConfig();
     }
 }

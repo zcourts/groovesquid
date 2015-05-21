@@ -23,10 +23,11 @@ public class SettingsFrame extends JFrame {
 
     private String originalDownloadDirectory, originalMaxParallelDownloads, originalFileNameScheme, originalProxyHost, originalProxyPort;
     private boolean originalAutocompleteEnabled;
-    private int originalDownloadComplete;
+    private int originalDownloadComplete, originalStartTab;
     private Locale originalLocale;
 
-    private JCheckBox searchAutocompleteCheckBox;
+    //private JCheckBox searchAutocompleteCheckBox;
+    private JComboBox startTabComboBox;
     private JComboBox downloadCompletedComboBox;
     private JButton downloadDirectoryButton;
     private JTextField downloadDirectoryTextField;
@@ -36,7 +37,8 @@ public class SettingsFrame extends JFrame {
     private JLabel proxyPortLabel;
     private JLabel filenameSchemeLabel;
     private JLabel filenameSchemeDescriptionLabel;
-    private JLabel searchAutocompleteLabel;
+    //private JLabel searchAutocompleteLabel;
+    private JLabel startTabLabel;
     private JLabel downloadCompletedLabel;
     private JLabel maxParallelDownloadsLabel;
     private JLabel languageLabel;
@@ -114,11 +116,16 @@ public class SettingsFrame extends JFrame {
         String tagStyle = "font-family: Monospaced; font-weight: bold;";
         filenameSchemeDescriptionLabel.setText("<html><body>" + I18n.getLocaleString("FILENAME_SCHEME_DESCRIPTION").replace("&lt;", "<span style=\"" + tagStyle + "\">&lt;").replace("&gt;", "&gt;</span>").replaceFirst("/", "<span style=\"" + tagStyle + "\">/</span>") + "</body></html>");
 
-        searchAutocompleteLabel = new JLabel(I18n.getLocaleString("SEARCH_AUTOCOMPLETE"));
+        /*searchAutocompleteLabel = new JLabel(I18n.getLocaleString("SEARCH_AUTOCOMPLETE"));
         searchAutocompleteLabel.setFont(new Font(searchAutocompleteLabel.getFont().getName(), Font.BOLD, 11));
 
         searchAutocompleteCheckBox = new JCheckBox(I18n.getLocaleString("ENABLED"));
-        searchAutocompleteCheckBox.setFont(new Font(searchAutocompleteCheckBox.getFont().getName(), Font.BOLD, 11));
+        searchAutocompleteCheckBox.setFont(new Font(searchAutocompleteCheckBox.getFont().getName(), Font.BOLD, 11));*/
+
+        startTabLabel = new JLabel(I18n.getLocaleString("START_TAB"));
+        startTabLabel.setFont(new Font(startTabLabel.getFont().getName(), Font.BOLD, 11));
+
+        startTabComboBox = new JComboBox();
 
         downloadCompletedLabel = new JLabel(I18n.getLocaleString("DOWNLOAD_COMPLETED"));
         downloadCompletedLabel.setFont(new Font(downloadCompletedLabel.getFont().getName(), Font.BOLD, 11));
@@ -228,7 +235,7 @@ public class SettingsFrame extends JFrame {
                                     .add(maxParallelDownloadsLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .add(filenameSchemeLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .add(downloadDirectoryLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .add(searchAutocompleteLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .add(startTabLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .add(downloadCompletedLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .add(proxyHostLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .add(proxyPortLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -243,7 +250,7 @@ public class SettingsFrame extends JFrame {
                             .add(layout.createSequentialGroup()
                                     .add(layout.createParallelGroup(GroupLayout.LEADING, false)
                                             .add(downloadCompletedComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .add(searchAutocompleteCheckBox)
+                                            .add(startTabComboBox)
                                             .add(maxParallelDownloadsSpinner, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
                                             .add(fileExistsComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .add(languageComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -272,8 +279,8 @@ public class SettingsFrame extends JFrame {
                     .add(filenameSchemeDescriptionLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(LayoutStyle.UNRELATED)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
-                            .add(searchAutocompleteLabel, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-                            .add(searchAutocompleteCheckBox))
+                            .add(startTabLabel, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+                            .add(startTabComboBox))
                     .add(18, 18, 18)
                     .add(layout.createParallelGroup(GroupLayout.BASELINE)
                             .add(downloadCompletedLabel)
@@ -351,7 +358,8 @@ public class SettingsFrame extends JFrame {
             Groovesquid.getConfig().setDownloadDirectory(downloadDirectoryTextField.getText());
             Groovesquid.getConfig().setMaxParallelDownloads((Integer) (maxParallelDownloadsSpinner.getValue()));
             Groovesquid.getConfig().setFileNameScheme(fileNameSchemeTextField.getText());
-            Groovesquid.getConfig().setAutocompleteEnabled(searchAutocompleteCheckBox.isSelected());
+            //Groovesquid.getConfig().setAutocompleteEnabled(searchAutocompleteCheckBox.isSelected());
+            Groovesquid.getConfig().setStartTab(startTabComboBox.getSelectedIndex());
             Groovesquid.getConfig().setDownloadComplete(downloadCompletedComboBox.getSelectedIndex());
             if (originalLocale != languageComboBox.getSelectedItem()) {
                 Locale locale = (Locale) languageComboBox.getSelectedItem();
@@ -379,7 +387,7 @@ public class SettingsFrame extends JFrame {
     }
     
     public boolean settingsChanged() {
-        return !originalDownloadDirectory.equals(downloadDirectoryTextField.getText()) || !originalMaxParallelDownloads.equals(maxParallelDownloadsSpinner.getValue().toString()) || !originalFileNameScheme.equals(fileNameSchemeTextField.getText()) || originalAutocompleteEnabled != searchAutocompleteCheckBox.isSelected() || originalDownloadComplete != downloadCompletedComboBox.getSelectedIndex() || originalLocale != languageComboBox.getSelectedItem() && !originalProxyHost.equals(proxyHostTextField.getText()) && !originalProxyPort.equals(proxyPortTextField.getText());
+        return !originalDownloadDirectory.equals(downloadDirectoryTextField.getText()) || !originalMaxParallelDownloads.equals(maxParallelDownloadsSpinner.getValue().toString()) || !originalFileNameScheme.equals(fileNameSchemeTextField.getText()) || originalStartTab != startTabComboBox.getSelectedIndex() || originalDownloadComplete != downloadCompletedComboBox.getSelectedIndex() || originalLocale != languageComboBox.getSelectedItem() && !originalProxyHost.equals(proxyHostTextField.getText()) && !originalProxyPort.equals(proxyPortTextField.getText());
     }
     
     public boolean checkSettings() {
@@ -403,8 +411,7 @@ public class SettingsFrame extends JFrame {
         downloadDirectoryTextField.setText(Groovesquid.getConfig().getDownloadDirectory());
         maxParallelDownloadsSpinner.setValue(Groovesquid.getConfig().getMaxParallelDownloads());
         fileNameSchemeTextField.setText(Groovesquid.getConfig().getFileNameScheme());
-        searchAutocompleteCheckBox.setSelected(Groovesquid.getConfig().getAutocompleteEnabled());
-        
+
         String[] downloadCompleteActions = Config.DownloadComplete.names();
         DefaultComboBoxModel downloadCompleteComboBoxModel = new DefaultComboBoxModel();
         downloadCompletedComboBox.setModel(downloadCompleteComboBoxModel);
@@ -412,6 +419,14 @@ public class SettingsFrame extends JFrame {
             downloadCompleteComboBoxModel.addElement(I18n.getLocaleString(downloadCompleteAction));
         }
         downloadCompletedComboBox.setSelectedIndex(Groovesquid.getConfig().getDownloadComplete());
+
+        String[] startTabs = Config.StartTab.names();
+        DefaultComboBoxModel startTabComboBoxModel = new DefaultComboBoxModel();
+        startTabComboBox.setModel(startTabComboBoxModel);
+        for (String startTab : startTabs) {
+            startTabComboBoxModel.addElement(I18n.getLocaleString(startTab));
+        }
+        startTabComboBox.setSelectedIndex(Groovesquid.getConfig().getStartTab());
         
         String[] fileExistsActions = Config.FileExists.names();
         DefaultComboBoxModel fileExistsComboBoxModel = new DefaultComboBoxModel();
@@ -431,7 +446,7 @@ public class SettingsFrame extends JFrame {
         originalDownloadDirectory = downloadDirectoryTextField.getText();
         originalMaxParallelDownloads = maxParallelDownloadsSpinner.getValue().toString();
         originalFileNameScheme = fileNameSchemeTextField.getText();
-        originalAutocompleteEnabled = searchAutocompleteCheckBox.isSelected();
+        originalStartTab = startTabComboBox.getSelectedIndex();
         originalDownloadComplete = downloadCompletedComboBox.getSelectedIndex();
         originalLocale = (Locale) languageComboBox.getSelectedItem();
         originalProxyHost = proxyHostTextField.getText();
