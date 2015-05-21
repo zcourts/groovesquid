@@ -79,25 +79,27 @@ public class FileStore implements Store {
                 id3v2Tag.setTitle(track.getSong().getName());
             }
 
-            if (track.getSong().getArtistNames() != null) {
+            if (track.getSong().getArtists() != null) {
                 id3v1Tag.setArtist(track.getSong().getArtistNames());
                 id3v2Tag.setArtist(track.getSong().getArtistNames());
             }
 
-            if (track.getSong().getAlbum().getName() != null) {
-                id3v1Tag.setAlbum(track.getSong().getAlbum().getName());
-                id3v2Tag.setAlbum(track.getSong().getAlbum().getName());
-            }
+            if (track.getSong().getAlbum() != null) {
+                if (track.getSong().getAlbum().getName() != null) {
+                    id3v1Tag.setAlbum(track.getSong().getAlbum().getName());
+                    id3v2Tag.setAlbum(track.getSong().getAlbum().getName());
+                }
 
-            if (track.getSong().getYear() != null) {
-                id3v1Tag.setYear(track.getSong().getAlbum().getName());
-                id3v2Tag.setYear(track.getSong().getAlbum().getName());
+                if (track.getSong().getYear() != null) {
+                    id3v1Tag.setYear(track.getSong().getAlbum().getName());
+                    id3v2Tag.setYear(track.getSong().getAlbum().getName());
+                }
             }
 
             Long trackNum = track.getSong().getTrackNum();
             if (trackNum != null) {
-                id3v1Tag.setTrack(track.getSong().getAlbum().getName());
-                id3v2Tag.setTrack(track.getSong().getAlbum().getName());
+                id3v1Tag.setTrack(track.getSong().getTrackNum().toString());
+                id3v2Tag.setTrack(track.getSong().getTrackNum().toString());
             }
 
             id3v1Tag.setGenre(12);
@@ -111,6 +113,7 @@ public class FileStore implements Store {
             downloadFile.delete();
 
         } catch (Exception e) {
+            log.error("error while writing id3 tags", e);
             downloadFile.renameTo(outputFile);
         }
     }
