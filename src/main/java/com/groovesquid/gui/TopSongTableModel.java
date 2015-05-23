@@ -1,6 +1,7 @@
 package com.groovesquid.gui;
 
 import com.groovesquid.model.Song;
+import com.groovesquid.util.I18n;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class TopSongTableModel extends AbstractTableModel {
+
+    private final String[] columnNames = {"#", "", "", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST")};
 
     private List<Song> songs = new ArrayList<Song>();
 
@@ -20,11 +23,16 @@ public class TopSongTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return 3;
+        return columnNames.length;
     }
 
     public int getRowCount() {
         return songs.size();
+    }
+
+    @Override
+    public String getColumnName(int col) {
+        return columnNames[col];
     }
 
     public Object getValueAt(int row, int col) {
@@ -32,10 +40,14 @@ public class TopSongTableModel extends AbstractTableModel {
 
         switch (col) {
             case 0:
-                return song.isDownloaded();
+                return row + 1;
             case 1:
-                return song.getName();
+                return song.isDownloaded();
             case 2:
+                return false;
+            case 3:
+                return song.getName();
+            case 4:
                 return song.getArtists() != null ? song.getArtistNames() : "";
         }
         return null;
@@ -76,7 +88,7 @@ public class TopSongTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
+        if (columnIndex == 1 || columnIndex == 2) {
             return true;
         } else {
             return super.isCellEditable(rowIndex, columnIndex);

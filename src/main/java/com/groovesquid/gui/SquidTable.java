@@ -24,6 +24,27 @@ public class SquidTable extends JXTable {
     public SquidTable() {
         setShowGrid(false);
         setIntercellSpacing(new Dimension(0, 0));
+        MouseAdapter editingListener = new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                possiblySwitchEditors(e);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                possiblySwitchEditors(e);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                possiblySwitchEditors(e);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                possiblySwitchEditors(e);
+            }
+        };
         this.addMouseListener(editingListener);
         this.addMouseMotionListener(editingListener);
     }
@@ -58,25 +79,6 @@ public class SquidTable extends JXTable {
         // scroll to top
         scrollRectToVisible(getCellRect(0, 0, true));
     }
-
-    private final MouseAdapter editingListener = new MouseAdapter() {
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            possiblySwitchEditors(e);
-        }
-        @Override
-        public void mouseEntered(MouseEvent e) {
-            possiblySwitchEditors(e);
-        }
-        @Override
-        public void mouseExited(MouseEvent e) {
-            possiblySwitchEditors(e);
-        }
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            possiblySwitchEditors(e);
-        }
-    };
 
     private void possiblySwitchEditors(MouseEvent e) {
         Point p = e.getPoint();
@@ -142,5 +144,20 @@ public class SquidTable extends JXTable {
                 return super.getRolloverRenderer(loc, prep);
             }
         };
+    }
+
+    public String getToolTipText(MouseEvent e) {
+        String tip = null;
+        java.awt.Point p = e.getPoint();
+        int rowIndex = rowAtPoint(p);
+        int colIndex = columnAtPoint(p);
+
+        try {
+            tip = getValueAt(rowIndex, colIndex).toString();
+        } catch (RuntimeException e1) {
+            //catch null pointer exception if mouse is over an empty line
+        }
+
+        return tip;
     }
 }

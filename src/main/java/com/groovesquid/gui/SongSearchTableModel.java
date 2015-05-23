@@ -10,7 +10,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class SongSearchTableModel extends AbstractTableModel {
 
-    private final String[] columnNames = {"", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("DURATION"), I18n.getLocaleString("YEAR")/*, I18n.getLocaleString("TRACK_NUMBER")*/};
+    private final String[] columnNames = { "", "", I18n.getLocaleString("SONG"), I18n.getLocaleString("ARTIST"), I18n.getLocaleString("ALBUM"), I18n.getLocaleString("DURATION"), I18n.getLocaleString("YEAR")/*, I18n.getLocaleString("TRACK_NUMBER")*/ };
     
     private List<Song> songs = new ArrayList<Song>();
 
@@ -42,14 +42,16 @@ public class SongSearchTableModel extends AbstractTableModel {
             case 0:
                 return song.isDownloaded();
             case 1:
-                return song.getName();
+                return false;
             case 2:
-                return song.getArtists() != null ? song.getArtistNames() : "";
+                return song.getName();
             case 3:
-                return song.getAlbum() != null ? song.getAlbum() : "";
+                return song.getArtists() != null ? song.getArtistNames() : "";
             case 4:
-                return song.getReadableDuration();
+                return song.getAlbum() != null ? song.getAlbum() : "";
             case 5:
+                return song.getReadableDuration();
+            case 6:
                 return song.getAlbum() != null ? song.getAlbum().getReleaseYear() : "";
             /*case 6:
                 return song.getTrackNum();*/
@@ -92,7 +94,7 @@ public class SongSearchTableModel extends AbstractTableModel {
     
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if(columnIndex == 0) {
+        if (columnIndex == 0 || columnIndex == 1) {
             return true;
         } else {
             return super.isCellEditable(rowIndex, columnIndex);

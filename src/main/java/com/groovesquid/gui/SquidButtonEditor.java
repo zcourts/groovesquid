@@ -1,7 +1,5 @@
 package com.groovesquid.gui;
 
-import com.groovesquid.Groovesquid;
-
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -9,83 +7,83 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-/**
- *  The ButtonColumn class provides a renderer and an editor that looks like a
- *  JButton. The renderer and editor will then be used for a specified column
- *  in the table. The TableModel will contain the String to be displayed on
- *  the button.
- *
- *  The button can be invoked by a mouse click or by pressing the space bar
- *  when the cell has focus. Optionally a mnemonic can be set to invoke the
- *  button. When the button is invoked the provided Action is invoked. The
- *  source of the Action will be the table. The action command will contain
- *  the model row number of the button that was clicked.
- *
- */
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class SquidButtonEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
+
     private JTable table;
     private Action action;
-
     private JButton renderButton;
     private JButton editButton;
-    private Object editorValue;
+    private Font fontAwesome;
+    public String buttonText;
+    public static String DOWNLOAD_ICON = "\uf019";
+    public static String PLAY_ICON = "\uf04b";
 
-    /**
-     *  Create the ButtonColumn to be used as a renderer and editor. The
-     *  renderer and editor will automatically be installed on the TableColumn
-     *  of the specified column.
-     *
-     *  @param table the table containing the button renderer/editor
-     *  @param action the Action to be invoked when the button is invoked
-     *  @param column the column to which the button renderer/editor is added
-     */
-    public SquidButtonEditor(JTable table, Action action, int column) {
-        this(table, action);
+    public SquidButtonEditor(JTable table, Action action, int column, String buttonText) {
+        this(table, action, buttonText);
 
         TableColumnModel columnModel = table.getColumnModel();
         columnModel.getColumn(column).setCellRenderer(this);
         columnModel.getColumn(column).setCellEditor(this);
     }
 
-    public SquidButtonEditor(JTable table, Action action) {
+    public SquidButtonEditor(JTable table, Action action, String buttonText) {
         this.table = table;
         this.action = action;
+        this.buttonText = buttonText;
 
-        renderButton = buildButton();
+        try {
+            InputStream is = getClass().getResourceAsStream("/gui/fonts/fontawesome.ttf");
+            fontAwesome = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (Exception ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
         editButton = buildButton();
         editButton.addActionListener(this);
-        editButton.setBackground(Color.RED);
-
-        //table.addMouseListener(this);
+        renderButton = buildButton();
     }
 
     private JButton buildButton() {
-        JButton button = new JButton();
+        final JButton button = new JButton();
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setBorder(null);
         button.setFocusable(false);
         button.setFocusPainted(false);
         button.setOpaque(true);
-        button.setHorizontalTextPosition(SwingConstants.LEFT);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.setVerticalAlignment(SwingConstants.CENTER);
+        button.setSize(button.getPreferredSize());
+        button.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        if (fontAwesome != null) {
+            if (buttonText.equals(DOWNLOAD_ICON)) {
+                button.setFont(fontAwesome.deriveFont(Font.PLAIN, 13f));
+            } else if (buttonText.equals(PLAY_ICON)) {
+                button.setFont(fontAwesome.deriveFont(Font.PLAIN, 10f));
+            }
+        }
         return button;
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        if(!((Boolean) value)) {
-            editButton.setIcon(Groovesquid.getMainFrame().plusIcon);
-            editButton.setRolloverIcon(Groovesquid.getMainFrame().plusIconHover);
+        if (value instanceof Boolean && !((Boolean) value)) {
+            editButton.setText(buttonText);
+            editButton.setEnabled(true);
         } else {
-            editButton.setIcon(null);
-            editButton.setRolloverIcon(null);
+            editButton.setText(null);
+            editButton.setEnabled(false);
         }
 
         if (isSelected) {
             editButton.setBackground(table.getSelectionBackground());
+            editButton.setForeground(Color.LIGHT_GRAY);
         } else {
+            editButton.setForeground(Color.GRAY);
             if (row % 2 == 0) {
                 editButton.setBackground(new Color(255, 255, 255));
             } else {
@@ -93,30 +91,31 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
             }
         }
 
-        this.editorValue = value;
         return editButton;
     }
 
     public Object getCellEditorValue() {
-        return editorValue;
+        return editButton.getText();
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        if(!((Boolean) value)) {
-            renderButton.setIcon(Groovesquid.getMainFrame().plusIcon);
-            renderButton.setRolloverIcon(Groovesquid.getMainFrame().plusIconHover);
+        if (value instanceof Boolean && !((Boolean) value)) {
+            renderButton.setText(buttonText);
+            renderButton.setEnabled(true);
         } else {
-            renderButton.setIcon(null);
-            renderButton.setRolloverIcon(null);
+            renderButton.setText(null);
+            renderButton.setEnabled(false);
         }
 
         if (isSelected) {
             renderButton.setBackground(table.getSelectionBackground());
+            renderButton.setForeground(Color.WHITE);
         } else {
+            renderButton.setForeground(Color.BLACK);
             if (row % 2 == 0) {
-                renderButton.setBackground(new Color(242,242,242));
+                renderButton.setBackground(new Color(255, 255, 255));
             } else {
-                renderButton.setBackground(new Color(230,230,230));
+                renderButton.setBackground(new Color(245, 245, 245));
             }
         }
 
