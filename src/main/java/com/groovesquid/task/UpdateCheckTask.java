@@ -35,11 +35,13 @@ public class UpdateCheckTask extends HttpService implements Runnable {
                 }
             }
 
-            String bannerUrl = json.get("ads").asObject().get("banner").asString();
-            if (bannerUrl != null) {
-
-                String bannerContent = get(bannerUrl);
-                Groovesquid.getMainFrame().getAdPane().setText(bannerContent);
+            try {
+                String bannerUrl = json.get("ads").asObject().get("banner").asString();
+                if (bannerUrl != null) {
+                    String bannerContent = get(bannerUrl);
+                    Groovesquid.getMainFrame().getAdPane().setText(bannerContent);
+                }
+            } catch (Exception ignored) {
             }
         }
 
