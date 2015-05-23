@@ -1,5 +1,7 @@
 package com.groovesquid.model;
 
+import com.groovesquid.Groovesquid;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +14,7 @@ public class Song {
     private long duration;
     private String year;
     private long trackNum, orderNum;
-    private boolean downloaded;
+    private Boolean downloaded;
 
     public Song(String id, String name, List<Artist> artists) {
         this(id, name, artists, null, 0);
@@ -26,11 +28,12 @@ public class Song {
 
         this.duration = duration;
 
-        if (year != null) {
+        /*if (year != null) {
             this.year = year;
         } else {
             this.year = "";
-        }
+        }*/
+        this.year = "";
 
         this.trackNum = trackNum;
         this.orderNum = trackNum;
@@ -101,14 +104,49 @@ public class Song {
     
     @Override
     public String toString() {
-        return "Song" + "{songID=" + id + ", songName='" + name + '\'' + '}';
+        return "Song" + "{id=" + id + ", name='" + name + '\'' + ", artists='" + artists + '}';
     }
 
     public boolean isDownloaded() {
+        if (downloaded == null) {
+            downloaded = false;
+            for (Track track : Groovesquid.getConfig().getDownloads()) {
+                if (this.equals(track.getSong())) {
+                    downloaded = true;
+                    break;
+                }
+            }
+        }
         return downloaded;
     }
 
     public void setDownloaded(boolean downloaded) {
         this.downloaded = downloaded;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Song other = (Song) obj;
+        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+            return false;
+        }
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.artists == null) ? (other.artists != null) : !this.artists.containsAll(other.artists) || !other.artists.containsAll(this.artists)) {
+            return false;
+        }
+        if ((this.album == null) ? (other.album != null) : !this.album.equals(other.album)) {
+            return false;
+        }
+        if ((this.year == null) ? (other.year != null) : !this.year.equals(other.year)) {
+            return false;
+        }
+        return this.trackNum == other.trackNum;
     }
 }

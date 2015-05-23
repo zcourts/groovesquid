@@ -59,4 +59,21 @@ public class Album {
     public String getReleaseYear() {
         return releaseDate != null ? String.valueOf(releaseDate.get(Calendar.YEAR)) : "";
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Album other = (Album) obj;
+        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+            return false;
+        }
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        return !((this.artists == null) ? (other.artists != null) : !this.artists.containsAll(other.artists) || !other.artists.containsAll(this.artists));
+    }
 }
