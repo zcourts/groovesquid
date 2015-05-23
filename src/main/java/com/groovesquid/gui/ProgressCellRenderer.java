@@ -92,7 +92,7 @@ public class ProgressCellRenderer extends DefaultTableCellRenderer {
 
         b.setValue((Integer) value);
         b.setString(text);
-        b.setFont(table.getFont());
+        b.setFont(table.getFont().deriveFont(11f));
         
         if (isSelected) {
             //b.setForeground(table.getSelectionForeground());
