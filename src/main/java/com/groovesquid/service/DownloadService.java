@@ -28,7 +28,7 @@ public class DownloadService extends HttpService {
     private final ExecutorService executorServiceForPlay;
     private final List<DownloadTask> currentlyRunningDownloads = new ArrayList<DownloadTask>();
     private final FilenameSchemeParser filenameSchemeParser;
-    private List<Hoster> hosters = new ArrayList<Hoster>();
+    private List<Class> hosters = new ArrayList<Class>();
 
     private long nextSongMustSleepUntil;
 
@@ -37,9 +37,9 @@ public class DownloadService extends HttpService {
         executorServiceForPlay = Executors.newFixedThreadPool(1);
         filenameSchemeParser = new FilenameSchemeParser();
 
-        hosters.add(new Deezer());
-        hosters.add(new Netease());
-        hosters.add(new Soundcloud());
+        hosters.add(Deezer.class);
+        hosters.add(Netease.class);
+        hosters.add(Soundcloud.class);
     }
 
     public FilenameSchemeParser getFilenameSchemeParser() {
@@ -163,7 +163,9 @@ public class DownloadService extends HttpService {
                 if (track.getStatus() == Track.Status.CANCELLED)
                     return;
 
-                for (Hoster hoster : hosters) {
+                for (Class hosterClass : hosters) {
+                    Hoster hoster = (Hoster) hosterClass.getConstructor().newInstance();
+
                     if (track.getStatus() == Track.Status.FINISHED) {
                         break;
                     }
