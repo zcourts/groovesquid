@@ -73,7 +73,7 @@ public class SearchService extends HttpService {
             while (i.hasNext()) {
                 Song song = i.next();
                 if (song.getName().equalsIgnoreCase(recording.asObject().get("title").asString()) && song.getArtists().get(0).getId().equals(artists.get(0).getId())) {
-                    if (date != null && date.getTime().before(song.getAlbum().getReleaseDate().getTime())) {
+                    if (date != null && song.getAlbum() != null && song.getAlbum().getReleaseDate() != null && date.getTime().before(song.getAlbum().getReleaseDate().getTime())) {
                         i.remove();
                     } else {
                         continue recordingsLoop;

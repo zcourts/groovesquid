@@ -10,6 +10,8 @@ import com.groovesquid.service.PlayService;
 import com.groovesquid.service.PlaybackListener;
 import com.groovesquid.util.GuiUtils;
 import com.groovesquid.util.I18n;
+import org.divxdede.swing.busy.BusySwingWorker;
+import org.divxdede.swing.busy.JBusyComponent;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
@@ -72,6 +74,7 @@ public class MainFrame extends JFrame {
     protected JButton searchButton;
     protected JPanel searchPanel;
     protected JScrollPane searchScrollPane;
+    protected JBusyComponent<JScrollPane> busySearchScrollPane;
     protected JTable searchTable;
     protected JPopupMenu searchTablePopupMenu;
     protected JTextField searchTextField;
@@ -86,7 +89,9 @@ public class MainFrame extends JFrame {
     protected JTable homeFirstTopTable;
     protected JTable homeSecondTopTable;
     protected JScrollPane homeFirstTopScrollPane;
+    protected JBusyComponent<JScrollPane> busyFirstTopScrollPane;
     protected JScrollPane homeSecondTopScrollPane;
+    protected JBusyComponent<JScrollPane> busySecondTopScrollPane;
     protected JComboBox homeFirstTopComboBox;
     protected JComboBox homeSecondTopComboBox;
     protected List<String> homeTopSources = new ArrayList<String>() {{
@@ -454,13 +459,16 @@ public class MainFrame extends JFrame {
                 tableMousePressed(evt);
             }
         });
-        homeTopComboBoxActionPerformed(new ActionEvent(homeFirstTopComboBox, 0, null));
 
         homeFirstTopScrollPane = new JScrollPane();
         homeFirstTopScrollPane.getVerticalScrollBar().setUI(style.getSearchScrollBarUI(homeFirstTopScrollPane.getVerticalScrollBar()));
         homeFirstTopScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         homeFirstTopScrollPane.setOpaque(false);
         homeFirstTopScrollPane.setViewportView(homeFirstTopTable);
+
+        busyFirstTopScrollPane = new JBusyComponent<JScrollPane>(homeFirstTopScrollPane);
+
+        homeTopComboBoxActionPerformed(new ActionEvent(homeFirstTopComboBox, 0, null));
 
         homeSecondTopTable = new SquidTable();
         homeSecondTopTable.setModel(new TopSongTableModel());
@@ -480,13 +488,16 @@ public class MainFrame extends JFrame {
                 tableMousePressed(evt);
             }
         });
-        homeTopComboBoxActionPerformed(new ActionEvent(homeSecondTopComboBox, 0, null));
 
         homeSecondTopScrollPane = new JScrollPane();
         homeSecondTopScrollPane.getVerticalScrollBar().setUI(style.getSearchScrollBarUI(homeSecondTopScrollPane.getVerticalScrollBar()));
         homeSecondTopScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         homeSecondTopScrollPane.setOpaque(false);
         homeSecondTopScrollPane.setViewportView(homeSecondTopTable);
+
+        busySecondTopScrollPane = new JBusyComponent<JScrollPane>(homeSecondTopScrollPane);
+
+        homeTopComboBoxActionPerformed(new ActionEvent(homeSecondTopComboBox, 0, null));
 
         adPane = new JEditorPane();
         adPane.setOpaque(false);
@@ -518,10 +529,10 @@ public class MainFrame extends JFrame {
                                 .addGroup(homePanelLayout.createSequentialGroup()
                                         .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(homeFirstTopComboBox)
-                                                .addComponent(homeFirstTopScrollPane))
+                                                .addComponent(busyFirstTopScrollPane))
                                         .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(homeSecondTopComboBox)
-                                                .addComponent(homeSecondTopScrollPane))))
+                                                .addComponent(busySecondTopScrollPane))))
         );
 
         homePanelLayout.setVerticalGroup(homePanelLayout.createSequentialGroup()
@@ -531,8 +542,8 @@ public class MainFrame extends JFrame {
                                                 .addComponent(homeFirstTopComboBox)
                                                 .addComponent(homeSecondTopComboBox))
                                         .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                .addComponent(homeFirstTopScrollPane)
-                                                .addComponent(homeSecondTopScrollPane))))
+                                                .addComponent(busyFirstTopScrollPane)
+                                                .addComponent(busySecondTopScrollPane))))
                         .addGroup(homePanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(adPane, 90, 90, 90))
         );
@@ -566,7 +577,7 @@ public class MainFrame extends JFrame {
         AbstractHyperlinkAction<Object> act = new AbstractHyperlinkAction<Object>() {
             public void actionPerformed(ActionEvent ev) {
                 if (target instanceof Artist) {
-                    SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
+                    BusySwingWorker<List<Song>, Void> worker = new BusySwingWorker<List<Song>, Void>(busySearchScrollPane.getBusyModel()) {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
@@ -587,7 +598,7 @@ public class MainFrame extends JFrame {
                     };
                     worker.execute();
                 } else if (target instanceof Album) {
-                    SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
+                    BusySwingWorker<List<Song>, Void> worker = new BusySwingWorker<List<Song>, Void>(busySearchScrollPane.getBusyModel()) {
                         @Override
                         protected List<Song> doInBackground() {
                             List<Song> songs = new ArrayList<Song>();
@@ -642,6 +653,8 @@ public class MainFrame extends JFrame {
         searchScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         searchScrollPane.setOpaque(false);
         searchScrollPane.setViewportView(searchTable);
+
+        busySearchScrollPane = new JBusyComponent<JScrollPane>(searchScrollPane);
 
         searchTypeComboBox = new JComboBox();
         searchTypeComboBox.setFont(new Font(searchTypeComboBox.getFont().getName(), Font.PLAIN, 12));
@@ -706,7 +719,7 @@ public class MainFrame extends JFrame {
                         .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                        .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                                        .addComponent(busySearchScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
                                         .addGroup(searchPanelLayout.createSequentialGroup()
                                                 .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -725,7 +738,7 @@ public class MainFrame extends JFrame {
                                         .addComponent(searchButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+                                .addComponent(busySearchScrollPane, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                                 .addContainerGap())
         );
 
@@ -733,6 +746,7 @@ public class MainFrame extends JFrame {
         downloadPanel.setOpaque(false);
 
         tabbedPane = new JTabbedPane();
+        tabbedPane.setFocusable(false);
         tabbedPane.addTab(I18n.getLocaleString("HOME"), null, homePanel, null);
         tabbedPane.addTab(I18n.getLocaleString("SEARCH"), null, searchPanel, null);
         tabbedPane.addTab(I18n.getLocaleString("DOWNLOADS"), null, downloadPanel, null);
@@ -894,7 +908,7 @@ public class MainFrame extends JFrame {
     private void homeTopComboBoxActionPerformed(ActionEvent evt) {
         final JComboBox comboBox = (JComboBox) evt.getSource();
 
-        new SwingWorker<List<Song>, Void>() {
+        new BusySwingWorker<List<Song>, Void>(busyFirstTopScrollPane.getBusyModel()) {
             @Override
             protected List<Song> doInBackground() {
                 comboBox.setEnabled(false);
@@ -1057,8 +1071,8 @@ public class MainFrame extends JFrame {
                 selectedRow = searchTable.convertRowIndexToModel(selectedRow);
                 albums.add(model.getAlbums().get(selectedRow));
             }
-            
-            SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>(){
+
+            BusySwingWorker<List<Song>, Void> worker = new BusySwingWorker<List<Song>, Void>(busySearchScrollPane.getBusyModel()) {
 
                 @Override
                 protected List<Song> doInBackground() {
@@ -1320,7 +1334,7 @@ public class MainFrame extends JFrame {
 
         // Songs
         if (searchTypeComboBox.getSelectedIndex() == 0) {
-            SwingWorker<List<Song>, Void> worker = new SwingWorker<List<Song>, Void>() {
+            BusySwingWorker<List<Song>, Void> worker = new BusySwingWorker<List<Song>, Void>(busySearchScrollPane.getBusyModel()) {
 
                 @Override
                 protected List<Song> doInBackground() {
@@ -1353,7 +1367,7 @@ public class MainFrame extends JFrame {
 
         // Albums
         } else if (searchTypeComboBox.getSelectedIndex() == 1) {
-            SwingWorker<List<Album>, Void> worker = new SwingWorker<List<Album>, Void>() {
+            BusySwingWorker<List<Album>, Void> worker = new BusySwingWorker<List<Album>, Void>(busySearchScrollPane.getBusyModel()) {
 
                 @Override
                 protected List<Album> doInBackground() {
@@ -1380,7 +1394,7 @@ public class MainFrame extends JFrame {
             
         // Artists
         } else if (searchTypeComboBox.getSelectedIndex() == 2) {
-            SwingWorker<List<Artist>, Void> worker = new SwingWorker<List<Artist>, Void>() {
+            BusySwingWorker<List<Artist>, Void> worker = new BusySwingWorker<List<Artist>, Void>(busySearchScrollPane.getBusyModel()) {
 
                 @Override
                 protected List<Artist> doInBackground() {
