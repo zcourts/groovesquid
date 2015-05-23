@@ -20,12 +20,16 @@ import org.jdesktop.swingx.renderer.JXRendererHyperlink;
 import org.jdesktop.swingx.rollover.RolloverProducer;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -42,29 +46,29 @@ public class MainFrame extends JFrame {
     protected JLabel albumCoverLabel;
     protected JLabel currentDurationLabel;
     protected JLabel currentlyPlayingLabel;
-    protected JButton downloadButton;
     protected JMenuItem downloadMenuItem;
     protected JPanel downloadPanel;
     protected JScrollPane downloadScrollPane;
     protected JTable downloadTable;
     protected JPopupMenu downloadTablePopupMenu;
+    protected JMenu selectMenu;
+    protected JMenuItem selectAllMenuItem;
+    protected JMenuItem selectCompletedMenuItem;
+    protected JMenuItem selectFailedMenuItem;
     protected JLabel durationLabel;
     protected JMenuBar menuBar;
     protected JMenu fileMenu;
     protected JMenu editMenu;
     protected JMenuItem openDirectoryMenuItem;
     protected JMenuItem openFileMenuItem;
-    protected JButton playButton;
     protected JMenuItem playMenuItem;
     protected JButton playPauseButton;
     protected JButton nextButton;
     protected JButton previousButton;
     protected JPanel playerPanel;
-    protected JButton removeFromDiskButton;
     protected JMenuItem removeFromDiskMenuItem;
-    protected JButton removeFromListButton;
     protected JMenuItem removeFromListMenuItem;
-    protected JButton retryFailedDownloadsButton;
+    protected JMenuItem retryFailedDownloadsMenuItem;
     protected JButton searchButton;
     protected JPanel searchPanel;
     protected JScrollPane searchScrollPane;
@@ -72,7 +76,6 @@ public class MainFrame extends JFrame {
     protected JPopupMenu searchTablePopupMenu;
     protected JTextField searchTextField;
     protected JComboBox searchTypeComboBox;
-    protected JComboBox selectComboBox;
     protected JSlider trackSlider;
     protected JLabel volumeOffLabel;
     protected JLabel volumeOnLabel;
@@ -167,6 +170,7 @@ public class MainFrame extends JFrame {
                 removeFromListMenuItemActionPerformed(evt);
             }
         });
+        removeFromListMenuItem.setAccelerator(KeyStroke.getKeyStroke("BACK_SPACE"));
 
         removeFromDiskMenuItem = new JMenuItem(I18n.getLocaleString("REMOVE_FROM_DISK"));
         removeFromDiskMenuItem.addActionListener(new ActionListener() {
@@ -174,6 +178,7 @@ public class MainFrame extends JFrame {
                 removeFromDiskMenuItemActionPerformed(evt);
             }
         });
+        removeFromDiskMenuItem.setAccelerator(KeyStroke.getKeyStroke("BACK_SPACE"));
 
         openFileMenuItem = new JMenuItem(I18n.getLocaleString("OPEN_FILE"));
         openFileMenuItem.addActionListener(new ActionListener() {
@@ -189,13 +194,49 @@ public class MainFrame extends JFrame {
             }
         });
 
+        retryFailedDownloadsMenuItem = new JMenuItem(I18n.getLocaleString("RETRY_FAILED_DOWNLOADS"));
+        retryFailedDownloadsMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                retryFailedDownloadsMenuItemActionPerformed(evt);
+            }
+        });
+
+        selectAllMenuItem = new JMenuItem(I18n.getLocaleString("ALL"));
+        selectAllMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                selectAllMenuItemActionPerformed(evt);
+            }
+        });
+
+        selectCompletedMenuItem = new JMenuItem(I18n.getLocaleString("COMPLETED"));
+        selectCompletedMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                selectCompletedMenuItemActionPerformed(evt);
+            }
+        });
+
+        selectFailedMenuItem = new JMenuItem(I18n.getLocaleString("FAILED"));
+        selectFailedMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                selectFailedMenuItemActionPerformed(evt);
+            }
+        });
+
+        selectMenu = new JMenu(I18n.getLocaleString("SELECT"));
+        selectMenu.add(selectAllMenuItem);
+        selectMenu.add(selectCompletedMenuItem);
+        selectMenu.add(selectFailedMenuItem);
+
         downloadTablePopupMenu = new JPopupMenu();
         downloadTablePopupMenu.add(removeFromListMenuItem);
         downloadTablePopupMenu.add(removeFromDiskMenuItem);
+        downloadTablePopupMenu.addSeparator();
         downloadTablePopupMenu.add(openFileMenuItem);
         downloadTablePopupMenu.add(openDirectoryMenuItem);
-
-        retryFailedDownloadsButton = new JButton();
+        downloadTablePopupMenu.addSeparator();
+        downloadTablePopupMenu.add(selectMenu);
+        downloadTablePopupMenu.addSeparator();
+        downloadTablePopupMenu.add(retryFailedDownloadsMenuItem);
 
         playerPanel = new JPanel();
         playerPanel.setBackground(style.getPlayerPanelBackground());
@@ -400,14 +441,13 @@ public class MainFrame extends JFrame {
         homeFirstTopTable.setFillsViewportHeight(true);
         homeFirstTopTable.setGridColor(new Color(204, 204, 204));
         homeFirstTopTable.setIntercellSpacing(new Dimension(0, 0));
-        homeFirstTopTable.setRowHeight(20);
+        homeFirstTopTable.setRowMargin(1);
+        homeFirstTopTable.setRowHeight(22);
         homeFirstTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeFirstTopTable.setShowHorizontalLines(false);
         homeFirstTopTable.setShowVerticalLines(false);
-        homeFirstTopTable.setTableHeader(null);
         homeFirstTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeFirstTopTable.setSelectionForeground(style.getSearchTableSelectionForeground());
-        homeFirstTopTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
         homeFirstTopTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -427,14 +467,13 @@ public class MainFrame extends JFrame {
         homeSecondTopTable.setFillsViewportHeight(true);
         homeSecondTopTable.setGridColor(new Color(204, 204, 204));
         homeSecondTopTable.setIntercellSpacing(new Dimension(0, 0));
-        homeSecondTopTable.setRowHeight(20);
+        homeSecondTopTable.setRowMargin(1);
+        homeSecondTopTable.setRowHeight(22);
         homeSecondTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeSecondTopTable.setShowHorizontalLines(false);
         homeSecondTopTable.setShowVerticalLines(false);
-        homeSecondTopTable.setTableHeader(null);
         homeSecondTopTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         homeSecondTopTable.setSelectionForeground(style.getSearchTableSelectionForeground());
-        homeSecondTopTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
         homeSecondTopTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -510,14 +549,14 @@ public class MainFrame extends JFrame {
         searchTable.setFillsViewportHeight(true);
         searchTable.setGridColor(new Color(204, 204, 204));
         searchTable.setIntercellSpacing(new Dimension(0, 0));
-        searchTable.setRowHeight(20);
+        searchTable.setRowMargin(1);
+        searchTable.setRowHeight(22);
         searchTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         searchTable.setShowHorizontalLines(false);
         searchTable.setShowVerticalLines(false);
         searchTable.getTableHeader().setReorderingAllowed(false);
         searchTable.setSelectionBackground(style.getSearchTableSelectionBackground());
         searchTable.setSelectionForeground(style.getSearchTableSelectionForeground());
-        searchTable.getSelectionModel().addListSelectionListener(searchListSelectionListener);
         searchTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -604,50 +643,6 @@ public class MainFrame extends JFrame {
         searchScrollPane.setOpaque(false);
         searchScrollPane.setViewportView(searchTable);
 
-        downloadButton = new JButton(I18n.getLocaleString("DOWNLOAD"));
-        downloadButton.setFont(new Font(downloadButton.getFont().getName(), Font.PLAIN, 11));
-        if (style.usesButtonBackgrounds()) {
-            downloadButton.setIcon(GuiUtils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
-            downloadButton.setRolloverIcon(GuiUtils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
-            downloadButton.setPressedIcon(GuiUtils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
-            downloadButton.setBorder(null);
-            downloadButton.setBorderPainted(false);
-            downloadButton.setContentAreaFilled(false);
-            downloadButton.setForeground(style.getSearchButtonsForeground());
-        }
-        downloadButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        downloadButton.setEnabled(false);
-        downloadButton.setFocusable(false);
-        downloadButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        downloadButton.setRequestFocusEnabled(false);
-        downloadButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadButtonActionPerformed(evt);
-            }
-        });
-
-        playButton = new JButton(I18n.getLocaleString("PLAY"));
-        playButton.setFont(new Font(playButton.getFont().getName(), Font.PLAIN, 11));
-        if (style.usesButtonBackgrounds()) {
-            playButton.setIcon(GuiUtils.stretchImage(style.getSearchButtonsBackground(), 90, 27, this));
-            playButton.setRolloverIcon(GuiUtils.stretchImage(style.getSearchButtonsHoverBackground(), 90, 27, this));
-            playButton.setPressedIcon(GuiUtils.stretchImage(style.getSearchButtonsPressedBackground(), 90, 27, this));
-            playButton.setBorder(null);
-            playButton.setBorderPainted(false);
-            playButton.setContentAreaFilled(false);
-            playButton.setForeground(style.getSearchButtonsForeground());
-        }
-        playButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        playButton.setEnabled(false);
-        playButton.setFocusable(false);
-        playButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        playButton.setRequestFocusEnabled(false);
-        playButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                playButtonActionPerformed(evt);
-            }
-        });
-
         searchTypeComboBox = new JComboBox();
         searchTypeComboBox.setFont(new Font(searchTypeComboBox.getFont().getName(), Font.PLAIN, 12));
         searchTypeComboBox.setUI(style.getSearchTypeComboBoxUI(searchTypeComboBox));
@@ -716,11 +711,6 @@ public class MainFrame extends JFrame {
                                                 .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                 .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                        .addGroup(searchPanelLayout.createSequentialGroup()
-                                                                .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(0, 0, Short.MAX_VALUE))
                                                         .addComponent(searchTextField))
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(searchButton, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)))
@@ -729,15 +719,11 @@ public class MainFrame extends JFrame {
         searchPanelLayout.setVerticalGroup(
                 searchPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
+                                .addContainerGap()
                                 .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(searchTextField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(searchButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(searchTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(searchPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(downloadButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(playButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(searchScrollPane, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                                 .addContainerGap())
@@ -754,48 +740,6 @@ public class MainFrame extends JFrame {
             tabbedPane.setSelectedIndex(1);
         }
 
-        removeFromDiskButton = new JButton(I18n.getLocaleString("REMOVE_FROM_DISK"));
-        removeFromDiskButton.setFont(new Font(removeFromDiskButton.getFont().getName(), Font.PLAIN, 11));
-        if (style.usesButtonBackgrounds()) {
-            removeFromDiskButton.setIcon(GuiUtils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
-            removeFromDiskButton.setRolloverIcon(GuiUtils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
-            removeFromDiskButton.setPressedIcon(GuiUtils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
-            removeFromDiskButton.setBorder(null);
-            removeFromDiskButton.setBorderPainted(false);
-            removeFromDiskButton.setContentAreaFilled(false);
-            removeFromDiskButton.setForeground(style.getDownloadButtonsForeground());
-        }
-        removeFromDiskButton.setEnabled(false);
-        removeFromDiskButton.setFocusable(false);
-        removeFromDiskButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        removeFromDiskButton.setRequestFocusEnabled(false);
-        removeFromDiskButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                removeFromDiskButtonActionPerformed(evt);
-            }
-        });
-
-        removeFromListButton = new JButton(I18n.getLocaleString("REMOVE_FROM_LIST"));
-        removeFromListButton.setFont(new Font(removeFromDiskButton.getFont().getName(), Font.PLAIN, 11));
-        if (style.usesButtonBackgrounds()) {
-            removeFromListButton.setIcon(GuiUtils.stretchImage(style.getDownloadButtonsBackground(), 148, 27, this));
-            removeFromListButton.setRolloverIcon(GuiUtils.stretchImage(style.getDownloadButtonsHoverBackground(), 148, 27, this));
-            removeFromListButton.setPressedIcon(GuiUtils.stretchImage(style.getDownloadButtonsPressedBackground(), 148, 27, this));
-            removeFromListButton.setBorder(null);
-            removeFromListButton.setBorderPainted(false);
-            removeFromListButton.setContentAreaFilled(false);
-            removeFromListButton.setForeground(style.getDownloadButtonsForeground());
-        }
-        removeFromListButton.setEnabled(false);
-        removeFromListButton.setFocusable(false);
-        removeFromListButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        removeFromListButton.setRequestFocusEnabled(false);
-        removeFromListButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                removeFromListButtonActionPerformed(evt);
-            }
-        });
-
         downloadScrollPane = new JScrollPane();
         downloadScrollPane.getVerticalScrollBar().setUI(style.getDownloadScrollBarUI(downloadScrollPane.getVerticalScrollBar()));
         downloadScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -811,13 +755,13 @@ public class MainFrame extends JFrame {
         downloadTable.setFillsViewportHeight(true);
         downloadTable.setGridColor(new Color(204, 204, 204));
         downloadTable.setIntercellSpacing(new Dimension(0, 0));
-        downloadTable.setRowHeight(20);
+        downloadTable.setRowMargin(1);
+        downloadTable.setRowHeight(22);
         downloadTable.setSelectionBackground(style.getDownloadTableSelectionBackground());
         downloadTable.setSelectionForeground(style.getDownloadTableSelectionForeground());
         downloadTable.setShowHorizontalLines(false);
         downloadTable.setShowVerticalLines(false);
         downloadTable.getTableHeader().setReorderingAllowed(false);
-        downloadTable.getSelectionModel().addListSelectionListener(downloadListSelectionListener);
         downloadTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -832,45 +776,6 @@ public class MainFrame extends JFrame {
         });
         downloadScrollPane.setViewportView(downloadTable);
 
-        selectComboBox = new JComboBox();
-        selectComboBox.setFont(new Font(selectComboBox.getFont().getName(), Font.PLAIN, 12));
-        selectComboBox.setUI(style.getSelectComboBoxUI(selectComboBox));
-        DefaultComboBoxModel selectComboBoxModel = new DefaultComboBoxModel();
-        selectComboBox.setModel(selectComboBoxModel);
-        selectComboBoxModel.addElement(I18n.getLocaleString("SELECT"));
-        selectComboBoxModel.addElement(I18n.getLocaleString("ALL"));
-        selectComboBoxModel.addElement(I18n.getLocaleString("COMPLETED"));
-        selectComboBoxModel.addElement(I18n.getLocaleString("FAILED"));
-        selectComboBox.setBorder(style.getSelectComboBoxBorder());
-        selectComboBox.setFocusable(false);
-        selectComboBox.setPreferredSize(new Dimension(90, 26));
-        selectComboBox.setRequestFocusEnabled(false);
-        selectComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                selectComboBoxActionPerformed(evt);
-            }
-        });
-
-        retryFailedDownloadsButton = new JButton(I18n.getLocaleString("RETRY_FAILED_DOWNLOADS"));
-        retryFailedDownloadsButton.setFont(new Font(retryFailedDownloadsButton.getFont().getName(), Font.PLAIN, 11));
-        if (style.usesButtonBackgrounds()) {
-            retryFailedDownloadsButton.setIcon(GuiUtils.stretchImage(style.getDownloadButtonsBackground(), 151, 27, this));
-            retryFailedDownloadsButton.setRolloverIcon(GuiUtils.stretchImage(style.getDownloadButtonsHoverBackground(), 151, 27, this));
-            retryFailedDownloadsButton.setPressedIcon(GuiUtils.stretchImage(style.getDownloadButtonsPressedBackground(), 151, 27, this));
-            retryFailedDownloadsButton.setBorder(null);
-            retryFailedDownloadsButton.setBorderPainted(false);
-            retryFailedDownloadsButton.setContentAreaFilled(false);
-            retryFailedDownloadsButton.setForeground(style.getDownloadButtonsForeground());
-        }
-        retryFailedDownloadsButton.setFocusable(false);
-        retryFailedDownloadsButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        retryFailedDownloadsButton.setRequestFocusEnabled(false);
-        retryFailedDownloadsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                retryFailedDownloadsButtonActionPerformed(evt);
-            }
-        });
-
         GroupLayout downloadPanelLayout = new GroupLayout(downloadPanel);
         downloadPanel.setLayout(downloadPanelLayout);
         downloadPanelLayout.setHorizontalGroup(
@@ -878,14 +783,6 @@ public class MainFrame extends JFrame {
                         .addGroup(downloadPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addGroup(downloadPanelLayout.createSequentialGroup()
-                                                .addComponent(removeFromListButton, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(removeFromDiskButton, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(retryFailedDownloadsButton, GroupLayout.PREFERRED_SIZE, 193, GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(selectComboBox, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
                                         .addComponent(downloadScrollPane, GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
                                 .addContainerGap())
         );
@@ -893,13 +790,6 @@ public class MainFrame extends JFrame {
                 downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(downloadPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGap(18, 18, 18)
-                                .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(selectComboBox, GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
-                                        .addGroup(downloadPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                .addComponent(removeFromListButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(removeFromDiskButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(retryFailedDownloadsButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(downloadScrollPane, GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                                 .addContainerGap())
@@ -1054,50 +944,6 @@ public class MainFrame extends JFrame {
         }.execute();
     }
 
-    private ListSelectionListener downloadListSelectionListener = new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent event) {
-            if (!event.getValueIsAdjusting()) {
-                int[] selectedRows = downloadTable.getSelectedRows();
-                if(selectedRows.length > 0) {
-                    removeFromListButton.setEnabled(true);
-                    removeFromListButton.setText(I18n.getLocaleString("REMOVE_FROM_LIST") + " (" + selectedRows.length + ")");
-                    removeFromDiskButton.setEnabled(true);
-                    removeFromDiskButton.setText(I18n.getLocaleString("REMOVE_FROM_DISK") + " (" + selectedRows.length + ")");
-                } else {
-                    removeFromListButton.setEnabled(false);
-                    removeFromListButton.setText(I18n.getLocaleString("REMOVE_FROM_LIST"));
-                    removeFromDiskButton.setEnabled(false);
-                    removeFromDiskButton.setText(I18n.getLocaleString("REMOVE_FROM_DISK"));
-                }
-            }
-        }
-    };
-
-    private ListSelectionListener searchListSelectionListener = new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent event) {
-            if (!event.getValueIsAdjusting()) {
-                int[] selectedRows = searchTable.getSelectedRows();
-
-                String playButtonText = I18n.getLocaleString("PLAY");
-
-                if(searchTable.getModel() instanceof AlbumSearchTableModel || searchTable.getModel() instanceof PlaylistSearchTableModel || searchTable.getModel() instanceof ArtistSearchTableModel) {
-                    playButtonText = I18n.getLocaleString("SHOW_SONGS");
-                }
-                if(selectedRows.length > 0) {
-                    downloadButton.setEnabled(true);
-                    downloadButton.setText(I18n.getLocaleString("DOWNLOAD") + " (" + selectedRows.length + ")");
-                    playButton.setEnabled(true);
-                    playButton.setText(playButtonText + " (" + selectedRows.length + ")");
-                } else {
-                    downloadButton.setEnabled(false);
-                    downloadButton.setText(I18n.getLocaleString("DOWNLOAD"));
-                    playButton.setEnabled(false);
-                    playButton.setText(playButtonText);
-                }
-            }
-        }
-    };
-
     private final PlaybackListener playbackListener = new PlaybackListener() {
         public void playbackStarted(Track track) {
             playPauseButton.setIcon(style.getPauseIcon());
@@ -1172,7 +1018,7 @@ public class MainFrame extends JFrame {
         }
     };
 
-    public void playButtonActionPerformed(ActionEvent evt) {
+    public void playMenuItemActionPerformed(ActionEvent evt) {
         JTable table;
         if (evt.getSource() instanceof JMenuItem) {
             table = (JTable) ((JPopupMenu) ((JMenuItem) evt.getSource()).getParent()).getInvoker();
@@ -1370,7 +1216,7 @@ public class MainFrame extends JFrame {
         return downloadListener;
     }
 
-    public void downloadButtonActionPerformed(ActionEvent evt) {
+    public void downloadMenuItemActionPerformed(ActionEvent evt) {
         JTable table;
         if (evt.getSource() instanceof JMenuItem) {
             table = (JTable) ((JPopupMenu) ((JMenuItem) evt.getSource()).getParent()).getInvoker();
@@ -1442,7 +1288,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void retryFailedDownloadsButtonActionPerformed(ActionEvent evt) {
+    public void retryFailedDownloadsMenuItemActionPerformed(ActionEvent evt) {
         List<Track> failedDownloads = new ArrayList<Track>();
         DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
@@ -1471,7 +1317,6 @@ public class MainFrame extends JFrame {
         searchTypeComboBox.setEnabled(false);
         searchTextField.setEnabled(false);
         searchButton.setEnabled(false);
-        playButton.setText(I18n.getLocaleString("PLAY"));
 
         // Songs
         if (searchTypeComboBox.getSelectedIndex() == 0) {
@@ -1563,37 +1408,35 @@ public class MainFrame extends JFrame {
         
     }
 
-    public void selectComboBoxActionPerformed(ActionEvent evt) {
-        // All
-        if(selectComboBox.getSelectedIndex() == 1) {
-            DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
-            downloadTable.setRowSelectionInterval(0, model.getRowCount() - 1);
-        // Completed
-        } else if(selectComboBox.getSelectedIndex() == 2) {
-            DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                if(model.getSongDownloads().get(i).getProgress() == 100) {
-                    if(downloadTable.getSelectedRows().length > 0) {
-                        downloadTable.addRowSelectionInterval(i, i);
-                    } else {
-                        downloadTable.setRowSelectionInterval(i, i);
-                    }
-                }
-            }
-        // Failed
-        } else if(selectComboBox.getSelectedIndex() == 3) {
-            DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                if(model.getSongDownloads().get(i).getStatus() == Track.Status.ERROR) {
-                    if(downloadTable.getSelectedRows().length > 0) {
-                        downloadTable.addRowSelectionInterval(i, i);
-                    } else {
-                        downloadTable.setRowSelectionInterval(i, i);
-                    }
+    public void selectAllMenuItemActionPerformed(ActionEvent evt) {
+        DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
+        downloadTable.setRowSelectionInterval(0, model.getRowCount() - 1);
+    }
+
+    public void selectCompletedMenuItemActionPerformed(ActionEvent evt) {
+        DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getSongDownloads().get(i).getProgress() == 100) {
+                if (downloadTable.getSelectedRows().length > 0) {
+                    downloadTable.addRowSelectionInterval(i, i);
+                } else {
+                    downloadTable.setRowSelectionInterval(i, i);
                 }
             }
         }
-        selectComboBox.setSelectedIndex(0);
+    }
+
+    public void selectFailedMenuItemActionPerformed(ActionEvent evt) {
+        DownloadTableModel model = (DownloadTableModel) downloadTable.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getSongDownloads().get(i).getStatus() == Track.Status.ERROR) {
+                if (downloadTable.getSelectedRows().length > 0) {
+                    downloadTable.addRowSelectionInterval(i, i);
+                } else {
+                    downloadTable.setRowSelectionInterval(i, i);
+                }
+            }
+        }
     }
 
     public void formWindowClosing(WindowEvent evt) {
@@ -1735,9 +1578,9 @@ public class MainFrame extends JFrame {
                 Object[] options = {I18n.getLocaleString("PLAY"), I18n.getLocaleString("DOWNLOAD"), I18n.getLocaleString("CANCEL")};
                 int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_DOWNLOAD_OR_PLAY"), I18n.getLocaleString("SONG"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 if (selectedValue == 0) {
-                    playButtonActionPerformed(new ActionEvent(table, 0, null));
+                    playMenuItemActionPerformed(new ActionEvent(table, 0, null));
                 } else if (selectedValue == 1) {
-                    downloadButtonActionPerformed(new ActionEvent(table, 0, null));
+                    downloadMenuItemActionPerformed(new ActionEvent(table, 0, null));
                 }
             }
 
@@ -1779,11 +1622,16 @@ public class MainFrame extends JFrame {
         for (int i = 0; i < selectedRows.length; i++) {
             int selectedRow = downloadTable.convertRowIndexToModel(selectedRows[i] - i);
             Track track = model.getSongDownloads().get(selectedRow);
-            try {
-                // open dir
-                Desktop.getDesktop().open(new File(track.getPath()).getParentFile());
-            } catch (IOException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            File dir = new File(track.getPath()).getParentFile();
+            if (dir.exists()) {
+                try {
+                    // open dir
+                    Desktop.getDesktop().open(dir);
+                } catch (IOException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                showError(I18n.getLocaleString("INVALID_DOWNLOAD_DIRECTORY"));
             }
         }
         downloadTable.clearSelection();
@@ -1795,11 +1643,16 @@ public class MainFrame extends JFrame {
         for (int i = 0; i < selectedRows.length; i++) {
             int selectedRow = downloadTable.convertRowIndexToModel(selectedRows[i] - i);
             Track track = model.getSongDownloads().get(selectedRow);
-            try {
-                // open file
-                Desktop.getDesktop().open(new File(track.getPath()));
-            } catch (IOException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            File file = new File(track.getPath());
+            if (file.exists()) {
+                try {
+                    // open file
+                    Desktop.getDesktop().open(new File(track.getPath()));
+                } catch (IOException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                showError(I18n.getLocaleString("INVALID_DOWNLOAD_DIRECTORY"));
             }
         }
         downloadTable.clearSelection();
@@ -1810,18 +1663,6 @@ public class MainFrame extends JFrame {
             Desktop.getDesktop().browse(java.net.URI.create(((JLabel) evt.getSource()).getToolTipText()));
         } catch (IOException ex) {
             Logger.getLogger(AboutFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void downloadMenuItemActionPerformed(ActionEvent evt) {
-        for (ActionListener a : downloadButton.getActionListeners()) {
-            a.actionPerformed(evt);
-        }
-    }
-
-    public void playMenuItemActionPerformed(ActionEvent evt) {
-        for (ActionListener a : playButton.getActionListeners()) {
-            a.actionPerformed(evt);
         }
     }
 
@@ -1842,10 +1683,8 @@ public class MainFrame extends JFrame {
     }
 
     public void play(List<Song> songs) {
-        final Song song = songs.get(0);
-        Track track = Groovesquid.getPlayService().getCurrentTrack();
-
-        if (track != null && track.getSong().equals(song) && Groovesquid.getPlayService().isPaused()) {
+        Track currentTrack = Groovesquid.getPlayService().getCurrentTrack();
+        if (currentTrack != null && currentTrack.getSong().equals(songs.get(0)) && Groovesquid.getPlayService().isPaused()) {
             Groovesquid.getPlayService().resume();
         } else {
             if (Groovesquid.getPlayService().isPlaying()) {
@@ -1861,11 +1700,16 @@ public class MainFrame extends JFrame {
             }
         }
     }
+
+    public void play(Song song) {
+        play(Arrays.asList(new Song[]{song}));
+    }
     
     public void resetPlayInfo() {
         currentlyPlayingLabel.setText("");
         playPauseButton.setIcon(style.getPlayIcon());
         trackSlider.setValue(0);
+        trackSlider.setMaximum(0);
         trackSlider.setEnabled(false);
         currentlyPlayingLabel.setText("");
         currentDurationLabel.setText("0:00");
