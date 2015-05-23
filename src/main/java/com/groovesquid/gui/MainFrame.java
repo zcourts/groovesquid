@@ -10,6 +10,7 @@ import com.groovesquid.service.PlayService;
 import com.groovesquid.service.PlaybackListener;
 import com.groovesquid.util.GuiUtils;
 import com.groovesquid.util.I18n;
+import org.divxdede.swing.busy.BusyModel;
 import org.divxdede.swing.busy.BusySwingWorker;
 import org.divxdede.swing.busy.JBusyComponent;
 import org.jdesktop.swingx.JXHyperlink;
@@ -908,7 +909,14 @@ public class MainFrame extends JFrame {
     private void homeTopComboBoxActionPerformed(ActionEvent evt) {
         final JComboBox comboBox = (JComboBox) evt.getSource();
 
-        new BusySwingWorker<List<Song>, Void>(busyFirstTopScrollPane.getBusyModel()) {
+        BusyModel busyModel = null;
+        if (comboBox.equals(homeFirstTopComboBox)) {
+            busyModel = busyFirstTopScrollPane.getBusyModel();
+        } else if (comboBox.equals(homeSecondTopComboBox)) {
+            busyModel = busySecondTopScrollPane.getBusyModel();
+        }
+
+        new BusySwingWorker<List<Song>, Void>(busyModel) {
             @Override
             protected List<Song> doInBackground() {
                 comboBox.setEnabled(false);
