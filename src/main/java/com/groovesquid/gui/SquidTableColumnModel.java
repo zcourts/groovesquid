@@ -35,7 +35,7 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                         downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(song, Groovesquid.getMainFrame().getDownloadListener(downloadTableModel)));
                     }
                 };
-                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, download, SquidButtonEditor.DOWNLOAD_ICON);
+                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, download, FontAwesomeIcon.DOWNLOAD_ICON);
 
                 tc.setCellRenderer(buttonColumn);
                 tc.setCellEditor(buttonColumn);
@@ -50,7 +50,7 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                         Groovesquid.getMainFrame().play(song);
                     }
                 };
-                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, play, SquidButtonEditor.PLAY_ICON);
+                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, play, FontAwesomeIcon.PLAY_ICON);
 
                 tc.setCellRenderer(buttonColumn);
                 tc.setCellEditor(buttonColumn);
@@ -68,7 +68,7 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                         downloadTableModel.addRow(0, Groovesquid.getDownloadService().download(song, Groovesquid.getMainFrame().getDownloadListener(downloadTableModel)));
                     }
                 };
-                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, download, SquidButtonEditor.DOWNLOAD_ICON);
+                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, download, FontAwesomeIcon.DOWNLOAD_ICON);
 
                 tc.setCellRenderer(buttonColumn);
                 tc.setCellEditor(buttonColumn);
@@ -83,7 +83,7 @@ public class SquidTableColumnModel extends DefaultTableColumnModel {
                         Groovesquid.getMainFrame().play(song);
                     }
                 };
-                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, play, SquidButtonEditor.PLAY_ICON);
+                SquidButtonEditor buttonColumn = new SquidButtonEditor(table, play, FontAwesomeIcon.PLAY_ICON);
 
                 tc.setCellRenderer(buttonColumn);
                 tc.setCellEditor(buttonColumn);

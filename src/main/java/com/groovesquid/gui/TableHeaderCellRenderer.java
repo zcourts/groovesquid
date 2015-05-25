@@ -21,11 +21,14 @@ public class TableHeaderCellRenderer implements TableCellRenderer {
     }  
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (table.getModel() instanceof TopSongTableModel && column == 0) {
+            label.setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+
         wrappedRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
         label.setBackground(Color.WHITE);
         label.setPreferredSize(new Dimension(label.getPreferredSize().width, 30));
-        label.setFont(new Font("Lucida Grande", Font.PLAIN, 11));
         if(column > 0) {
             label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, new Color(204, 204, 204)), BorderFactory.createMatteBorder(0, 1, 0, 0, color)), BorderFactory.createEmptyBorder(0, 5, 0, 0)));
         } else {
