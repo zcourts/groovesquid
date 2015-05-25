@@ -1591,11 +1591,10 @@ public class MainFrame extends JFrame {
 
     public void tableMousePressed(MouseEvent evt) {
         JTable table = (JTable) evt.getSource();
-        int r = table.rowAtPoint(evt.getPoint());
-        boolean isSearchTable = false;
-        isSearchTable = !table.equals(downloadTable);
+        int row = table.rowAtPoint(evt.getPoint());
+        boolean isSearchTable = !table.equals(downloadTable);
 
-        if (r >= 0) {
+        if (row >= 0) {
             if (isSearchTable && evt.getClickCount() == 2 && (evt.getModifiers() & InputEvent.BUTTON1_MASK) == InputEvent.BUTTON1_MASK) {
                 Object[] options = {I18n.getLocaleString("PLAY"), I18n.getLocaleString("DOWNLOAD"), I18n.getLocaleString("CANCEL")};
                 int selectedValue = JOptionPane.showOptionDialog(this, I18n.getLocaleString("ALERT_DOWNLOAD_OR_PLAY"), I18n.getLocaleString("SONG"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
@@ -1606,32 +1605,20 @@ public class MainFrame extends JFrame {
                 }
             }
 
-            if (r < table.getRowCount()) {
-                if (GuiUtils.getSystem() == GuiUtils.OperatingSystem.MAC && ((evt.getModifiers() & KeyEvent.META_MASK) == 0 || SwingUtilities.isRightMouseButton(evt)) || GuiUtils.getSystem() != GuiUtils.OperatingSystem.MAC && !evt.isControlDown()) {
-                    if (evt.isPopupTrigger()) {
-                        if (!table.isRowSelected(r)) {
-                            table.setRowSelectionInterval(r, r);
-                        } else {
-                            table.addRowSelectionInterval(r, r);
-                        }
-                        if (isSearchTable) {
-                            searchTablePopupMenu.show(table, evt.getX(), evt.getY());
-                        } else {
-                            downloadTablePopupMenu.show(table, evt.getX(), evt.getY());
-                        }
-                    } else {
-                        table.setRowSelectionInterval(r, r);
-                    }
-                } else {
-                    if (!table.isRowSelected(r)) {
-                        table.removeRowSelectionInterval(r, r);
-                    } else if (table.getSelectedRowCount() > 0) {
-                        table.addRowSelectionInterval(r, r);
-                    } else {
-                        table.setRowSelectionInterval(r, r);
-                    }
+            if (evt.isPopupTrigger()) {
+                int column = table.columnAtPoint( evt.getPoint() );
+
+                if (table.getSelectedRowCount() == 0 || !table.isRowSelected(row)) {
+                    table.changeSelection(row, column, false, false);
                 }
 
+                JPopupMenu popupMenu;
+                if (isSearchTable) {
+                    popupMenu = searchTablePopupMenu;
+                } else {
+                    popupMenu = downloadTablePopupMenu;
+                }
+                popupMenu.show(table, evt.getX(), evt.getY());
             }
         } else {
             table.clearSelection();
