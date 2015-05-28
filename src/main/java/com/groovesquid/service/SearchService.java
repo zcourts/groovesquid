@@ -9,11 +9,16 @@ import com.groovesquid.model.Song;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class SearchService extends HttpService {
 
@@ -28,10 +33,15 @@ public class SearchService extends HttpService {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-        JsonValue recordings = JsonObject.readFrom(response).get("recording-list").asObject().get("recording");
+        System.out.println(response);
 
         List<Song> songs = new ArrayList<Song>();
+
+        if (response == null) {
+            return songs;
+        }
+
+        JsonValue recordings = JsonObject.readFrom(response).get("recording-list").asObject().get("recording");
 
         if (recordings == null || recordings.asArray().isEmpty()) {
             return songs;
@@ -63,10 +73,10 @@ public class SearchService extends HttpService {
                         e.printStackTrace();
                     }
                 }
-
-                album = new Album(release.get("id").asString(), release.get("title").asString(), artists, date);
+                int songCount = release.asObject().get("medium-list").asObject().get("track-count").asInt();
+                album = new Album(release.get("id").asString(), release.get("title").asString(), artists, date, songCount);
             } else {
-                album = new Album("", "", artists, null);
+                album = new Album("", "", artists, null, 0);
             }
 
             Iterator<Song> i = songs.iterator();
@@ -96,9 +106,13 @@ public class SearchService extends HttpService {
             e.printStackTrace();
         }
 
-        JsonValue recordings = JsonObject.readFrom(response).get("recording-list").asObject().get("recording");
-
         List<Song> songs = new ArrayList<Song>();
+
+        if (response == null) {
+            return songs;
+        }
+
+        JsonValue recordings = JsonObject.readFrom(response).get("recording-list").asObject().get("recording");
 
         if (recordings == null || recordings.asArray().isEmpty()) {
             return songs;
@@ -125,9 +139,13 @@ public class SearchService extends HttpService {
             e.printStackTrace();
         }
 
-        JsonValue releases = JsonObject.readFrom(response).get("release-list").asObject().get("release");
-
         List<Album> albums = new ArrayList<Album>();
+
+        if (response == null) {
+            return albums;
+        }
+
+        JsonValue releases = JsonObject.readFrom(response).get("release-list").asObject().get("release");
 
         if (releases == null || releases.asArray().isEmpty()) {
             return albums;
@@ -152,20 +170,62 @@ public class SearchService extends HttpService {
                     e.printStackTrace();
                 }
             }
-            albums.add(new Album(release.asObject().get("id").asString(), release.asObject().get("title").asString(), artists, date));
+            int songCount = release.asObject().get("medium-list").asObject().get("track-count").asInt();
+            albums.add(new Album(release.asObject().get("id").asString(), release.asObject().get("title").asString(), artists, date, songCount));
         }
 
         return albums;
     }
 
-    public List<Artist> getArtistsByQuery(String query) {
-        List<Artist> artists = new ArrayList<Artist>();
+    public Image getAlbumCover(Album album) {
+        if (album != null) {
+            if (album.getCoverUrl() == null && album.getId() != null) {
+                String response = null;
+                try {
+                    response = get("http://coverartarchive.org/release/" + album.getId());
+                } catch (Exception ignored) {
+                }
+                if (response != null) {
+                    JsonObject json = JsonObject.readFrom(response);
+                    if (json != null) {
+                        album.setCoverUrl(json.get("images").asArray().get(0).asObject().get("thumbnails").asObject().get("large").asString());
+                    }
+                }
+            }
 
+            if (album.getCoverUrl() != null) {
+                try {
+                    return ImageIO.read(new ByteArrayInputStream(getRaw(album.getCoverUrl())));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Artist> getArtistsByQuery(String query) {
         String response = null;
         try {
             response = get("http://search.musicbrainz.org/ws/2/artist/?query=" + URLEncoder.encode("\"" + query + "\"", "UTF-8") + "&fmt=json&dismax=true&limit=100");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        }
+
+        List<Artist> artists = new ArrayList<Artist>();
+
+        if (response == null) {
+            return artists;
+        }
+
+        JsonValue releases = JsonObject.readFrom(response).get("artist-list").asObject().get("artist");
+
+        if (releases == null || releases.asArray().isEmpty()) {
+            return artists;
+        }
+
+        for (JsonValue release : releases.asArray()) {
+            artists.add(new Artist(release.asObject().get("id").asString(), release.asObject().get("name").asString()));
         }
 
         return artists;
@@ -198,7 +258,9 @@ public class SearchService extends HttpService {
                         }
                     }
                 }
-                Album album = new Album(null, entry.asObject().get("im:collection").asObject().get("im:name").asObject().get("label").asString(), artists, null);
+                Album album = new Album(null, entry.asObject().get("im:collection").asObject().get("im:name").asObject().get("label").asString(), artists, null, 0);
+                JsonArray images = entry.asObject().get("im:image").asArray();
+                album.setCoverUrl(images.get(images.size() - 1).asObject().get("label").asString());
                 songs.add(new Song(null, title, artists, album, 0));
             }
         }
@@ -232,7 +294,7 @@ public class SearchService extends HttpService {
                 for (JsonValue artist : track.asObject().get("artists").asArray()) {
                     artists.add(new Artist(null, artist.asObject().get("name").asString()));
                 }
-                Album album = new Album(null, track.asObject().get("label").asObject().get("name").asString(), artists, null);
+                Album album = new Album(null, track.asObject().get("label").asObject().get("name").asString(), artists, null, 0);
                 songs.add(new Song(null, track.asObject().get("title").asString(), artists, album, track.asObject().get("duration").asObject().get("milliseconds").asLong()));
             }
         }
@@ -253,7 +315,82 @@ public class SearchService extends HttpService {
         return songs;
     }
 
-    public List<Song> getSongsByArtist(Artist target) {
-        return null;
+    public List<Song> getSongsByArtist(Artist artist) {
+        String response = null;
+        try {
+            response = get("http://search.musicbrainz.org/ws/2/recording/?query=" + URLEncoder.encode("arid:" + artist.getId(), "UTF-8") + "&fmt=json&limit=100");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        List<Song> songs = new ArrayList<Song>();
+
+        if (response == null) {
+            return songs;
+        }
+
+        JsonValue recordings = JsonObject.readFrom(response).get("recording-list").asObject().get("recording");
+
+        if (recordings == null || recordings.asArray().isEmpty()) {
+            return songs;
+        }
+
+        for (JsonValue recording : recordings.asArray()) {
+            List<Artist> artists = new ArrayList<Artist>();
+            for (JsonValue artistsJson : recording.asObject().get("artist-credit").asObject().get("name-credit").asArray()) {
+                artists.add(new Artist(artistsJson.asObject().get("artist").asObject().get("id").asString(), artistsJson.asObject().get("artist").asObject().get("name").asString()));
+            }
+
+            Song song = new Song(recording.asObject().get("id").asString(), recording.asObject().get("title").asString(), artists, null, recording.asObject().get("length") != null ? recording.asObject().get("length").asLong() : 0);
+            songs.add(song);
+        }
+
+        return songs;
+    }
+
+    public List<Album> getAlbumsByArtist(Artist artist) {
+        String response = null;
+        try {
+            response = get("http://search.musicbrainz.org/ws/2/release/?query=" + URLEncoder.encode("arid:" + artist.getId(), "UTF-8") + "&fmt=json&limit=100");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        List<Album> albums = new ArrayList<Album>();
+
+        if (response == null) {
+            return albums;
+        }
+
+        JsonValue releases = JsonObject.readFrom(response).get("release-list").asObject().get("release");
+
+        if (releases == null || releases.asArray().isEmpty()) {
+            return albums;
+        }
+
+        for (JsonValue release : releases.asArray()) {
+            List<Artist> artists = new ArrayList<Artist>();
+            for (JsonValue artistsJson : release.asObject().get("artist-credit").asObject().get("name-credit").asArray()) {
+                artists.add(new Artist(artistsJson.asObject().get("artist").asObject().get("id").asString(), artistsJson.asObject().get("artist").asObject().get("name").asString()));
+            }
+            Calendar date = Calendar.getInstance();
+            if (release.asObject().get("date") != null) {
+                try {
+                    if (release.asObject().get("date").asString().length() == 4) {
+                        date.setTime(new SimpleDateFormat("Y").parse(release.asObject().get("date").asString()));
+                    } else if (release.asObject().get("date").asString().length() == 7) {
+                        date.setTime(new SimpleDateFormat("Y-m").parse(release.asObject().get("date").asString()));
+                    } else if (release.asObject().get("date").asString().length() == 10) {
+                        date.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(release.asObject().get("date").asString()));
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            int songCount = release.asObject().get("medium-list").asObject().get("track-count").asInt();
+            albums.add(new Album(release.asObject().get("id").asString(), release.asObject().get("title").asString(), artists, date, songCount));
+        }
+
+        return albums;
     }
 }
