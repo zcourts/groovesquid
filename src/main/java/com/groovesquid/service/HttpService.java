@@ -121,6 +121,10 @@ public class HttpService {
         return responseContent;
     }
 
+    public byte[] getRaw(String url) {
+        return getRaw(url, null);
+    }
+
     public String get(String url) {
         return get(url, null);
     }
