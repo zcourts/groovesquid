@@ -15,7 +15,8 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
     private Action action;
     private JButton renderButton;
     private JButton editButton;
-    private FontAwesomeIcon renderIcon, editIcon, renderSelectedIcon, editSelectedIcon;
+    private FontAwesomeIcon renderIcon;
+    private FontAwesomeIcon editIcon;
 
     public SquidButtonEditor(JTable table, Action action, int column, String iconText) {
         this(table, action, iconText);
@@ -86,7 +87,7 @@ public class SquidButtonEditor extends AbstractCellEditor implements TableCellRe
             renderButton.setBackground(table.getSelectionBackground());
             renderIcon.setForeground(Color.WHITE);
         } else {
-            renderIcon.setForeground(Color.BLACK);
+            renderIcon.setForeground(Color.DARK_GRAY);
             if (row % 2 == 0) {
                 renderButton.setBackground(new Color(255, 255, 255));
             } else {

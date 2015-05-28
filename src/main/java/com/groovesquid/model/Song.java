@@ -15,6 +15,7 @@ public class Song {
     private String year;
     private long trackNum, orderNum;
     private Boolean downloaded;
+    private boolean playing;
 
     public Song(String id, String name, List<Artist> artists) {
         this(id, name, artists, null, 0);
@@ -122,6 +123,11 @@ public class Song {
 
     public void setDownloaded(boolean downloaded) {
         this.downloaded = downloaded;
+    }
+
+    public boolean isPlaying() {
+        Track currentTrack = Groovesquid.getPlayService().getCurrentTrack();
+        return currentTrack != null && currentTrack.getSong().equals(this) && !Groovesquid.getPlayService().isPaused();
     }
 
     public boolean equals(Object obj) {

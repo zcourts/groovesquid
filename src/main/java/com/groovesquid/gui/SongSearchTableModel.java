@@ -42,7 +42,7 @@ public class SongSearchTableModel extends AbstractTableModel {
             case 0:
                 return song.isDownloaded();
             case 1:
-                return false;
+                return song.isPlaying();
             case 2:
                 return song.getName();
             case 3:

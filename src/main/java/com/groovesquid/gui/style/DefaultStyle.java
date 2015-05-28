@@ -1,6 +1,6 @@
 package com.groovesquid.gui.style;
 
-import com.bulenkov.iconloader.IconLoader;
+import com.groovesquid.gui.FontAwesomeIcon;
 
 import javax.swing.*;
 import javax.swing.plaf.TextUI;
@@ -27,20 +27,20 @@ public class DefaultStyle extends Style {
         downloadTableSelectionForeground = Color.WHITE;
         downloadTableSelectionBackground = new Color(17, 108, 214);
 
-        playIcon = IconLoader.getIcon("/gui/style/default/play.png");
-        playIconActive = IconLoader.getIcon("/gui/style/default/playH.png");
+        playIcon = new FontAwesomeIcon(FontAwesomeIcon.PLAY_ICON, 28, Color.DARK_GRAY);
+        playIconActive = new FontAwesomeIcon(FontAwesomeIcon.PLAY_ICON, 28, Color.BLACK);
 
-        pauseIcon = IconLoader.getIcon("/gui/style/default/pause.png");
-        pauseIconActive = IconLoader.getIcon("/gui/style/default/pauseH.png");
+        pauseIcon = new FontAwesomeIcon(FontAwesomeIcon.PAUSE_ICON, 28, Color.DARK_GRAY);
+        pauseIconActive = new FontAwesomeIcon(FontAwesomeIcon.PAUSE_ICON, 28, Color.BLACK);
 
-        nextIcon = IconLoader.getIcon("/gui/style/default/next.png");
-        nextIconActive = IconLoader.getIcon("/gui/style/default/nextH.png");
+        previousIcon = new FontAwesomeIcon(FontAwesomeIcon.BACKWARD_ICON, 18, Color.DARK_GRAY);
+        previousIconActive = new FontAwesomeIcon(FontAwesomeIcon.BACKWARD_ICON, 18, Color.BLACK);
 
-        previousIcon = IconLoader.getIcon("/gui/style/default/previous.png");
-        previousIconActive = IconLoader.getIcon("/gui/style/default/previousH.png");
+        nextIcon = new FontAwesomeIcon(FontAwesomeIcon.FORWARD_ICON, 18, Color.DARK_GRAY);
+        nextIconActive = new FontAwesomeIcon(FontAwesomeIcon.FORWARD_ICON, 18, Color.BLACK);
 
-        volumeOnIcon = IconLoader.getIcon("/gui/style/default/volumeOn.png");
-        volumeOffIcon = IconLoader.getIcon("/gui/style/default/volumeOff.png");
+        volumeOnIcon = new FontAwesomeIcon(FontAwesomeIcon.VOLUME_UP_ICON, 14, Color.DARK_GRAY);
+        volumeOffIcon = new FontAwesomeIcon(FontAwesomeIcon.VOLUME_OFF_ICON, 14, Color.DARK_GRAY);
     }
 
     public TextUI getSearchTextFieldUI(JTextField text) {

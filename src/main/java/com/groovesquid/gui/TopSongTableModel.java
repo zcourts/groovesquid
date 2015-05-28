@@ -44,7 +44,7 @@ public class TopSongTableModel extends AbstractTableModel {
             case 1:
                 return song.isDownloaded();
             case 2:
-                return false;
+                return song.isPlaying();
             case 3:
                 return song.getName();
             case 4:

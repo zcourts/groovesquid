@@ -22,13 +22,32 @@ public class FontAwesomeIcon implements Icon, PropertyChangeListener {
 
     public static String DOWNLOAD_ICON = "\uf019";
     public static String PLAY_ICON = "\uf04b";
+    public static String PAUSE_ICON = "\uf04c";
+    public static String VOLUME_OFF_ICON = "\uf026";
+    public static String VOLUME_DOWN_ICON = "\uf027";
+    public static String VOLUME_UP_ICON = "\uf028";
+    public static String BACKWARD_ICON = "\uf04a";
+    public static String FORWARD_ICON = "\uf04e";
 
     public FontAwesomeIcon(JComponent component, String text) {
-        this(component, text, text.equals(DOWNLOAD_ICON) ? 13f : (text.equals(PLAY_ICON) ? 11f : 12f));
+        this(component, text, text.equals(DOWNLOAD_ICON) ? 13f : (text.equals(PLAY_ICON) ? 11f : 12f), null);
     }
 
-    public FontAwesomeIcon(JComponent component, String text, float fontSize) {
+    public FontAwesomeIcon(JComponent component, String text, Color foreground) {
+        this(component, text, text.equals(DOWNLOAD_ICON) ? 13f : (text.equals(PLAY_ICON) ? 11f : 12f), foreground);
+    }
+
+    public FontAwesomeIcon(String text, float fontSize) {
+        this(new JLabel(), text, fontSize, null);
+    }
+
+    public FontAwesomeIcon(String text, float fontSize, Color foreground) {
+        this(new JLabel(), text, fontSize, foreground);
+    }
+
+    public FontAwesomeIcon(JComponent component, String text, float fontSize, Color foreground) {
         this.component = component;
+        this.foreground = foreground;
 
         try {
             InputStream is = getClass().getResourceAsStream("/gui/fonts/fontawesome.ttf");

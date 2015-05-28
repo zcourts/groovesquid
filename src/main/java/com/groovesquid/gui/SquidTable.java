@@ -146,7 +146,7 @@ public class SquidTable extends JXTable {
         };
     }
 
-    public String getToolTipText(MouseEvent e) {
+    /*public String getToolTipText(MouseEvent e) {
         String tip = null;
         Point p = e.getPoint();
         int rowIndex = rowAtPoint(p);
@@ -159,5 +159,5 @@ public class SquidTable extends JXTable {
         }
 
         return tip;
-    }
+    }*/
 }
