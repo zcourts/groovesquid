@@ -1,3 +1,44 @@
+v0.9.1
+==================
+- Fixed several bugs
+- Added Deezer
+- New "Home" Tab
+- Added album search
+
+v0.9.0
+==================
+- Removed Grooveshark support
+- Added MusicBrainz support
+- Added NeteaseMusic & SoundCloud support
+- Better ID3 tagging
+
+v0.8.2
+==================
+- Fix downloading in directories
+- Added language flags from crowdin
+
+v0.8.1
+==================
+- Automatically download locales from crowdin
+- GUI fixes (+ removed Lucida Grande font dependency)
+
+v0.8.0
+===================
+- many locale updates
+- new locale system
+- new styling system
+- new default style
+- fix initialisation issues
+
+v0.7.0
+===================
+- several GUI fixes
+- download songs by clicking the '+' button in the search table
+- new language: greece
+- new playlist order tag
+- batch search
+- auto-completion fix
+
 v0.6.1
 ===================
 - several bug fixes
@@ -13,7 +54,7 @@ v0.6.0
 
 v0.5.2
 ==================
-- temporarily fixes the error which occured while trying to download a song.
+- temporarily fixes the error which occurred while trying to download a song.
 
 v0.5.1
 ==================

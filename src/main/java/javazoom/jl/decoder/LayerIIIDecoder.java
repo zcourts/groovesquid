@@ -39,6 +39,8 @@ package javazoom.jl.decoder;
  *
  * @since 0.0
  */
+
+@SuppressWarnings("cast")
 final class LayerIIIDecoder implements FrameDecoder
 {
 	final double d43 = (4.0/3.0);

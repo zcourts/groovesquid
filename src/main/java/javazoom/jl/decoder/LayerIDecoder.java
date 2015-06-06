@@ -27,6 +27,8 @@ package javazoom.jl.decoder;
 /**
  * Implements decoding of MPEG Audio Layer I frames. 
  */
+
+@SuppressWarnings("empty")
 class LayerIDecoder implements FrameDecoder
 {
 	protected Bitstream 			stream;
